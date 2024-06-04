@@ -32,10 +32,7 @@ I work as a full-stack and currently studying.
 
 [![Blog](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white
 )](https://discord.gg/vZrZE6Gr)
-[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/dev_nightcore/)
-![Spotify](https://img.shields.io/badge/Spotify-1ED760?&style=for-the-badge&logo=spotify&logoColor=white)
-[![Binance](https://img.shields.io/badge/Binance-FCD535?style=for-the-badge&logo=binance&logoColor=white
-)]()
+[![Instagram](https://www.instagram.com/sswfl?igsh=cG9mdnZvaWpwcTVl&utm_source=qr)
 ![Blog](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white)
 ![Blog](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
 )
