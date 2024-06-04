@@ -1,7 +1,7 @@
-### Hello! I'm Nightcore and I'm a full-stack developer
+### Hello! I'm Luis and I'm a full-stack developer
 ## 
 
-I work as a full-stack and currently I am studying typescript.
+I work as a full-stack and currently I am studying.
 
 
 ![Blog](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
