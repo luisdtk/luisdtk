@@ -1,7 +1,7 @@
 ### Hello! I'm Luis and I'm a full-stack developer
 ## 
 
-I work as a full-stack and currently I am studying.
+I work as a full-stack and currently studying.
 
 
 
