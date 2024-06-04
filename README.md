@@ -30,9 +30,6 @@ I work as a full-stack and currently I am studying.
 
 
 
-
-
-
 ##
 
 ### Contacts
