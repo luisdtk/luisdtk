@@ -2,7 +2,7 @@
 
 **`FullStack Developer`**
 
-Me chamo Luís Fellipe, tenho 18 anos e sou natural do Rio de Janeiro, atualmente morando em Nova York. Concluí o ensino médio no NHP Memorial High School. Atualmente, estou cursando Computer Science na NYIT. Sou apaixonado por tecnologia e tambem na complexidade desse mundo, adquiro conhecimento e compartilho eles. "[Luís Fellipe](https://www.youtube.com/@usalut)".
+My name is Luís Fellipe, I’m 18 years old, and I’m originally from Rio de Janeiro, currently living in New York. I graduated from NHP Memorial High School and am currently pursuing a degree in Computer Science at NYIT. I’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others. "[Luís Fellipe](https://www.youtube.com/@usalut)".
 
 <p align="left">
     <a href="https://www.youtube.com/@usalut?sub_confirmation=1">
@@ -37,7 +37,7 @@ Me chamo Luís Fellipe, tenho 18 anos e sou natural do Rio de Janeiro, atualment
 
 ---
 
-### 🤖 Linguagens e Tecnologias
+### 🤖 Languages & Technologies
 
 <img 
     align="left" 
@@ -131,7 +131,7 @@ Me chamo Luís Fellipe, tenho 18 anos e sou natural do Rio de Janeiro, atualment
 <br/>
 <br/>
 
-### 📊 Estatísticas
+### 📊 Statistics
 
 <p>
   <img 
