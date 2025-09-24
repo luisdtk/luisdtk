@@ -6,7 +6,7 @@ My name is Luís Fellipe, I’m 18 years old, and I’m originally from Rio de J
 
 ---
 
-### 🤖 Languages and Technologies
+###  Languages and Technologies
 
 <img 
     align="left" 
@@ -68,7 +68,7 @@ My name is Luís Fellipe, I’m 18 years old, and I’m originally from Rio de J
 <br/>
 <br/>
 
-### 📊 Statistics  
+###  Statistics  
 
 <img 
     align="left" 
