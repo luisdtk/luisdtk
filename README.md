@@ -80,7 +80,7 @@ I'm Luis, I’m 18 years old, and I’m originally from Rio de Janeiro, currentl
 <img 
       align="left" 
       alt="GitHub Stats" 
-      src="https://github-readme-stats.vercel.app/api/top-langs/?username=luisdtk&theme=tokyonight&layout=compact&custom_title=Tecnologias&langs_count=9" 
+      src="https://github-readme-stats.vercel.app/api/top-langs/?username=luisdtk&theme=tokyonight&layout=compact&custom_title=Tech&langs_count=9" 
 /> 
 
 
