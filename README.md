@@ -1,12 +1,11 @@
-# Luís Fellipe
+# luís fellipe
 
-**`Fullstack Developer`**
 
 My name is Luís Fellipe, I’m 18 years old, and I’m originally from Rio de Janeiro, currently living in New York. I graduated from NHP Memorial High School and am currently pursuing a degree in Computer Science at NYIT. I’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others.
 
 ---
 
-###  Languages and Technologies
+###  Languages & Tech
 
 <img 
     align="left" 
