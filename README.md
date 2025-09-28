@@ -1,7 +1,7 @@
 # luis fellipe
 
 
-I'm Luis, I’m 18 years old, and I’m originally from Rio de Janeiro, currently living in New York. I graduated from NHP Memorial High School and am currently pursuing a degree in Computer Science at NYIT. I’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others.
+i'm Luis, i’m 18 years old, and i’m originally from Rio de Janeiro, currently living in New York. Majoring Computer Science at NYIT. i’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others.
 
 ---
 
