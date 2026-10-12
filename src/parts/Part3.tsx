@@ -1,19 +1,10 @@
 import React from "react";
 import { AbsoluteFill, Easing, OffthreadVideo, getStaticFiles, staticFile } from "remotion";
 import { config } from "../config";
-import { C, INTER, SERIF, ease, easeIn, easeOut, mix, motionBlur, prog, snap } from "../theme";
+import { C, INTER, SERIF, born, ease, easeIn, easeOut, mix, motionBlur, prog, snap } from "../theme";
 import { glowGradient } from "../components/Background";
 import { Avatar, ClaudeSymbol, IconBookmark, IconComment, IconHeart, IconRepost, IconShare } from "../components/Pieces";
 
-/** 81300 -> "81,3 mil"; 66 -> "66". */
-export const formatCount = (n: number) => {
-  const v = Math.floor(n);
-  if (v < 1000) return String(v);
-  const tenths = Math.floor(v / 100) / 10;
-  return `${tenths.toFixed(1).replace(".", ",")} mil`;
-};
-
-const count = (f: number, a: number, b: number, target: number) => target * prog(f, a, b, easeOut);
 
 const hasPostVideo = () => getStaticFiles().some((s) => s.name === "meu-post.mp4");
 
@@ -38,8 +29,6 @@ const GrayBar: React.FC<{ w: number; h?: number; color?: string; style?: React.C
 const Phone: React.FC<{ f: number }> = ({ f }) => {
   const OTHER_H = 66 + 600 + 64;
   const scroll = mix(0, OTHER_H, prog(f, 686, 703, Easing.out(Easing.back(1.15))));
-  const likes = count(f, 714, 775, config.curtidas);
-  const comments = count(f, 728, 775, config.comentarios);
   return (
     <div
       style={{
@@ -75,18 +64,18 @@ const Phone: React.FC<{ f: number }> = ({ f }) => {
           <Avatar size={44} />
           <div style={{ fontFamily: INTER, lineHeight: 1.2 }}>
             <div style={{ fontWeight: 600, fontSize: 21, color: "#000" }}>{config.perfilInstagram}</div>
-            <div style={{ fontSize: 17, color: "#000" }}>Áudio original</div>
+            <div style={{ fontSize: 17, color: "#000" }}>Original audio</div>
           </div>
           <div style={{ marginLeft: "auto", fontFamily: INTER, fontSize: 24, fontWeight: 700, color: "#000", letterSpacing: 1 }}>···</div>
         </div>
         <PostVideo f={f} />
         <div style={{ height: 58, display: "flex", alignItems: "center", padding: "0 14px", gap: 8, fontFamily: INTER, fontWeight: 600, fontSize: 19, color: "#000" }}>
           <IconHeart size={30} />
-          <span style={{ marginRight: 14 }}>{formatCount(likes)}</span>
+          <span style={{ marginRight: 10 }} />
           <IconComment size={29} />
-          <span style={{ marginRight: 14 }}>{formatCount(comments)}</span>
+          <span style={{ marginRight: 10 }} />
           <IconRepost size={29} />
-          <span style={{ marginRight: 14 }}>{config.republicacoes}</span>
+          <span style={{ marginRight: 10 }} />
           <IconShare size={28} />
           <div style={{ marginLeft: "auto" }}>
             <IconBookmark size={29} />
@@ -108,13 +97,11 @@ const Phone: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-const Numbers: React.FC<{ f: number }> = ({ f }) => {
+/** Três frases grandes à direita do celular. */
+const Statements: React.FC<{ f: number }> = ({ f }) => {
   const out = prog(f, 783, 792, easeIn);
   const outBlur = motionBlur(f, 783, 792, 14, easeIn);
   if (f > 793) return null;
-  const views = count(f, 700, 775, config.visualizacoes);
-  const likes = count(f, 714, 775, config.curtidas);
-  const comments = count(f, 728, 775, config.comentarios);
   const pulse = f >= 775 && f <= 787 ? Math.sin(Math.PI * prog(f, 775, 787, (x) => x)) : 0;
   const row = (start: number) => {
     const p = prog(f, start, start + 12, easeOut);
@@ -132,23 +119,26 @@ const Numbers: React.FC<{ f: number }> = ({ f }) => {
         filter: outBlur > 0.1 ? `blur(${outBlur}px)` : undefined,
       }}
     >
-      <div style={row(698)}>
-        <div style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 216, lineHeight: "220px", color: C.accent, transform: `scale(${1 + 0.07 * pulse})`, transformOrigin: "0 60%", whiteSpace: "nowrap", letterSpacing: -2 }}>
-          {formatCount(views)}
-        </div>
-        <div style={{ fontFamily: INTER, fontSize: 42, color: "#8a8a8a", marginTop: 4 }}>visualizações</div>
-      </div>
-      <div style={{ display: "flex", gap: 110, marginTop: 70 }}>
-        {[
-          { v: likes, l: "curtidas", s: 710 },
-          { v: comments, l: "comentários", s: 722 },
-        ].map((it) => (
-          <div key={it.l} style={row(it.s)}>
-            <div style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 112, lineHeight: "120px", color: C.cream, whiteSpace: "nowrap" }}>{formatCount(it.v)}</div>
-            <div style={{ fontFamily: INTER, fontSize: 36, color: "#8a8a8a", marginTop: 4 }}>{it.l}</div>
+      {config.frasesProva.map((t, i) => (
+        <div key={i} style={row([698, 710, 722][i])}>
+          <div
+            style={{
+              fontFamily: SERIF,
+              fontWeight: 600,
+              fontSize: 150,
+              lineHeight: "170px",
+              color: i === 0 ? C.accent : C.cream,
+              transform: i === 0 ? `scale(${1 + 0.07 * pulse})` : undefined,
+              transformOrigin: "0 60%",
+              whiteSpace: "nowrap",
+              letterSpacing: -2,
+              ...born(f - [698, 710, 722][i], i === 0 ? C.accent : C.cream),
+            }}
+          >
+            {t}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };
@@ -226,7 +216,7 @@ export const Part3: React.FC<{ frame: number }> = ({ frame: f }) => {
         >
           <Phone f={f} />
         </AbsoluteFill>
-        <Numbers f={f} />
+        <Statements f={f} />
         <Comments f={f} />
       </AbsoluteFill>
       {f >= 851 && (

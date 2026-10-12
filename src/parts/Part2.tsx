@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { config } from "../config";
-import { CODE_P2, CODE_P2_SHORT, TRACK_CODE } from "../codeText";
+import { CODE_P2, CODE_P2_SHORT, TRACK_CODE, TRACK_NAMES } from "../codeText";
 import { C, INTER, MONO, SERIF, born, ease, easeIn, easeOut, mix, motionBlur, prog, snap, track } from "../theme";
 import { Check, ClaudeSymbol, MacCursor, SendButton } from "../components/Pieces";
 import { CodeLine } from "../components/Code";
@@ -32,11 +32,11 @@ const TL_TOP = 626;
 const BAR_X0 = 266;
 const BAR_W = 806;
 const TRACKS = [
-  { name: "<Riscos>", s: 0, d: 0.2 },
-  { name: "<Simbolo>", s: 0.14, d: 0.48 },
-  { name: "<Saudacao>", s: 0.3, d: 0.56 },
-  { name: "<Caixa>", s: 0.42, d: 0.58 },
-  { name: "<Brilho>", s: 0, d: 1 },
+  { name: TRACK_NAMES[0], s: 0, d: 0.2 },
+  { name: TRACK_NAMES[1], s: 0.14, d: 0.48 },
+  { name: TRACK_NAMES[2], s: 0.3, d: 0.56 },
+  { name: TRACK_NAMES[3], s: 0.42, d: 0.58 },
+  { name: TRACK_NAMES[4], s: 0, d: 1 },
 ];
 
 // Mouse (no desenho)
@@ -119,7 +119,7 @@ const Panel: React.FC<{ f: number }> = ({ f }) => {
           </span>
         ))}
         <div style={{ position: "absolute", left: 0, width: PW, textAlign: "center", color: "#929292", pointerEvents: "none" }}>
-          Remotion Studio <span style={{ color: "#636363" }}>/</span> <span style={{ color: "#d9d9d9" }}>Motion</span>
+          {config.painelTitulo} <span style={{ color: "#636363" }}>/</span> <span style={{ color: "#d9d9d9" }}>{config.painelCena}</span>
         </div>
       </div>
       {/* palco */}
@@ -193,7 +193,7 @@ const Panel: React.FC<{ f: number }> = ({ f }) => {
                   <path d="M2 12 C5 6.5 8.5 4.5 12 4.5 C15.5 4.5 19 6.5 22 12 C19 17.5 15.5 19.5 12 19.5 C8.5 19.5 5 17.5 2 12 Z" stroke="#a0a0a0" strokeWidth={1.8} fill="none" />
                   <circle cx={12} cy={12} r={3.2} fill="#a0a0a0" />
                 </svg>
-                <div style={{ position: "absolute", left: 46, top: 0, lineHeight: "50px", ...MONO_STYLE, fontSize: 16, color: "#d9d9d9" }}>{tr.name}</div>
+                <div style={{ position: "absolute", left: 46, top: 0, lineHeight: "50px", fontFamily: INTER, fontSize: 16, color: "#d9d9d9" }}>{tr.name}</div>
                 <div
                   style={{
                     position: "absolute",
@@ -210,8 +210,8 @@ const Panel: React.FC<{ f: number }> = ({ f }) => {
                 />
               </div>
               {toText > 0 && (
-                <div style={{ position: "absolute", left: 16, top: 0, lineHeight: "50px", ...MONO_STYLE, fontSize: 36, opacity: toText, whiteSpace: "pre" }}>
-                  <span style={{ color: "rgba(242,242,242,0.35)" }}>{`${i + 3}  `}</span>
+                <div style={{ position: "absolute", left: 16, top: 0, lineHeight: "50px", fontFamily: INTER, fontWeight: 500, fontSize: 36, opacity: toText, whiteSpace: "pre" }}>
+                  <span style={{ color: "rgba(242,242,242,0.35)" }}>{`${i + 1}  `}</span>
                   <CodeLine line={line} f={f} appearAt={(c) => writeStart + c * 0.4} />
                 </div>
               )}
@@ -322,9 +322,9 @@ const Chat: React.FC<{ f: number }> = ({ f }) => {
           }}
         >
           <div style={{ height: 40, borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", paddingLeft: 18, fontFamily: INTER, fontSize: 15, color: "rgba(196,196,196,0.7)" }}>
-            Motion.tsx
+            {config.painelCena}
           </div>
-          <div style={{ padding: "12px 18px", ...MONO_STYLE, fontSize: 18.5, lineHeight: "28px" }}>
+          <div style={{ padding: "12px 18px", fontFamily: INTER, fontSize: 18.5, lineHeight: "28px" }}>
             {CODE_P2.map((l, i) => {
               const s = 626 + 6 * i;
               return (
@@ -350,7 +350,7 @@ const Chat: React.FC<{ f: number }> = ({ f }) => {
           boxSizing: "border-box",
         }}
       >
-        <span style={{ position: "absolute", left: 24, top: 24, fontFamily: INTER, fontSize: 22, color: "rgba(242,242,242,0.38)" }}>Responder...</span>
+        <span style={{ position: "absolute", left: 24, top: 24, fontFamily: INTER, fontSize: 22, color: "rgba(242,242,242,0.38)" }}>Reply...</span>
         <div style={{ position: "absolute", right: 20, top: 20 }}>
           <SendButton size={38} />
         </div>
@@ -428,9 +428,9 @@ const CodeCard: React.FC<{ f: number }> = ({ f }) => {
         }}
       >
         <div style={{ height: 56, borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", paddingLeft: 26, gap: 10, fontFamily: INTER, fontSize: 21, color: "rgba(196,196,196,0.75)" }}>
-          Motion.tsx
+          prompt.txt
         </div>
-        <div style={{ padding: "22px 26px", ...MONO_STYLE, fontSize: 28, lineHeight: "45px" }}>
+        <div style={{ padding: "22px 26px", fontFamily: INTER, fontSize: 28, lineHeight: "45px" }}>
           {CODE_P2_SHORT.map((l, i) => {
             const s = 432 + 4 * i;
             return (

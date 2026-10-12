@@ -128,20 +128,18 @@ export const Check: React.FC<{ size: number; light?: boolean }> = ({ size, light
   </svg>
 );
 
-/** Estrela da Supernova (x de -54 a 54, y de -64 a 90). height = altura em px. */
-export const STAR_PATH = "M0,-64 C5,-23 18,-6 54,0 C18,6 6,30 0,90 C-6,30 -18,6 -54,0 C-18,-6 -5,-23 0,-64Z";
-export const SupernovaStar: React.FC<{ height: number; color?: string }> = ({ height, color = C.cream }) => (
-  <svg width={(height * 108) / 154} height={height} viewBox="-54 -64 108 154" style={{ display: "block", overflow: "visible" }}>
-    <path d={STAR_PATH} fill={color} />
-  </svg>
-);
-
-/** Avatar do perfil: círculo preto com a estrela branca. */
+/** Avatar neutro do perfil: círculo escuro com um boneco branco. */
 export const Avatar: React.FC<{ size: number }> = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" style={{ display: "block", flexShrink: 0 }}>
-    <circle cx={50} cy={50} r={50} fill="#000" />
-    <g transform="translate(50 46) scale(0.36)">
-      <path d={STAR_PATH} fill="#fff" />
+    <defs>
+      <clipPath id="avatarClip">
+        <circle cx={50} cy={50} r={50} />
+      </clipPath>
+    </defs>
+    <circle cx={50} cy={50} r={50} fill="#1a1a1a" />
+    <g clipPath="url(#avatarClip)" fill="#f2f2f2">
+      <circle cx={50} cy={39} r={17} />
+      <ellipse cx={50} cy={92} rx={33} ry={28} />
     </g>
   </svg>
 );

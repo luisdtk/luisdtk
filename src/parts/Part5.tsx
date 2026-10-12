@@ -48,7 +48,7 @@ const OtherComment: React.FC<{ text: string; time: string }> = ({ text, time }) 
         <span style={{ fontSize: 12.5, color: C.igGray }}>{time}</span>
       </div>
       <div style={{ fontSize: 15.5, color: "#000", lineHeight: "20px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{text}</div>
-      <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Responder</div>
+      <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Reply</div>
     </div>
     <div style={{ paddingTop: 14 }}>
       <SmallHeart />
@@ -103,7 +103,7 @@ const Keyboard: React.FC<{ f: number; typedKey: string | null; keyAge: number; s
   const y4 = 48 + 3 * 54;
   keys.push(key("123", 6, y4, 46, true, 16));
   keys.push(key("☺", 58, y4, 40, true, 20));
-  keys.push(key("espaço", 104, y4, 206, false, 16));
+  keys.push(key("space", 104, y4, 206, false, 16));
   keys.push(key("@", 316, y4, 52, true, 18));
   keys.push(key("#", 374, y4, 50, true, 18));
   return (
@@ -148,7 +148,7 @@ const PhoneScreen: React.FC<{ f: number }> = ({ f }) => {
       {/* folha de comentários */}
       <div style={{ position: "absolute", left: 0, top: sheetTop, width: 430, height: 932, background: "#fff", borderRadius: "22px 22px 0 0" }}>
         <div style={{ position: "absolute", left: 197, top: 8, width: 36, height: 4.5, borderRadius: 3, background: "#d0d0d0" }} />
-        <div style={{ position: "absolute", left: 16, top: 26, fontFamily: INTER, fontSize: 13.5, color: C.igGray, fontWeight: 500 }}>Para você ⌄</div>
+        <div style={{ position: "absolute", left: 16, top: 26, fontFamily: INTER, fontSize: 13.5, color: C.igGray, fontWeight: 500 }}>For you ⌄</div>
         <div style={{ position: "absolute", right: 18, top: 20, fontFamily: INTER, fontSize: 18, fontWeight: 700, color: "#000" }}>···</div>
       </div>
       {/* lista */}
@@ -159,16 +159,16 @@ const PhoneScreen: React.FC<{ f: number }> = ({ f }) => {
             <Faceless size={35} />
             <div style={{ flex: 1, fontFamily: INTER }}>
               <div style={{ fontSize: 12.5, height: 16, display: "flex", alignItems: "center", gap: 4 }}>
-                <b style={{ fontWeight: 600, color: "#000" }}>voce</b>
-                <span style={{ color: C.igGray }}>agora</span>
+                <b style={{ fontWeight: 600, color: "#000" }}>you</b>
+                <span style={{ color: C.igGray }}>now</span>
                 {liked > 0 && (
                   <span style={{ color: C.igGray, display: "flex", alignItems: "center", gap: 3, opacity: Math.min(1, liked) }}>
-                    · <SmallHeart filled={1} /> pelo autor
+                    · <SmallHeart filled={1} /> by author
                   </span>
                 )}
               </div>
               <div style={{ fontSize: 15.5, lineHeight: "20px", ...born(f - 1532, "#000", 16, true) }}>{WORD}</div>
-              <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Responder</div>
+              <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Reply</div>
             </div>
             <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
               <div style={{ transform: `scale(${liked > 0 ? liked : 1})` }}>
@@ -185,7 +185,7 @@ const PhoneScreen: React.FC<{ f: number }> = ({ f }) => {
             <div style={{ flex: 1, fontFamily: INTER, minWidth: 0 }}>
               <div style={{ fontSize: 12.5, height: 16, display: "flex", alignItems: "center", gap: 4 }}>
                 <b style={{ fontWeight: 600, color: "#000" }}>{config.perfilInstagram}</b>
-                <span style={{ color: C.igGray }}>agora · Autor</span>
+                <span style={{ color: C.igGray }}>now · Author</span>
               </div>
               <div style={{ fontSize: 15.5, lineHeight: "20px", color: "#000" }}>
                 <div style={{ whiteSpace: "nowrap" }}>
@@ -203,12 +203,12 @@ const PhoneScreen: React.FC<{ f: number }> = ({ f }) => {
                   {part2Age >= 0 && <span style={born(part2Age - 2, "#000", 16, true)}>{config.respostaAutor2.split(" ").slice(2).join(" ")}</span>}
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Responder</div>
+              <div style={{ fontSize: 13, color: C.igGray, fontWeight: 500, marginTop: 2 }}>Reply</div>
             </div>
           </div>
         </div>
         {config.comentariosPost.map((t, i) => (
-          <OtherComment key={i} text={t} time={["2 h", "3 h", "5 h"][i]} />
+          <OtherComment key={i} text={t} time={["2h", "3h", "5h"][i]} />
         ))}
       </div>
       {/* faixa de reações */}
@@ -234,7 +234,7 @@ const PhoneScreen: React.FC<{ f: number }> = ({ f }) => {
               ))}
             </span>
           ) : (
-            f < SEND && <span style={{ fontFamily: INTER, fontSize: 16, color: C.igGray }}>Adicione um comentário...</span>
+            f < SEND && <span style={{ fontFamily: INTER, fontSize: 16, color: C.igGray }}>Add a comment...</span>
           )}
           {f < SEND + 2 && (
             <span style={{ display: "inline-block", width: 2, height: 20, marginLeft: 1, background: "#000", opacity: typedText || Math.floor(f / 15) % 2 === 0 ? 1 : 0 }} />

@@ -1,59 +1,62 @@
-// Código que aparece na tela (parte 2 e parte 4).
+// Plain-English text that Claude "writes" on screen (parts 2 and 4).
 
+// What Claude writes in the chat (part 2).
 export const CODE_P2 = [
-  "export const Motion = () => (",
-  "  <>",
-  '    <Riscos entram="bordas" />',
-  '    <Simbolo nasce="centro" />',
-  '    <Saudacao texto="Boa noite" />',
-  '    <Caixa pergunta="Como posso ajudar?" />',
-  "  </>",
-  ");",
+  "Scene 1 — The opening",
+  "  Four light streaks fly in from the edges.",
+  "  They meet in the center: the symbol is born.",
+  '  "Good evening, night owl" rises beside it.',
+  "  A question box slides up underneath.",
+  "  A soft white glow breathes behind it all.",
+  "Scene 2 — The title",
+  '  "Every frame was made by Claude."',
 ];
 
+// The prompt card (part 2).
 export const CODE_P2_SHORT = [
-  "export const Motion = () => (",
-  "  <>",
-  "    <Riscos />",
-  "    <Simbolo />",
-  "    <Saudacao />",
-  "    <Caixa />",
-  "  </>",
-  ");",
+  "Hey Claude, make an opening:",
+  "  light streaks fly in,",
+  "  the symbol is born,",
+  "  a greeting rises,",
+  "  a question box appears,",
+  "  everything glows.",
+  "Make it feel alive.",
+  "Thanks!",
 ];
 
-// As linhas que substituem as faixas da linha do tempo.
+// Timeline track names and the sentences that replace them.
+export const TRACK_NAMES = ["Streaks", "Symbol", "Greeting", "Box", "Glow"];
 export const TRACK_CODE = [
-  '<Riscos entram="bordas" />',
-  '<Simbolo nasce="centro" />',
-  '<Saudacao texto="Boa noite" />',
-  '<Caixa pergunta="Como posso ajudar?" />',
-  '<Brilho cor="laranja" />',
+  '"Light streaks fly in"',
+  '"The symbol is born"',
+  '"A greeting rises"',
+  '"A question box appears"',
+  '"Everything glows"',
 ];
 
-// [nível de recuo, texto]
+// The storyboard Claude writes in part 4: [indent level, text]
 export const CODE_P4: [number, string][] = [
-  [0, 'import { Easing, interpolate, useCurrentFrame } from "remotion";'],
+  [0, 'Storyboard — "The AI Era"'],
   [0, ""],
-  [0, "type Props = { text: string; delay: number };"],
+  [0, "Scene 1 · The opening"],
+  [1, "Light streaks fly in and meet in the center."],
+  [1, "The symbol is born from the flash."],
+  [1, '"Nobody animated this video." is typed out.'],
   [0, ""],
-  [0, "export const Title: React.FC<Props> = ({ text, delay }) => {"],
-  [1, "const frame = useCurrentFrame() - delay;"],
-  [1, "const opacity = interpolate(frame, [0, 18], [0, 1], {"],
-  [2, 'extrapolateLeft: "clamp",'],
-  [2, 'extrapolateRight: "clamp",'],
-  [1, "});"],
-  [1, "const rise = interpolate(frame, [0, 24], [40, 0], {"],
-  [2, "easing: Easing.out(Easing.cubic),"],
-  [2, 'extrapolateLeft: "clamp",'],
-  [2, 'extrapolateRight: "clamp",'],
-  [1, "});"],
-  [1, "const blur = Math.max(0, 12 - frame);"],
+  [0, "Scene 2 · The reveal"],
+  [1, 'The chat asks: "So how did Claude do it?"'],
+  [1, "Plain words turn into motion, piece by piece."],
   [0, ""],
-  [1, "return ("],
-  [2, "<h1 style={{ opacity, top: rise, filter: `blur(${blur}px)` }}>"],
-  [3, "{text}"],
-  [2, "</h1>"],
-  [1, ");"],
-  [0, "};"],
+  [0, "Scene 3 · The proof"],
+  [1, "Videos like this are everywhere now."],
+  [1, 'Everyone asks the same thing: "How?"'],
+  [0, ""],
+  [0, "Scene 4 · The steps"],
+  [1, "Open Claude Code."],
+  [1, "Paste a prompt, or describe your idea."],
+  [2, "Claude does the rest."],
+  [0, ""],
+  [0, "Scene 5 · The call"],
+  [1, 'Comment "ADAPT".'],
+  [1, "Adapt, or get left behind."],
 ];

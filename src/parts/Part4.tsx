@@ -5,7 +5,6 @@ import { CODE_P4 } from "../codeText";
 import {
   C,
   INTER,
-  MONO,
   SERIF,
   born,
   clamp01,
@@ -21,8 +20,6 @@ import {
 } from "../theme";
 import { glowGradient } from "../components/Background";
 import { Check, ClaudeSymbol, MacCursor, SendButton } from "../components/Pieces";
-
-const MONO_STYLE: React.CSSProperties = { fontFamily: MONO, fontVariantLigatures: "none", fontFeatureSettings: '"liga" 0, "calt" 0' };
 
 // ---------- O fundo claro que abre a partir do centro ----------
 export const lightRadius = (f: number) => mix(60, 1380, prog(f, 896, 907, ease));
@@ -205,8 +202,9 @@ const CodeBlock: React.FC<{ f: number }> = ({ f }) => {
               top: 70 + 40 * i,
               height: 40,
               lineHeight: "40px",
-              ...MONO_STYLE,
-              fontSize: 24,
+              fontFamily: lvl === 0 && text.length > 0 ? SERIF : INTER,
+              fontWeight: lvl === 0 ? 600 : 400,
+              fontSize: lvl === 0 ? 27 : 25,
               color: C.codeInk,
               whiteSpace: "pre",
             }}
@@ -359,7 +357,7 @@ const Card: React.FC<{ f: number }> = ({ f }) => {
             {updating ? (
               <>
                 <ClaudeSymbol size={42} color={C.ink} rotate={f * 14} />
-                <span style={{ fontFamily: INTER, fontWeight: 600, fontSize: 32, color: C.support }}>Atualizando…</span>
+                <span style={{ fontFamily: INTER, fontWeight: 600, fontSize: 32, color: C.support }}>Updating…</span>
               </>
             ) : (
               <>
@@ -464,7 +462,7 @@ const ReplyArea: React.FC<{ f: number }> = ({ f }) => {
       >
         <div style={{ position: "absolute", left: 30, top: 22, height: 56, display: "flex", alignItems: "center", fontFamily: INTER, fontSize: 46, whiteSpace: "pre" }}>
           {focused && !anyText && <span style={{ display: "inline-block", width: 3, height: 50, marginRight: 2, background: C.ink, opacity: Math.floor(f / 15) % 2 === 0 ? 1 : 0 }} />}
-          {!anyText && <span style={{ fontSize: 44, color: C.faint }}>Responder</span>}
+          {!anyText && <span style={{ fontSize: 44, color: C.faint }}>Reply</span>}
           {typing &&
             (() => {
               const t = typing as { text: string; startF: number; interval: number };
@@ -631,7 +629,7 @@ const PromptBox: React.FC<{ f: number }> = ({ f }) => {
             transform: `translateY(${(1 - prog(f, 928, 941, easeOut)) * 30}px)`,
           }}
         >
-          <span>Projeto ⌄</span>
+          <span>Project ⌄</span>
           <span>{config.modeloClaro} ⌄</span>
         </div>
       )}

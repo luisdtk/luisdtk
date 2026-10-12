@@ -1,9 +1,8 @@
 import React from "react";
 import { AbsoluteFill, interpolateColors } from "remotion";
 import { config } from "../config";
-import { C, SERIF, born, ease, easeIn, easeOut, mix, motionBlur, prog, snap } from "../theme";
-import { ClaudeSymbol, SupernovaStar } from "../components/Pieces";
-import { NameOutline } from "../components/NameOutline";
+import { C, SERIF, UNBOUNDED, born, ease, easeIn, easeOut, measure, mix, motionBlur, prog, snap } from "../theme";
+import { ClaudeSymbol } from "../components/Pieces";
 import { lightCoverage } from "./Part4";
 
 // Frases que saem do símbolo do canto: [sai, volta, linhas, tamanho]
@@ -64,18 +63,15 @@ export const Mascot: React.FC<{ frame: number }> = ({ frame: f }) => {
   cx = mix(118, 1450, cross);
   blur += motionBlur(f, 1490, 1504, 14, ease);
   const float = f < 1606 ? Math.sin(f / 18) * 4 : 0;
-  // assinatura
+  // assinatura: o símbolo vai para o centro, cresce e gira; depois sai para a esquerda
   const toCenter = prog(f, 1606, 1621, ease);
-  const slide = prog(f, 1621, 1634, ease);
   const groupOut = prog(f, 1653, 1659, easeIn);
-  const starW = (270 * 108) / 154;
-  const groupLeft = 960 - (230 + 200 + starW) / 2;
   if (f >= 1606) {
-    cx = mix(mix(1450, 960, toCenter), groupLeft + 115, slide);
+    cx = mix(1450, 960, toCenter);
     cy = mix(130, 540, toCenter);
-    size = mix(mix(76, 300, toCenter), 230, slide);
+    size = mix(76, 300, toCenter);
     rot += toCenter * 220;
-    blur += motionBlur(f, 1621, 1634, 6, ease) + motionBlur(f, 1606, 1621, 6, ease);
+    blur += motionBlur(f, 1606, 1621, 6, ease);
   }
   const groupShift = -70 * groupOut;
   blur += motionBlur(f, 1653, 1659, 14, easeIn);
@@ -85,13 +81,7 @@ export const Mascot: React.FC<{ frame: number }> = ({ frame: f }) => {
   const color = interpolateColors(cov, [0, 1], ["#f2f2f2", C.ink]);
   const halo = cov > 0.5 ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
 
-  // estrela e "+"
-  const starIn = prog(f, 1622, 1632, easeOut);
-  const starBlur = motionBlur(f, 1622, 1632, 14, easeOut);
-  const plusIn = prog(f, 1626, 1635, snap);
-  const starCx = groupLeft + 230 + 200 + starW / 2;
-  const plusCx = groupLeft + 230 + 100;
-  // nome
+  // frase final
   const nameIn = prog(f, 1658, 1665, easeOut);
   const nameBlur = motionBlur(f, 1658, 1665, 14, easeOut);
   const nameScale = mix(0.97, 1.03, prog(f, 1658, 1709, (x) => x));
@@ -150,40 +140,7 @@ export const Mascot: React.FC<{ frame: number }> = ({ frame: f }) => {
           </div>
         );
       })()}
-      {/* "+" e estrela */}
-      {f >= 1622 && f < 1660 && (
-        <>
-          <div
-            style={{
-              position: "absolute",
-              left: plusCx - 38 + groupShift,
-              top: 540 - 38,
-              width: 76,
-              height: 76,
-              transform: `rotate(${mix(-90, 0, plusIn)}deg) scale(${plusIn})`,
-              opacity: (f >= 1626 ? 1 : 0) * (1 - groupOut),
-              filter: blur > 0.1 && groupOut > 0 ? `blur(${blur}px)` : undefined,
-            }}
-          >
-            <svg width={76} height={76} viewBox="0 0 76 76">
-              <path d="M38 6 V70 M6 38 H70" stroke="#ffffff" strokeWidth={4.5} strokeLinecap="round" />
-            </svg>
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              left: starCx - starW / 2 + (1 - starIn) * 90 + groupShift,
-              top: 540 - 135,
-              transform: `scale(${mix(0.7, 1, starIn)})`,
-              opacity: starIn * (1 - groupOut),
-              filter: starBlur + (groupOut > 0 ? blur : 0) > 0.1 ? `blur(${starBlur + (groupOut > 0 ? blur : 0)}px)` : undefined,
-            }}
-          >
-            <SupernovaStar height={270} color="#ffffff" />
-          </div>
-        </>
-      )}
-      {/* o nome */}
+      {/* a frase final */}
       {f >= 1658 && (
         <AbsoluteFill style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div
@@ -193,7 +150,18 @@ export const Mascot: React.FC<{ frame: number }> = ({ frame: f }) => {
               filter: nameBlur > 0.1 ? `blur(${nameBlur}px)` : undefined,
             }}
           >
-            <NameOutline name={config.nomeFinal} width={1180} color={C.cream} />
+            <div
+              style={{
+                fontFamily: UNBOUNDED,
+                fontWeight: 300,
+                fontSize: (100 * 1180) / measure(config.fraseFinal, `300 100px ${UNBOUNDED}`),
+                lineHeight: 1,
+                color: C.cream,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {config.fraseFinal}
+            </div>
           </div>
         </AbsoluteFill>
       )}
