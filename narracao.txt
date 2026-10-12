@@ -1,0 +1,34 @@
+ROTEIRO DA NARRAÇÃO
+Tom calmo e confiante. Uns 54 segundos, terminando por volta do quadro 1625.
+(30 quadros = 1 segundo. Entre as falas, só os efeitos.)
+
+Quadro  Segundo  Fala
+40      1,3      Presta atenção nesse vídeo.
+108     3,6      Ninguém animou este vídeo.
+156     5,2      Chegou a era da IA. ("IA" no quadro 177)
+205     6,8      Esse vídeo foi todo feito pelo…
+237     7,9      …Claude.
+271     9,0      Mas como o Claude fez isso?
+325     10,8     Ele usou o Remotion: um programa gratuito, de código aberto, que transforma código em vídeo. ("gratuito" no 352, "aberto" no 375)
+432     14,4     O Claude escreve o código… e o código vira vídeo. ("vira vídeo" no 456)
+494     16,5     Cada pedaço do vídeo é uma peça…
+560     18,7     …e cada peça é uma linha de código.
+630     21,0     E quem escreve tudo isso? O Claude. ("Claude" no 667)
+700     23,3     E funciona: mais de oitenta mil pessoas assistiram.
+795     26,5     E todo mundo me perguntou a mesma coisa:
+851     28,4     Como faz?
+909     30,3     É simples. Abra o Claude Code.
+967     32,2     Cole o prompt…
+1010    33,7     …que eu te envio no fim deste vídeo.
+1079    36,0     E o Claude faz o resto:
+1112    37,1     instala tudo, escreve o código e te entrega o vídeo pronto. ("pronto" no 1203)
+1258    41,9     Sem escrever uma linha de código.
+1319    44,0     Quer mudar? Pede em português.
+1373    45,8     Troca o nome…
+1399    46,6     …inverte as cores…
+1424    47,5     …deixa mais lento.
+1457    48,6     Faz o que você quiser.
+1507    50,2     Comenta "PROMPT"…
+1541    51,4     …que eu te mando o Remotion…
+1570    52,3     …e o prompt que fez esse vídeo.
+1606    53,5     A era da IA já começou.
