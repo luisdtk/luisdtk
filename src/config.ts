@@ -3,7 +3,7 @@
 
 export const config = {
   // Part 1: opening
-  saudacaoAbertura: "Good evening, night owl",
+  saudacaoAbertura: "Good evening, stranger",
   textoApagadoPergunta: "How can I help you today?",
   modeloEscuro: "Opus 5.5",
   // Each word of the typed sentence and the frame where it appears.

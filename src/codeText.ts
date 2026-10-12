@@ -5,7 +5,7 @@ export const CODE_P2 = [
   "Scene 1 — The opening",
   "  Four light streaks fly in from the edges.",
   "  They meet in the center: the symbol is born.",
-  '  "Good evening, night owl" rises beside it.',
+  '  "Good evening, stranger" rises beside it.',
   "  A question box slides up underneath.",
   "  A soft white glow breathes behind it all.",
   "Scene 2 — The title",
