@@ -43,7 +43,7 @@ export const config = {
   painelCena: "Opening",
 
   // Part 3: videos like this are everywhere
-  perfilInstagram: "aluunartime",
+  perfilInstagram: "ailuunartime",
   frasesProva: ["No camera.", "No studio.", "No team."],
   legendaPost: "#ai #claude #claudecode",
   comentariosPost: ["How do I do this?", "Please teach me how 🙏🏻", "teach me bro, I'm struggling with claude code 🫠"],
