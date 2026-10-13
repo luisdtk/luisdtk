@@ -71,7 +71,7 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
     // the devil (supplied art), animated: hair streaming, wings beating, tail swaying (tools/animate_pages.py)
     const push = 1.02 + 0.1 * easeInOut(u);
     const h = H * push;
-    const w = (h * 1600) / 1949;
+    const w = (h * 1440) / 1754;
     return (
       <div style={{ position: "absolute", inset: 0, background: "#000" }}>
         <Img src={animSrc("devil", t)} style={{ position: "absolute", left: (W - w) / 2, top: (H - h) / 2 - 40 * u, width: w, height: h, maxWidth: "none" }} />

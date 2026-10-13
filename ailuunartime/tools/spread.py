@@ -1,7 +1,7 @@
 """The Asta vs Yuno spread for the post's feed.
 
-Characters stay white (isnet-anime matte, run on each half), the sky and ground go black with
-grey ink, Asta's headband goes red and Yuno's coat buttons go green.
+Characters white with red ink (isnet-anime matte, run on each half), the sky and ground black
+with dim red ink, Yuno's coat buttons green.
 Writes public/images/redink/spread.png (2x), animated by tools/animate_pages.py.
 
     uv run --with onnxruntime --with numpy --with pillow --with opencv-python-headless \\
@@ -37,22 +37,34 @@ matte = np.zeros((h, w), np.float32)
 for x0, x1 in ((0, int(0.36 * w)), (int(0.64 * w), w)):  # Asta on the left, Yuno on the right
     matte[:, x0:x1] = np.maximum(matte[:, x0:x1], run(rgb[:, x0:x1]))
 matte = np.clip((matte - 0.3) / 0.4, 0, 1)
-# the horizon strip beside each character is scenery, not character
-for x0, x1, y0, y1 in ((0.0, 0.11, 0.12, 0.31), (0.245, 0.36, 0.12, 0.31), (0.64, 0.715, 0.12, 0.31), (0.9, 1.0, 0.12, 0.31)):
-    matte[int(y0 * h):int(y1 * h), int(x0 * w):int(x1 * w)] = 0
+# in the horizon band the model takes the ground for character: there, keep only the heads and shoulders
+band = np.zeros((h, w), np.uint8)
+band[int(0.0 * h):int(0.31 * h), :] = 1
+heads = np.zeros((h, w), np.uint8)
+cv2.ellipse(heads, (int(0.18 * w), int(0.17 * h)), (int(0.075 * w), int(0.11 * h)), -10, 0, 360, 1, -1)
+cv2.fillPoly(heads, [np.array([[0.1, 0.24], [0.255, 0.24], [0.255, 0.31], [0.06, 0.31]]) * [w, h]].astype(np.int32) if False else [(np.array([[0.1, 0.24], [0.255, 0.24], [0.255, 0.31], [0.06, 0.31]]) * [w, h]).astype(np.int32)], 1)
+cv2.ellipse(heads, (int(0.78 * w), int(0.1 * h)), (int(0.08 * w), int(0.11 * h)), 0, 0, 360, 1, -1)
+cv2.fillPoly(heads, [(np.array([[0.715, 0.17], [0.93, 0.15], [0.95, 0.31], [0.7, 0.31]]) * [w, h]).astype(np.int32)], 1)
+matte = np.where(band > 0, matte * heads, matte)
 matte = cv2.GaussianBlur(matte, (0, 0), 2)[..., None]
 
 lum = rgb.astype(np.float32).mean(axis=2, keepdims=True) / 255
 ink = np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9
-character = 244 * (1 - ink) + 12 * ink
-ground = 70 * ink  # sky and ground: dark grey ink on black
-out = np.repeat(character * matte + ground * (1 - matte), 3, axis=2)
+# large solid blacks stay black; only lines, hatching and details go red
+solid = cv2.GaussianBlur(ink[..., 0], (0, 0), 6)[..., None]
+lines = ink * np.clip((0.82 - solid) / 0.3, 0, 1)
+BLACK = np.array([10, 8, 8], np.float32)
+# characters: white with red ink; sky and ground: black with dim red ink
+WHITE = np.array([244, 242, 238], np.float32)
+character = WHITE * (1 - ink) + BLACK * (ink - lines) + RED * lines
+ground = RED * 0.22 * lines  # the sky and ground: black, with faint red lines
+out = character * matte + ground * (1 - matte)
 
 # Asta's headband: its dark band turns red
 hb = np.zeros((h, w), np.float32)
 cv2.ellipse(hb, (int(0.185 * w), int(0.165 * h)), (int(0.062 * w), int(0.03 * h)), -14, 0, 360, 1, -1)
 hb = cv2.GaussianBlur(hb, (0, 0), 3)[..., None] * ink
-out = out * (1 - hb) + RED * hb
+out = out * (1 - hb) + RED * 1.0 * hb  # already red ink; kept so the band reads solid
 
 # Yuno's buttons, located on a zoomed grid of his coat (normalised x, y)
 BUTTONS = [(0.7905, 0.259), (0.7923, 0.301), (0.7885, 0.359), (0.791, 0.408), (0.7944, 0.529),
