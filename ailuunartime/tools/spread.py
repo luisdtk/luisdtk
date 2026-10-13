@@ -58,7 +58,9 @@ BLACK = np.array([10, 8, 8], np.float32)
 WHITE = np.array([244, 242, 238], np.float32)
 character = WHITE * (1 - ink) + BLACK * (ink - lines) + RED * lines
 ground = WHITE * (1 - ink) + BLACK * ink  # sky and ground: the manga as drawn, on white paper
-out = character * matte + ground * (1 - matte)
+from duotone import duotone  # noqa: E402
+
+out = duotone(rgb).astype(np.float32)  # the reel's red duotone; only Yuno's buttons stay green
 
 # Asta's headband: its dark band turns red
 hb = np.zeros((h, w), np.float32)

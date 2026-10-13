@@ -45,21 +45,11 @@ MATTE = {
 
 
 def redink(rgba: np.ndarray, matte: np.ndarray) -> np.ndarray:
-    """White paper everywhere; scenery keeps its black ink; characters' lines turn red."""
-    import cv2
+    """The whole image in the red duotone (tools/duotone.py), like the red-sun Asta."""
+    from duotone import duotone
 
-    rgb = rgba[..., :3].astype(np.float32) / 255
-    lum = rgb @ np.array([0.299, 0.587, 0.114], np.float32)
-    ink = (np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9)[..., None]
-    # large solid blacks (hair, clothes) stay black; lines, hatching and details go red
-    solid = cv2.GaussianBlur(ink[..., 0], (0, 0), 6)[..., None]
-    lines = ink * np.clip((0.82 - solid) / 0.3, 0, 1)
-    BLACK = np.array([12, 10, 10], np.float32)
-    m = matte[..., None]
-    character = WHITE * (1 - ink) + BLACK * (ink - lines) + RED * lines
-    page = WHITE * (1 - ink) + BLACK * ink
     out = rgba.copy()
-    out[..., :3] = (character * m + page * (1 - m)).clip(0, 255).astype(np.uint8)
+    out[..., :3] = duotone(rgba)
     return out
 
 

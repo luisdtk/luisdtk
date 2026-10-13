@@ -120,7 +120,7 @@ function Screen({ t }: { t: number }) {
             <Img
               key={name}
               src={on > 0 ? animSrc(name, t, i * 0.37) : staticFile(`images/redink/${name}.png`)}
-              style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.paper }}
+              style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.ink }}
             />
           ))}
         </div>

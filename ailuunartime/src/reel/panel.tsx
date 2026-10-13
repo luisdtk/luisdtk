@@ -67,7 +67,7 @@ export function PanelView({
 }) {
   const place = placeImage(panel, width, height, shot);
   return (
-    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee", ...style }}>
+    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#0a0a0a", ...style }}>
       <Img
         src={flow ? animSrc(flow.anim, flow.t) : staticFile(PANELS[panel].src)}
         style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", ...imageStyle }}
@@ -149,7 +149,7 @@ export function LayeredPanel({
   // the blade sways on its hilt, slowly, with a quicker tremor of energy on top
   const sway = Math.sin(t * 2.2) * 1.6 + Math.sin(t * 7.3) * 0.35;
   return (
-    <div data-rig={id} style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee" }}>
+    <div data-rig={id} style={{ position: "relative", width, height, overflow: "hidden", background: "#0a0a0a" }}>
       <Img src={bgSrc} style={{ ...at(back), filter: blurBg > 0.3 ? `blur(${blurBg}px) brightness(0.96)` : undefined }} />
       {between}
       <Img src={fgSrc} style={{ ...at(front, driftFg), filter: blurFg > 0.3 ? `blur(${blurFg}px)` : undefined }} />
