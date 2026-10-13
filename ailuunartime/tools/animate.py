@@ -25,7 +25,7 @@ FPS = 12
 
 # name: source, weight map, max width, displacement (px at that width), eyes, eyelid colour, quality
 ASSETS = {
-    "asta": dict(src="asta-redblack.png", map="asta", width=1200, amp=11, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(240, 86, 80), blink=10),
+    "asta": dict(src="asta-redblack.png", map="asta", width=1200, amp=16, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(240, 86, 80), blink=10),
     "sword-fg": dict(src="layers/sword-fg-noblade.png", map="sword-fg", width=1725, amp=8, eyes=[(0.436, 0.284, 0.016, 0.011), (0.522, 0.286, 0.016, 0.011)], skin=(244, 242, 238), blink=15),
     "tornado-fg": dict(src="layers/tornado-fg.png", map="tornado-fg", width=3312, amp=18, eyes=[], skin=None, blink=None),
     "tornado-bg": dict(src="layers/tornado-bg.png", map="tornado-bg", width=1656, amp=16, eyes=[], skin=None, blink=None),
@@ -57,9 +57,11 @@ def draw_lids(rgba, eyes, skin, shut):
     return out
 
 
-def main():
-    manifest = {}
+def main(only=None):
+    manifest = json.loads((OUT / "manifest.json").read_text()) if (OUT / "manifest.json").exists() else {}
     for name, a in ASSETS.items():
+        if only and name not in only:
+            continue
         src = Image.open(IMG / a["src"]).convert("RGBA")
         if src.width > a["width"]:
             src = src.resize((a["width"], round(src.height * a["width"] / src.width)), Image.LANCZOS)
@@ -94,4 +96,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    main(sys.argv[1:] or None)  # optionally: names of the loops to regenerate

@@ -198,6 +198,7 @@ export function MangaScene({ t }: { t: number }) {
             <LiveAsta
               t={t}
               size={1320}
+              phase={0.08} // the loop's blink lands at 6.75 s, mid-shot
               style={{
                 left: (W - 1320) / 2 + 40 - drift * 30,
                 top: H - 1320 + 40 + (1 - slam) * 420 + Math.sin(drift * 3) * 8,
