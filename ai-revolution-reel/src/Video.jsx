@@ -1,6 +1,5 @@
 import {AbsoluteFill, Sequence} from 'remotion';
 import {SoundTrack} from './audio/SoundTrack';
-import {Captions} from './components/Captions';
 import {Grain, LightStreak, Particles} from './components/FX';
 import {SceneWrap} from './components/SceneWrap';
 import {Scene01Hook} from './scenes/Scene01Hook';
@@ -45,7 +44,6 @@ export const Video = () => (
 		{timeline.scenes.slice(1).map(({from}, i) => (
 			<LightStreak key={from} at={from - 6} duration={12} y={[520, 1380, 760, 1180][i % 4]} length={900} thickness={3} reverse={i % 2 === 1} />
 		))}
-		<Captions />
 		<Grain opacity={0.035} />
 		<SoundTrack />
 	</AbsoluteFill>

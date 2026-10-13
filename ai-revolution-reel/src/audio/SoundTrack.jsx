@@ -94,7 +94,7 @@ export const CUES = [
 
 export const SoundTrack = () => (
 	<Fragment>
-		<Audio src={s('music')} volume={0.9} />
+		<Audio src={s('music')} volume={0.7} />
 		<Sequence from={Math.round(timeline.voiceOffsetSeconds * fps)} layout="none">
 			<Audio src={s('voice')} volume={1} />
 		</Sequence>
