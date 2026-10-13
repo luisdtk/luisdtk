@@ -1,6 +1,6 @@
 import { AbsoluteFill, Img, staticFile } from "remotion";
 
-import { step } from "../kit/spring";
+import { step, track } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers, Logo } from "./fx";
@@ -40,6 +40,22 @@ const YAMI = (() => {
   const top = 24;
   return { w, h, left, top, tip: { x: left + 0.6 * w, y: top + 0.205 * h } };
 })();
+/** Below Yami, the chapter's animated pages, one after another. */
+const FEED = ["cover", "page-4-birds-yuno", "page-5-flock", "page-6-dash"] as const;
+const FEED_H = MEDIA.w * 1.5;
+const FEED_GAP = 16;
+const feedTop = (i: number) => MEDIA.h + FEED_GAP + i * (FEED_H + FEED_GAP);
+const STRIP_H = feedTop(FEED.length);
+const r0 = cue.reaction;
+/** Scroll keys: hold on Yami, then a thumb flick down to each page's busiest part. */
+const FEED_KEYS = [
+  [r0, 0],
+  [r0 + 0.75, feedTop(0) + FEED_H * 0.18],
+  [r0 + 1.15, feedTop(1) + FEED_H * 0.3],
+  [r0 + 1.55, feedTop(2) + FEED_H * 0.05],
+  [r0 + 1.95, feedTop(3) + FEED_H * 0.45],
+] as const;
+const feedAt = (t: number) => track(t, FEED_KEYS, { stiffness: 90, damping: 18 });
 const SHEET_TOP = 1010;
 const ROW = 128;
 const LIST_BOTTOM = 1640;
@@ -160,6 +176,8 @@ export function PostScene({ t }: { t: number }) {
   const shown = COMMENTS.filter((c) => t >= c.at).length;
   const glow = 0.6 + 0.4 * Math.sin(t * 11);
   const push = 1 + 0.05 * clamp01((t - cue.reaction) / 2.6);
+  const feed = feedAt(t);
+  const feedBlur = Math.min(10, Math.abs(feedAt(t + 1 / 60) - feedAt(t - 1 / 60)) * 30 / 900);
   const dots = Math.floor(t * 6) % 4;
 
   return (
@@ -180,13 +198,26 @@ export function PostScene({ t }: { t: number }) {
 
         {/* the post's media: the animated page, still moving */}
         <div style={{ position: "absolute", left: MEDIA.x, top: MEDIA.y, width: MEDIA.w, height: MEDIA.h, overflow: "hidden" }}>
-          {/* Yami, in the wind: hair and cape blow (tools/animate.py), smoke rises from his cigarette */}
-          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 90% at 45% 30%, #3a0b0d 0%, #120707 55%, #070707 100%)` }} />
-          <Gust t={t} w={MEDIA.w} h={MEDIA.h} />
-          <div style={{ position: "absolute", inset: 0, scale: `${push}`, transformOrigin: `${YAMI.tip.x}px ${YAMI.tip.y}px` }}>
-            <Img src={animSrc("yami", t)} style={{ position: "absolute", left: YAMI.left, top: YAMI.top, width: YAMI.w, height: YAMI.h, filter: `drop-shadow(0 0 ${20 + glow * 14}px rgba(226,38,43,0.35))` }} />
-            <Smoke t={t} x={YAMI.tip.x} y={YAMI.tip.y} w={MEDIA.w} h={MEDIA.h} />
+          {/* the post's media scrolls like a feed: Yami smoking first, then on down through the animated pages */}
+          <div style={{ position: "absolute", left: 0, top: 0, width: MEDIA.w, height: STRIP_H, translate: `0 ${-feed}px`, filter: feedBlur > 0.6 ? "url(#feed-blur)" : undefined }}>
+            {/* Yami, in the wind: hair and cape blow (tools/animate.py), smoke rises from his cigarette */}
+            <div style={{ position: "absolute", left: 0, top: 0, width: MEDIA.w, height: MEDIA.h, overflow: "hidden" }}>
+              <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 90% at 45% 30%, #3a0b0d 0%, #120707 55%, #070707 100%)` }} />
+              <Gust t={t} w={MEDIA.w} h={MEDIA.h} />
+              <div style={{ position: "absolute", inset: 0, scale: `${push}`, transformOrigin: `${YAMI.tip.x}px ${YAMI.tip.y}px` }}>
+                <Img src={animSrc("yami", t)} style={{ position: "absolute", left: YAMI.left, top: YAMI.top, width: YAMI.w, height: YAMI.h, filter: `drop-shadow(0 0 ${20 + glow * 14}px rgba(226,38,43,0.35))` }} />
+                <Smoke t={t} x={YAMI.tip.x} y={YAMI.tip.y} w={MEDIA.w} h={MEDIA.h} />
+              </div>
+            </div>
+            {FEED.map((name, i) => (
+              <Img key={name} src={animSrc(name, t, i * 0.31)} style={{ position: "absolute", left: 0, top: feedTop(i), width: MEDIA.w, height: FEED_H, background: color.ink }} />
+            ))}
           </div>
+          <svg width={0} height={0} style={{ position: "absolute" }}>
+            <filter id="feed-blur" x="-5%" y="-20%" width="110%" height="140%">
+              <feGaussianBlur stdDeviation={`0 ${feedBlur}`} />
+            </filter>
+          </svg>
           <Embers t={t} start={cue.reaction} end={cue.reactionOut} count={18} seed={61} area={{ x: 500, y: 100, w: 500, h: 600 }} rise={260} size={8} />
         </div>
 
