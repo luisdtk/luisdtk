@@ -1,5 +1,5 @@
 import {AbsoluteFill, Sequence, interpolate, useCurrentFrame} from 'remotion';
-import {FootageBox} from '../components/Footage';
+import {MotionSlides} from '../components/MotionSlides';
 import {Label, PaperGrid} from '../components/FX';
 import {KineticText} from '../components/KineticText';
 import {C, FONT, easeInOut, easeOut, shadow} from '../theme';
@@ -152,7 +152,7 @@ export const Scene05CodeBecomesCreation = () => {
 				</AbsoluteFill>
 				<AbsoluteFill style={{clipPath: `inset(${(1 - reveal) * 50}% ${(1 - reveal) * 50}% round 28px)`}}>
 					<Sequence from={PHASES[3].at} layout="none">
-						<FootageBox start={26.2} width={STAGE.w} height={STAGE.h} zoom={1.1} duration={80} />
+						<MotionSlides w={STAGE.w} h={STAGE.h} />
 					</Sequence>
 				</AbsoluteFill>
 			</div>
