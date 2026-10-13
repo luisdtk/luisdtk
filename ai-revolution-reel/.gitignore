@@ -2,3 +2,4 @@ node_modules/
 out/*.tmp*
 .remotion/
 out/raw.mp4
+out/render.log
