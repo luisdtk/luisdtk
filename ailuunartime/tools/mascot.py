@@ -76,7 +76,9 @@ def in_hair(x, y):
     return False
 
 
-def build():
+def build(expression="smirk"):
+    """expression: smirk (the default), smile (happy eyes, open grin) or blink."""
+    random.seed(7)  # same skin texture in every expression
     grid = [[CLEAR] * GRID for _ in range(GRID)]
     solid = [[False] * GRID for _ in range(GRID)]
 
@@ -108,14 +110,28 @@ def build():
     put([(16, 24), (17, 24), (18, 25), (19, 25), (20, 26)], INK)
     put([(32, 24), (31, 24), (30, 25), (29, 25), (28, 26)], INK)
 
-    # tall pill eyes with a white catch-light
-    for ex in (18, 29):
-        for y in range(27, 32):
-            put([(ex, y), (ex + 1, y)], INK)
-        put([(ex + 1, 28)], WHITE)
-
-    # confident smirk, lifted on one side
-    put([(21, 36), (22, 36), (23, 36), (24, 36), (25, 36), (26, 35), (27, 34)], INK)
+    if expression == "smile":
+        # happy closed eyes (upturned arcs) and an open grin with a white tooth row
+        for ex in (18, 29):
+            put([(ex - 1, 30), (ex, 29), (ex + 1, 29), (ex + 2, 30)], INK)
+        put([(x, 34) for x in range(20, 29)], INK)
+        put([(x, 35) for x in range(20, 29)], WHITE)
+        put([(19, 34), (19, 33), (29, 34), (29, 33)], INK)
+        put([(x, 36) for x in range(21, 28)], INK)
+        put([(x, 37) for x in range(22, 27)], INK)
+        put([(23, 37), (24, 37), (25, 37)], RED_DARK)
+    else:
+        if expression == "blink":
+            for ex in (18, 29):
+                put([(ex - 1, 30), (ex, 30), (ex + 1, 30), (ex + 2, 30)], INK)
+        else:
+            # tall pill eyes with a white catch-light
+            for ex in (18, 29):
+                for y in range(27, 32):
+                    put([(ex, y), (ex + 1, y)], INK)
+                put([(ex + 1, 28)], WHITE)
+        # confident smirk, lifted on one side
+        put([(21, 36), (22, 36), (23, 36), (24, 36), (25, 36), (26, 35), (27, 34)], INK)
 
     # dashed dark outline, like the stitched edge of the reference
     outline = [[False] * GRID for _ in range(GRID)]
@@ -155,4 +171,6 @@ if __name__ == "__main__":
     grid = build()
     render(grid).save(out / "asta-mascot.png")
     render(grid, (10, 10, 10, 255)).convert("RGB").save(out / "asta-mascot-on-black.png")
-    print("wrote", out / "asta-mascot.png")
+    for expression in ("smile", "blink"):
+        render(build(expression)).save(out / f"asta-mascot-{expression}.png")
+    print("wrote", out / "asta-mascot*.png")

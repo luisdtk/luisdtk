@@ -91,6 +91,25 @@ export function Embers({
   return <AbsoluteFill style={{ pointerEvents: "none" }}>{embers}</AbsoluteFill>;
 }
 
+/**
+ * The pixel Asta mascot, alive: it bobs, blinks, and when `happy` turns on it hops and grins.
+ * Three drawn expressions (tools/mascot.py): smirk, blink, smile.
+ */
+export function LiveMascot({ t, size, happyAt }: { t: number; size: number; happyAt: number }) {
+  const happy = t >= happyAt;
+  const hop = happy ? Math.max(0, Math.sin(Math.min(1, (t - happyAt) / 0.32) * Math.PI)) : 0;
+  const squash = happy ? Math.max(0, 1 - (t - happyAt - 0.32) / 0.12) * (t - happyAt > 0.32 ? 1 : 0) : 0;
+  const bob = Math.sin(t * 7) * 0.05 * size;
+  const tilt = Math.sin(t * 3.5) * 6;
+  const blink = !happy && t % 1.3 < 0.09;
+  const face = happy ? "asta-mascot-smile" : blink ? "asta-mascot-blink" : "asta-mascot";
+  return (
+    <div style={{ width: size, height: size, translate: `0 ${bob - hop * size * 0.45}px`, rotate: `${tilt}deg`, scale: `${1 + squash * 0.15} ${1 - squash * 0.15}`, transformOrigin: "50% 100%" }}>
+      <Img src={staticFile(`images/${face}.png`)} style={{ width: size, height: size, imageRendering: "pixelated", display: "block" }} />
+    </div>
+  );
+}
+
 /** The pixel Asta mascot (the reader app's icon). */
 export function Mascot({ size, style }: { size: number; style?: CSSProperties }) {
   return (

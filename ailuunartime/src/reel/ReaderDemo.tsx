@@ -4,7 +4,8 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { step, track } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { Embers, Mascot } from "./fx";
+import { Embers, LiveMascot } from "./fx";
+import { FocusLines, shake } from "./inkfx";
 import { DirectionalBlur, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
 import { Wind } from "./wind";
@@ -33,6 +34,25 @@ const PAGE = (() => {
   };
 })();
 
+/** A panel that wakes up as horizontal slices kicking sideways and snapping back. */
+function SliceWake({ t, start, w, h, children }: { t: number; start: number; w: number; h: number; children: ReactNode }) {
+  const count = 7;
+  const sh = h / count;
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => {
+        const u = progress(t, start + i * 0.03, 0.32);
+        const kick = Math.sin(u * Math.PI) * (i % 2 ? 1 : -1) * w * 0.22;
+        return (
+          <div key={i} style={{ position: "absolute", left: 0, top: i * sh, width: w, height: sh + 1, overflow: "hidden", translate: `${kick}px 0` }}>
+            <div style={{ position: "absolute", left: 0, top: -i * sh, width: w, height: h }}>{children}</div>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 function Box({ r, children, style }: { r: { x: number; y: number; w: number; h: number }; children: ReactNode; style?: CSSProperties }) {
   return <div style={{ position: "absolute", left: r.x, top: r.y, width: r.w, height: r.h, overflow: "hidden", ...style }}>{children}</div>;
 }
@@ -50,6 +70,18 @@ function Toggle({ on }: { on: number }) {
 
 function Screen({ t }: { t: number }) {
   const on = step(t - cue.motionOn, { stiffness: 420, damping: 30 });
+  // panel life once Motion is on: a lift off the page, impact pulses, shakes, one inverted impact frame
+  const wake = easeOut(progress(t, cue.motionOn + 0.1, 0.4));
+  const lifted = (i: number): CSSProperties => ({
+    scale: `${1 + 0.025 * wake}`,
+    translate: `${(i % 2 ? 1 : -1) * 4 * wake}px ${-6 * wake}px`,
+    boxShadow: wake > 0 ? `0 ${18 * wake}px ${40 * wake}px rgba(0,0,0,0.55)` : undefined,
+    zIndex: 1 + i,
+  });
+  const pulse = (at: number) => Math.max(0, 1 - Math.abs(t - at) / 0.18);
+  const invertAt = (at: number) => t > at && t < at + 0.07;
+  const shockShake = shake(t, 5 * on * (0.4 + pulse(cue.motionOn + 0.25)), 3);
+  const screamShake = shake(t, 4 * on * (0.3 + pulse(cue.motionOn + 0.4)), 7);
   const live = on > 0.5;
 
   // camera inside the viewport: the page, then into the tornado panel
@@ -105,7 +137,7 @@ function Screen({ t }: { t: number }) {
 
       {/* header */}
       <div style={{ position: "absolute", top: 84, left: 22, right: 22, height: 96, display: "flex", alignItems: "center", gap: 16 }}>
-        <Mascot size={60} />
+        <LiveMascot t={t} size={84} happyAt={cue.motionOn} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
           <span style={{ fontWeight: 600, fontSize: 32, letterSpacing: "-0.01em" }}>Black Clover</span>
           <span style={{ fontFamily: font.mono, fontSize: 19, letterSpacing: "0.06em", color: color.muted }}>CH. 03 · WIZARD KING</span>
@@ -117,18 +149,27 @@ function Screen({ t }: { t: number }) {
       <div style={{ position: "absolute", left: VIEW.x, top: VIEW.y, width: VIEW.w, height: VIEW.h, borderRadius: 26, overflow: "hidden", background: color.ink, boxShadow: live ? `0 0 0 2px rgba(226,38,43,${0.35 + 0.25 * glow * energy})` : `0 0 0 1px ${color.line}` }}>
         {/* page: strip, tornado, row of two (scrolls away with the camera) */}
         <div style={{ position: "absolute", left: 0, top: 0, width: VIEW.w, height: VIEW.h, background: color.ink, transformOrigin: "0 0", translate: `${camX}px ${camY}px`, scale: `${1 + (pageZoom - 1) * pushU}` }}>
-          <Box r={PAGE.yuno}>
-            <PanelView panel="yuno" width={PAGE.yuno.w} height={PAGE.yuno.h} shot={{ fx: 0.5, fy: 0.5, zoom: 1 }} />
+          {/* with Motion on, every panel wakes up its own way and lifts off the page */}
+          <Box r={PAGE.yuno} style={lifted(0)}>
+            <PanelView panel="yuno" width={PAGE.yuno.w} height={PAGE.yuno.h} shot={{ fx: 0.5 + 0.12 * on * Math.sin(t * 0.9), fy: 0.45, zoom: 1 + 0.35 * on }} />
           </Box>
-          <Box r={PAGE.tornado}>
-            <PanelView panel="tornado" width={PAGE.tornado.w} height={PAGE.tornado.h} shot={{ fx: 0.55 + 0.03 * on * Math.sin(t * 1.6), fy: 0.5, zoom: 1 + 0.06 * on }} />
-            <Wind t={t} w={PAGE.tornado.w} h={PAGE.tornado.h} strength={on} />
+          <Box r={PAGE.tornado} style={lifted(1)}>
+            <SliceWake t={t} start={cue.motionOn} w={PAGE.tornado.w} h={PAGE.tornado.h}>
+              <PanelView panel="tornado" width={PAGE.tornado.w} height={PAGE.tornado.h} shot={{ fx: 0.55 + 0.03 * on * Math.sin(t * 1.6), fy: 0.5, zoom: 1 + 0.08 * on }} />
+              <Wind t={t} w={PAGE.tornado.w} h={PAGE.tornado.h} strength={on} />
+            </SliceWake>
           </Box>
-          <Box r={PAGE.shock}>
-            <PanelView panel="shock" width={PAGE.shock.w} height={PAGE.shock.h} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 }} />
+          <Box r={PAGE.shock} style={lifted(2)}>
+            <div style={{ position: "absolute", inset: 0, translate: `${shockShake.x}px ${shockShake.y}px`, scale: `${1 + 0.06 * pulse(cue.motionOn + 0.25)}` }}>
+              <PanelView panel="shock" width={PAGE.shock.w} height={PAGE.shock.h} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 + 0.1 * on }} />
+            </div>
+            <FocusLines t={t} w={PAGE.shock.w} h={PAGE.shock.h} cx={PAGE.shock.w * 0.5} cy={PAGE.shock.h * 0.55} strength={on * 0.85} count={44} inner={0.42} />
           </Box>
-          <Box r={PAGE.scream}>
-            <PanelView panel="scream" width={PAGE.scream.w} height={PAGE.scream.h} shot={{ fx: 0.5, fy: 0.38, zoom: 1.2 }} />
+          <Box r={PAGE.scream} style={lifted(3)}>
+            <div style={{ position: "absolute", inset: 0, translate: `${screamShake.x}px ${screamShake.y}px`, scale: `${1 + 0.1 * pulse(cue.motionOn + 0.4)}`, filter: invertAt(cue.motionOn + 0.42) ? "invert(1)" : undefined }}>
+              <PanelView panel="scream" width={PAGE.scream.w} height={PAGE.scream.h} shot={{ fx: 0.5, fy: 0.38, zoom: 1.2 + 0.12 * on }} />
+            </div>
+            <FocusLines t={t + 0.04} w={PAGE.scream.w} h={PAGE.scream.h} cx={PAGE.scream.w * 0.5} cy={PAGE.scream.h * 0.5} strength={on * 0.8} count={50} inner={0.45} />
           </Box>
         </div>
 
@@ -164,7 +205,10 @@ function Screen({ t }: { t: number }) {
         {/* scrolled in: Asta's scream, the panel after */}
         {scroll > 0 && (
           <div style={{ position: "absolute", inset: 0, translate: `0 ${(1 - scroll) * VIEW.h}px`, filter: scrollBlur > 0.5 ? "url(#scroll-blur)" : undefined }}>
-            <PanelView panel="scream" width={VIEW.w} height={VIEW.h} shot={screamShot} />
+            <div style={{ position: "absolute", inset: 0, filter: invertAt(cue.nextPanel + 0.32) ? "invert(1)" : undefined }}>
+              <PanelView panel="scream" width={VIEW.w} height={VIEW.h} shot={screamShot} />
+              <FocusLines t={t} w={VIEW.w} h={VIEW.h} cx={VIEW.w * 0.5} cy={VIEW.h * 0.48} strength={0.85} count={70} />
+            </div>
           </div>
         )}
       </div>

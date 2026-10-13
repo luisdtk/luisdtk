@@ -6,6 +6,7 @@ import { cue } from "./cues";
 import { Embers } from "./fx";
 import { DirectionalBlur, PanelView, PANELS, shotAt, snappy } from "./panel";
 import { color, easeIn, easeInOut, easeOut, FRAME, seeded } from "./tokens";
+import { FocusLines } from "./inkfx";
 import { Wind } from "./wind";
 
 const W = FRAME.width;
@@ -54,26 +55,6 @@ function Burst({ t, start, cx, cy }: { t: number; start: number; cx: number; cy:
             opacity={(i % 4 === 0 ? 0.35 : 0.75) * (0.6 + 0.4 * Math.sin(t * 9 + i * 1.7))}
           />
         );
-      })}
-    </svg>
-  );
-}
-
-/** Anime focus lines: thin ink spikes converging on a point, redrawn 12 times a second. */
-function FocusLines({ t, cx, cy, strength }: { t: number; cx: number; cy: number; strength: number }) {
-  if (strength <= 0) return null;
-  const rand = seeded(Math.floor(t * 12) + 5);
-  return (
-    <svg width={W} height={H} style={{ position: "absolute", inset: 0, opacity: strength }}>
-      {Array.from({ length: 90 }, (_, i) => {
-        const a = (i / 90) * Math.PI * 2 + rand() * 0.06;
-        const r0 = 520 + rand() * 260;
-        const r1 = 1500;
-        const w = 2 + rand() * 7;
-        const n = { x: -Math.sin(a), y: Math.cos(a) };
-        const p0 = { x: cx + Math.cos(a) * r0, y: cy + Math.sin(a) * r0 };
-        const p1 = { x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 };
-        return <path key={i} d={`M${p0.x} ${p0.y} L${p1.x + n.x * w * 3} ${p1.y + n.y * w * 3} L${p1.x - n.x * w * 3} ${p1.y - n.y * w * 3} Z`} fill="#0b0b0b" />;
       })}
     </svg>
   );
@@ -201,7 +182,7 @@ export function MangaScene({ t }: { t: number }) {
           {/* A) scream */}
           <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, overflow: "hidden", filter: impactFrame ? "invert(1)" : undefined }}>
             <PanelView panel="scream" width={W} height={H} shot={screamShot} />
-            <FocusLines t={t} cx={W * 0.5} cy={H * 0.5} strength={focus} />
+            <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={focus} />
           </div>
 
           {/* B) the blade, in two halves that lock together */}
