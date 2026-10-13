@@ -7,6 +7,7 @@ import { Embers, LiveMascot } from "./fx";
 import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
 import { BladeEnergy } from "./aura";
+import { ClaudeNotification } from "./Notification";
 import { animSrc, LiveAsta } from "./rig";
 
 /**
@@ -95,6 +96,11 @@ function Screen({ t }: { t: number }) {
             <span key={h} style={{ width: 6, height: h, borderRadius: 2, background: color.white }} />
           ))}
         </span>
+      </div>
+
+      {/* a notification drops in once Motion is on */}
+      <div style={{ position: "absolute", left: 14, right: 14, top: 14, height: 0 }}>
+        <ClaudeNotification t={t} at={cue.motionOn + 0.35} width={SCREEN.w - 28} />
       </div>
 
       {/* header */}

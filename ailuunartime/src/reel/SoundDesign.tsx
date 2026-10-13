@@ -33,6 +33,7 @@ const HITS: [at: number, sfx: Sfx, volume: number][] = [
   [cue.astaSlam + 0.25, "energy", 0.4],
   [cue.reader + 0.15, "whoosh-heavy", 0.4],
   [cue.motionOn, "tick", 0.5],
+  [cue.motionOn + 0.38, "pop", 0.45],
   [cue.pushIn + 0.15, "whoosh", 0.28],
   [cue.maskReveal + 0.15, "swipe", 0.36],
   [cue.foreground + 0.1, "whoosh", 0.28],
