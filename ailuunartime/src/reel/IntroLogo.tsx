@@ -1,22 +1,22 @@
 import { AbsoluteFill, staticFile } from "remotion";
 
-import { bayerPath } from "../kit/dither";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { Embers, Mascot, Slash, Wordmark } from "./fx";
+import { Embers, Logo, LOGO_ASPECT, Slash, Wordmark } from "./fx";
 import { color, easeIn, easeOut } from "./tokens";
 
-const MASCOT = 520;
+const LOGO_W = 780;
+const LOGO_H = LOGO_W / LOGO_ASPECT;
 
 /** Scene 1: black, an impact, a red slash, and the logo switches on like new tech. */
 export function IntroLogo({ t }: { t: number }) {
   if (t > cue.manga + 0.1) return null;
 
-  // the slash cuts the frame, then the logo resolves out of dithered pixels
+  // the slash cuts the frame and the logo is drawn behind it, tail to tip
   const slash = progress(t, cue.slash, 0.34);
   const flash = Math.max(0, 1 - Math.abs(t - (cue.slash + 0.12)) / 0.06);
-  const dither = easeOut(progress(t, cue.logoIn, 0.42));
+  const dither = easeOut(progress(t, cue.slash + 0.06, 0.42));
   const pop = step(t - cue.logoIn, { stiffness: 260, damping: 22 });
   const scale = 0.86 + 0.14 * pop;
 
@@ -26,8 +26,6 @@ export function IntroLogo({ t }: { t: number }) {
   // exit: the mark pushes toward camera and smears, a second slash wipes to the manga
   const out = easeIn(progress(t, cue.introOut, 0.22));
   const exitSlash = progress(t, cue.introOut - 0.02, 0.26);
-
-  const path = bayerPath({ width: MASCOT, height: MASCOT, cell: 24, progress: dither, sweep: "out", band: 0.6 });
 
   return (
     <AbsoluteFill style={{ background: color.bg }}>
@@ -48,18 +46,18 @@ export function IntroLogo({ t }: { t: number }) {
           filter: out > 0 ? `blur(${out * 18}px)` : undefined,
         }}
       >
-        <div style={{ position: "relative", width: MASCOT, height: MASCOT, marginTop: -120 }}>
-          <div style={{ clipPath: dither >= 1 ? undefined : `path("${path || "M0 0"}")` }}>
-            <Mascot size={MASCOT} />
+        <div style={{ position: "relative", width: LOGO_W, height: LOGO_H, marginTop: -80 }}>
+          <div style={{ clipPath: dither >= 1 ? undefined : `polygon(0 0, ${dither * 125}% 0, ${dither * 125 - 25}% 100%, 0 100%)`, filter: `drop-shadow(0 0 ${30 + 30 * (1 - dither)}px rgba(226,38,43,0.55))` }}>
+            <Logo width={LOGO_W} />
           </div>
-          {/* the light sweep, masked to the mascot's own pixels */}
+          {/* the light sweep, masked to the logo */}
           {sweep > 0 && sweep < 1 && (
             <div
               style={{
                 position: "absolute",
                 inset: 0,
-                maskImage: `url(${staticFile("images/asta-mascot.png")})`,
-                WebkitMaskImage: `url(${staticFile("images/asta-mascot.png")})`,
+                maskImage: `url(${staticFile("images/logo-white.png")})`,
+                WebkitMaskImage: `url(${staticFile("images/logo-white.png")})`,
                 maskSize: "100% 100%",
                 WebkitMaskSize: "100% 100%",
                 background: `linear-gradient(115deg, rgba(255,255,255,0) ${sweep * 140 - 30}%, rgba(255,255,255,0.85) ${sweep * 140 - 15}%, rgba(255,255,255,0) ${sweep * 140}%)`,
@@ -68,7 +66,7 @@ export function IntroLogo({ t }: { t: number }) {
             />
           )}
         </div>
-        <Wordmark size={120} reveal={easeOut(progress(t, cue.wordmark, 0.55))} tracking={0.02 + 0.1 * (1 - easeOut(progress(t, cue.wordmark, 0.9)))} style={{ marginTop: 28 }} />
+        <Wordmark size={120} reveal={easeOut(progress(t, cue.wordmark, 0.55))} tracking={0.02 + 0.1 * (1 - easeOut(progress(t, cue.wordmark, 0.9)))} style={{ marginTop: 64 }} />
       </AbsoluteFill>
 
       <Slash progress={slash} angle={-28} y={940} thickness={12} />

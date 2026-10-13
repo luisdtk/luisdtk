@@ -3,7 +3,7 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { Embers, Mascot, Wordmark } from "./fx";
+import { Embers, Logo, Wordmark } from "./fx";
 import { PanelView, shotAt } from "./panel";
 import { color, easeOut, font, FRAME, land } from "./tokens";
 
@@ -120,7 +120,7 @@ export function FinalTitle({ t }: { t: number }) {
           opacity: clamp01(lockup * 2),
         }}
       >
-        <Mascot size={76} />
+        <Logo width={150} />
         <Wordmark size={54} />
       </div>
 

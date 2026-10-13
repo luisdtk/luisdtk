@@ -20,7 +20,8 @@ Sound: `SoundDesign.tsx` places every effect on its cue (offset by the measured 
 
 - `source/`: the three Black Clover pages as supplied.
 - `public/images/asta.png`: the supplied Asta PNG; `asta-redblack.png` is its red-and-black duotone.
-- `public/images/asta-mascot.png`: the pixel Asta mascot used as the Ailuunartime mark (`tools/mascot.py`).
+- `public/images/logo-white.png`, `logo-red.png`: the supplied Ailuunartime logo cut out of its white background (`tools/logo.py`).
+- `public/images/asta-mascot.png`: the pixel Asta mascot, used as the reader app icon (`tools/mascot.py`).
 - `public/images/panels/`: panels cropped to the art (no balloons), upscaled 3× with line-art cleanup; only Asta's sword is painted red and black (`tools/prepare.py`).
 - `public/audio/`: every sound synthesized from scratch with numpy (`tools/audio.py`); `narration.wav` is the supplied ElevenLabs narration (+5 dB). `tools/voiceover.py` keeps the earlier Kokoro TTS fallback.
 - `public/fonts/`: Anton, Inter, JetBrains Mono (SIL OFL, from @fontsource).

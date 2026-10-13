@@ -91,12 +91,23 @@ export function Embers({
   return <AbsoluteFill style={{ pointerEvents: "none" }}>{embers}</AbsoluteFill>;
 }
 
-/** The brand mark: the pixel Asta mascot. */
+/** The pixel Asta mascot (the reader app's icon). */
 export function Mascot({ size, style }: { size: number; style?: CSSProperties }) {
   return (
     <Img
       src={staticFile("images/asta-mascot.png")}
       style={{ width: size, height: size, imageRendering: "pixelated", display: "block", ...style }}
+    />
+  );
+}
+
+/** The Ailuunartime logo (tools/logo.py cut it out of the white background). Aspect 2833:1383. */
+export const LOGO_ASPECT = 2833 / 1383;
+export function Logo({ width, red = false, style }: { width: number; red?: boolean; style?: CSSProperties }) {
+  return (
+    <Img
+      src={staticFile(red ? "images/logo-red.png" : "images/logo-white.png")}
+      style={{ width, height: width / LOGO_ASPECT, display: "block", ...style }}
     />
   );
 }

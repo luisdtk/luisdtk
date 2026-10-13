@@ -3,7 +3,7 @@ import { AbsoluteFill } from "remotion";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { Embers, Mascot, Wordmark } from "./fx";
+import { Embers, Logo, Wordmark } from "./fx";
 import { color, easeIn, easeOut, font } from "./tokens";
 
 type Comment = {
@@ -118,8 +118,8 @@ export function CommentSequence({ t }: { t: number }) {
           filter: out > 0 ? `blur(${out * 16}px)` : undefined,
         }}
       >
-        <Mascot size={340} />
-        <Wordmark size={78} style={{ marginTop: 18 }} />
+        <Logo width={460} style={{ filter: "drop-shadow(0 0 40px rgba(226,38,43,0.45))" }} />
+        <Wordmark size={78} style={{ marginTop: 44 }} />
       </AbsoluteFill>
 
       {COMMENTS.map((c, i) => (
