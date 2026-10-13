@@ -58,5 +58,11 @@
     "fps": 12,
     "width": 1200,
     "height": 1200
+  },
+  "yami": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1152,
+    "height": 1282
   }
 }

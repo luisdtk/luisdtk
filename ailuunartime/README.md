@@ -11,16 +11,18 @@ A 19.5 s vertical reel (1080×1920, 30 fps, H.264 + AAC) for Instagram Reels, ma
 | 0.0–3.0 s | "Imagine reading Black Clover like this." | A red slash draws the logo (small, centred); six manga folders burst out and float; the mouse glides to Black Clover, hovers, and clicks as the narration names it; the folder opens and its pages fly into a sideways carousel of moving panels (2.5D); the blade card grows to fill the frame | `IntroLogo.tsx`, `Folders.tsx`, `MangaCarousel.tsx` |
 | 3.0–7.2 s | "The characters move. The scenes come to life. And suddenly" | Manga-to-anime 2.5D, after the user's reference: characters cut from their backgrounds (`tools/segment.py`, isnet-anime) so slow dollies open real depth; backgrounds out of focus, soft bloom and haze, red bokeh in front; shots hand over with a blurred pan and a focus pull; Asta under a red sun and pillars at their own depths | `MangaScene.tsx`, `panel.tsx` (`LayeredPanel`) |
 | 7.2–11.2 s | "reading manga feels like watching anime. And the crazy part?" | Concept reader on a phone: the pixel mascot bobs and blinks, then hops and grins as Motion turns on; every panel wakes up (slices, focus lines, shakes, an impact frame) and lifts off the page; push-in, mask reveal, blade layer, red energy, panel scroll | `ReaderDemo.tsx`, `inkfx.tsx` |
-| 11.2–13.8 s | "AI is making things like this possible." | A generic social post of the animated page: comment sheet slides up, new comments land on top and push the rest down (the brief's four among other readers'), likes climb, hearts rise | `PostScene.tsx` |
+| 11.2–13.8 s | "AI is making things like this possible." | A generic social post of the animated page: comment sheet slides up, new comments land on top and push the rest down (the brief's four among other readers'), likes climb, hearts rise with Yami in the post: hair and cape blow in the wind, cigarette smoke rises and drifts | `PostScene.tsx`, `Smoke.tsx` |
 | 13.8–19.5 s | "The AI era is here. Imagine manga that moves like anime." | "Have you ever / imagined reading / manga like this?" in three typefaces, the logo, final hit | `FinalTitle.tsx` |
 
-Sound: `SoundDesign.tsx` places every effect on its cue (offset by the measured peak in `public/audio/sfx-peaks.json`) and ducks the music under the narration.
+Sound: narration and effects only, no music. `SoundDesign.tsx` places every effect on its cue (offset by the measured peak in `public/audio/sfx-peaks.json`).
 
 ## Assets
 
 - `source/`: the three Black Clover pages and the logo as supplied.
 - Folder pages for Naruto, JoJo, One Piece, Demon Slayer and Chainsaw Man are drawn in code (`DrawnPage`), not real pages; swap in supplied pages via `FOLDERS` in `IntroLogo.tsx`.
 - `public/images/asta.png`: the supplied Asta PNG; `asta-redblack.png` is its red-and-black duotone.
+- `public/images/yami.png`: the supplied Yami art cut out of its white background (`tools/yami.py`); his painted smoke is replaced by animated smoke.
+- `public/images/pages/` and `public/anim/page-*`: the three reader pages with balloon text removed (`tools/pages.py`) and animated by action (`tools/animate_pages.py`).
 - `public/images/logo-white.png`, `logo-red.png`: the supplied Ailuunartime logo cut out of its white background (`tools/logo.py`).
 - `public/images/asta-mascot*.png`: the pixel Asta mascot in three expressions (smirk, smile, blink), animated as the reader app icon (`tools/mascot.py`).
 - `public/anim/`: animation inside the art (`tools/animate.py`, after `tools/rig.py` weight maps): 24-frame loops at 12 fps where hair, Asta's cape, Yuno's book and the tornado flow and the eyes blink (Asta red-black, the blade panel's Asta, Yuno, the scream and shock panels). Asta's blade sways on its hilt in code.

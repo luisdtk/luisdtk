@@ -4,7 +4,8 @@ import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers, Logo } from "./fx";
-import { LayeredPanel, shotAt } from "./panel";
+import { animSrc } from "./rig";
+import { Gust, Smoke } from "./Smoke";
 import { color, easeIn, easeOut, font, FRAME, seeded } from "./tokens";
 
 /**
@@ -20,7 +21,7 @@ const r = cue.reaction;
 const COMMENTS: Comment[] = [
   { at: r + 0.12, user: "yuki.panels", text: "wait, is this manga or anime?", likes: 214 },
   { at: r + 0.32, user: "kenji.reads", text: "How is this possible?", likes: 1203, brief: true },
-  { at: r + 0.58, user: "rin_ink", text: "that blade glow though", likes: 388 },
+  { at: r + 0.58, user: "rin_ink", text: "the smoke is actually moving", likes: 388 },
   { at: r + 0.82, user: "mari_draws", text: "How did you make this?", likes: 962, brief: true },
   { at: r + 1.06, user: "shonen.daily", text: "need this for every chapter", likes: 517 },
   { at: r + 1.3, user: "otaku.lens", text: "I want to read manga like this.", likes: 2410, brief: true },
@@ -31,6 +32,14 @@ const COMMENTS: Comment[] = [
 
 const W = FRAME.width;
 const MEDIA = { x: 0, y: 330, w: W, h: 520 };
+// Yami placed in the post's media: upper body, the cigarette near the middle (measured on tools/yami.py output)
+const YAMI = (() => {
+  const w = 700;
+  const h = (w * 1282) / 1152;
+  const left = MEDIA.w / 2 - 0.66 * w;
+  const top = 24;
+  return { w, h, left, top, tip: { x: left + 0.6 * w, y: top + 0.205 * h } };
+})();
 const SHEET_TOP = 1010;
 const ROW = 128;
 const LIST_BOTTOM = 1640;
@@ -148,11 +157,8 @@ export function PostScene({ t }: { t: number }) {
   const liked = t > cue.reaction + 0.5;
   const heartPop = Math.max(0, 1 - Math.abs(t - cue.reaction - 0.5) / 0.12);
   const shown = COMMENTS.filter((c) => t >= c.at).length;
-  const shot = shotAt(t, [
-    [cue.reaction, 0.6, 0.3, 1.25],
-    [cue.reaction + 1.4, 0.55, 0.42, 1.08],
-  ]);
   const glow = 0.6 + 0.4 * Math.sin(t * 11);
+  const push = 1 + 0.05 * clamp01((t - cue.reaction) / 2.6);
   const dots = Math.floor(t * 6) % 4;
 
   return (
@@ -172,7 +178,13 @@ export function PostScene({ t }: { t: number }) {
 
         {/* the post's media: the animated page, still moving */}
         <div style={{ position: "absolute", left: MEDIA.x, top: MEDIA.y, width: MEDIA.w, height: MEDIA.h, overflow: "hidden" }}>
-          <LayeredPanel layers="sword" t={t} id="post-sword" width={MEDIA.w} height={MEDIA.h} fx={shot.fx} fy={shot.fy} zoomBg={shot.zoom} zoomFg={shot.zoom * 1.04} driftFg={{ x: 10, y: -8 }} blurBg={3} bloom={0.2} />
+          {/* Yami, in the wind: hair and cape blow (tools/animate.py), smoke rises from his cigarette */}
+          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 70% 90% at 45% 30%, #3a0b0d 0%, #120707 55%, #070707 100%)` }} />
+          <Gust t={t} w={MEDIA.w} h={MEDIA.h} />
+          <div style={{ position: "absolute", inset: 0, scale: `${push}`, transformOrigin: `${YAMI.tip.x}px ${YAMI.tip.y}px` }}>
+            <Img src={animSrc("yami", t)} style={{ position: "absolute", left: YAMI.left, top: YAMI.top, width: YAMI.w, height: YAMI.h, filter: `drop-shadow(0 0 ${20 + glow * 14}px rgba(226,38,43,0.35))` }} />
+            <Smoke t={t} x={YAMI.tip.x} y={YAMI.tip.y} w={MEDIA.w} h={MEDIA.h} />
+          </div>
           <Embers t={t} start={cue.reaction} end={cue.reactionOut} count={18} seed={61} area={{ x: 500, y: 100, w: 500, h: 600 }} rise={260} size={8} />
         </div>
 
