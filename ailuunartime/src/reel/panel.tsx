@@ -81,3 +81,61 @@ export function DirectionalBlur({ id, x = 0, y = 0 }: { id: string; x?: number; 
     </svg>
   );
 }
+
+/** Character / background layer pairs cut by tools/segment.py (same pixel size as the panel). */
+export const LAYERS = {
+  sword: { fg: "images/layers/sword-fg.png", bg: "images/layers/sword-bg.png", panel: "sword" },
+  tornado: { fg: "images/layers/tornado-fg.png", bg: "images/layers/tornado-bg.png", panel: "tornado" },
+} as const;
+
+/**
+ * A panel filmed in 2.5D: the background and the character are separate layers on one camera.
+ * The character's zoom runs ahead of the background's, so a dolly opens real depth (parallax);
+ * the background sits out of focus, and a soft bloom lifts the whites like the reference edits.
+ */
+export function LayeredPanel({
+  layers,
+  width,
+  height,
+  fx,
+  fy,
+  zoomBg,
+  zoomFg,
+  driftFg = { x: 0, y: 0 },
+  blurBg = 5,
+  blurFg = 0,
+  bloom = 0.35,
+  fgExtra,
+  between,
+}: {
+  layers: keyof typeof LAYERS;
+  width: number;
+  height: number;
+  fx: number;
+  fy: number;
+  zoomBg: number;
+  zoomFg: number;
+  driftFg?: { x: number; y: number };
+  blurBg?: number;
+  blurFg?: number;
+  bloom?: number;
+  fgExtra?: (place: ReturnType<typeof placeImage>) => ReactNode;
+  /** drawn between the background and the character (wind, smoke) */
+  between?: ReactNode;
+}) {
+  const { fg, bg, panel } = LAYERS[layers];
+  const back = placeImage(panel, width, height, { fx, fy, zoom: zoomBg });
+  const front = placeImage(panel, width, height, { fx, fy, zoom: zoomFg });
+  const at = (p: typeof back, extra = { x: 0, y: 0 }): CSSProperties => ({ position: "absolute", left: p.x + extra.x, top: p.y + extra.y, width: p.w, height: p.h, maxWidth: "none" });
+  return (
+    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee" }}>
+      <Img src={staticFile(bg)} style={{ ...at(back), filter: blurBg > 0.3 ? `blur(${blurBg}px) brightness(0.96)` : undefined }} />
+      {between}
+      <Img src={staticFile(fg)} style={{ ...at(front, driftFg), filter: blurFg > 0.3 ? `blur(${blurFg}px)` : undefined }} />
+      {fgExtra?.({ ...front, x: front.x + driftFg.x, y: front.y + driftFg.y })}
+      {bloom > 0 && (
+        <Img src={staticFile(fg)} style={{ ...at(front, driftFg), filter: "blur(22px) brightness(1.25)", mixBlendMode: "screen", opacity: bloom }} />
+      )}
+    </div>
+  );
+}

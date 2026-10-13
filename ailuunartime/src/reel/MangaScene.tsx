@@ -1,33 +1,23 @@
 import { AbsoluteFill, Img, staticFile } from "remotion";
 
-import { step, track } from "../kit/spring";
+import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers } from "./fx";
-import { DirectionalBlur, PanelView, PANELS, shotAt, snappy } from "./panel";
-import { color, easeIn, easeInOut, easeOut, FRAME, seeded } from "./tokens";
 import { FocusLines } from "./inkfx";
+import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, snappy } from "./panel";
+import { color, easeIn, easeInOut, easeOut, FRAME, lerp, seeded } from "./tokens";
 import { Wind } from "./wind";
 
 const W = FRAME.width;
 const H = FRAME.height;
 
 /**
- * Scene 2, after the scroll-driven manga sites: the Black Clover pages are one long page the
- * camera scrolls down. Every panel arrives its own way (focus lines, a split, an ink bleed, a red sun)
- * and its layers keep moving after it lands.
+ * Scene 2, after the manga-to-anime edits the user referenced: the camera never stops,
+ * characters are cut from their backgrounds (tools/segment.py) so a dolly opens real depth,
+ * backgrounds sit out of focus under a soft bloom, and shots hand over with focus pulls and
+ * blurred pans instead of cuts.
  */
-
-/** The scroll position of the long page, on a spring that retargets at each panel. */
-const scrollKeys = () =>
-  [
-    [cue.manga, 0],
-    [cue.swordWipe, H],
-    [cue.tornado, 2 * H],
-    [cue.astaSlam, 3 * H],
-  ] as const;
-const scrollSpring = { stiffness: 190, damping: 25 };
-const scrollAt = (t: number) => track(t, scrollKeys(), scrollSpring);
 
 /** Red energy rays bursting from a point behind Asta. */
 function Burst({ t, start, cx, cy }: { t: number; start: number; cx: number; cy: number }) {
@@ -60,25 +50,29 @@ function Burst({ t, start, cx, cy }: { t: number; start: number; cx: number; cy:
   );
 }
 
-/** Ink bleed: a turbulence mask whose threshold sweeps from nothing to everything. */
-function InkBleed({ id, amount }: { id: string; amount: number }) {
-  const slope = 9;
-  const intercept = slope * (amount * 1.5 - 1.0);
+/** Out-of-focus red sparks drifting in front of the lens: depth in front of the character. */
+function Bokeh({ t, start, end, seed }: { t: number; start: number; end: number; seed: number }) {
+  const fade = clamp01((t - start) / 0.3) * (1 - clamp01((t - end) / 0.3));
+  if (fade <= 0) return null;
+  const rand = seeded(seed);
   return (
-    <svg width={0} height={0} style={{ position: "absolute" }}>
-      <filter id={id} x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.006 0.012" numOctaves={4} seed={9} result="noise" />
-        <feColorMatrix in="noise" type="luminanceToAlpha" result="lum" />
-        <feComponentTransfer in="lum" result="mask">
-          <feFuncA type="linear" slope={slope} intercept={intercept} />
-        </feComponentTransfer>
-        <feComposite in="SourceGraphic" in2="mask" operator="in" />
-      </filter>
-    </svg>
+    <AbsoluteFill style={{ pointerEvents: "none" }}>
+      {Array.from({ length: 9 }, (_, i) => {
+        const size = 40 + rand() * 110;
+        const x = rand() * W + Math.sin(t * 0.8 + i) * 40 - (t - start) * (30 + rand() * 60);
+        const y = rand() * H - (t - start) * (40 + rand() * 50);
+        return <div key={i} style={{ position: "absolute", left: x, top: y, width: size, height: size, borderRadius: "50%", background: color.red, filter: `blur(${size * 0.28}px)`, opacity: (0.35 + rand() * 0.3) * fade }} />;
+      })}
+    </AbsoluteFill>
   );
 }
 
-/** Red pillars rising from the floor, like the red wall in the reference sites. */
+/** Soft light from the top of frame, like sun haze over the page. */
+function Haze({ amount }: { amount: number }) {
+  return <AbsoluteFill style={{ background: `radial-gradient(ellipse 90% 45% at 70% 0%, rgba(255,255,255,${0.35 * amount}) 0%, rgba(255,255,255,0) 70%)`, mixBlendMode: "screen", pointerEvents: "none" }} />;
+}
+
+/** Red pillars rising from the floor. */
 function Pillars({ t, start }: { t: number; start: number }) {
   const rand = seeded(77);
   return (
@@ -113,104 +107,120 @@ export function MangaScene({ t }: { t: number }) {
   if (t < cue.manga - 0.05 || t > cue.reader + 0.12) return null;
 
   const open = progress(t, cue.manga - 0.05, 0.1);
-  const scroll = scrollAt(t);
-  const velocity = (scrollAt(t + 1 / 120) - scrollAt(t - 1 / 120)) * 60;
-  const scrollBlur = Math.min(42, Math.abs(velocity) / 140);
 
-  // A) the scream: strips, then a punch-in and a one-frame impact (inverted) frame
+  // 1) the scream: a slow push that never stops, a breath of focus lines, one impact frame
   const screamShot = shotAt(t, [
     [cue.manga - 0.1, 0.5, 0.42, 1.42],
     [cue.manga, 0.5, 0.4, 1.12],
-    [cue.manga + 0.5, 0.52, 0.46, 1.22],
   ], snappy);
+  const screamPush = 1 + 0.12 * easeInOut(progress(t, cue.manga, cue.swordWipe - cue.manga));
   const impactFrame = t > cue.manga + 0.36 && t < cue.manga + 0.43;
-  const focus = easeOut(progress(t, cue.manga + 0.05, 0.2)) * 0.9;
+  const focus = easeOut(progress(t, cue.manga + 0.05, 0.2)) * 0.55;
 
-  // B) the blade: two halves slide in opposite directions and lock, then the camera works the panel
-  const lock = easeOut(progress(t, cue.swordWipe - 0.1, 0.5));
-  const swordShot = shotAt(t, [
-    [cue.swordWipe, 0.5, 0.36, 1.25],
-    [cue.swordPan, 0.47, 0.25, 1.9],
-    [cue.swordPan + 0.45, 0.78, 0.2, 1.6],
-    [cue.swordPull, 0.56, 0.42, 1.04],
-  ]);
-  const pull = easeOut(progress(t, cue.swordPull, 0.6));
-  const glow = 0.6 + 0.4 * Math.sin(t * 11);
+  // 1 -> 2: a blurred pan, the scream slides out left as the blade shot slides in
+  const pan = easeInOut(progress(t, cue.swordWipe - 0.18, 0.42));
+  const panBlur = Math.sin(pan * Math.PI) * 38;
 
-  // C) the wind panel bleeds in like ink and its tornado turns
-  const ink = easeInOut(progress(t, cue.tornado - 0.12, 0.6));
-  const tornadoShot = shotAt(t, [
-    [cue.tornado, 0.45, 0.5, 1.35],
-    [cue.tornado + 0.35, 0.52, 0.5, 1.08],
-  ]);
+  // 2) the blade in 2.5D: a slow dolly in, Asta and his sword run ahead of the colosseum
+  const swordE = easeInOut(progress(t, cue.swordWipe, cue.tornado - cue.swordWipe));
+  const glow = 0.6 + 0.4 * Math.sin(t * 9);
 
-  // D) Asta: a red sun, red pillars, and Asta in front
+  // 2 -> 3: a focus pull, the blade shot melts out of focus while the wind shot comes into it
+  const pull = easeInOut(progress(t, cue.tornado - 0.22, 0.44));
+
+  // 3) the wind in 2.5D: the camera eases back, Yuno holds while the tornado drifts behind him
+  const windE = easeOut(progress(t, cue.tornado - 0.2, cue.astaSlam - cue.tornado + 0.2));
+
+  // 4) Asta: a red sun and pillars at their own depths, Asta in front
   const sun = easeOut(progress(t, cue.astaSlam - 0.05, 0.4));
   const slam = step(t - cue.astaSlam - 0.08, { stiffness: 230, damping: 19 });
   const flash = Math.max(0, 1 - Math.abs(t - cue.astaSlam - 0.1) / 0.07);
-  const float = Math.sin((t - cue.astaSlam) * 3) * 8;
+  const drift = Math.max(0, t - cue.astaSlam);
+  const enterRed = easeOut(progress(t, cue.astaSlam - 0.1, 0.18));
 
   // exit: whip pan left into the reader
   const out = easeIn(progress(t, cue.mangaOut, 0.14));
   const outBlur = out * 60;
 
-  const blade = (place: { x: number; y: number; w: number; h: number }) => (
-    <Img
-      src={staticFile(PANELS.blade.src)}
-      style={{
-        position: "absolute",
-        // the blade rides its own layer: it drifts against the page as it scrolls, then lifts toward camera
-        left: place.x + pull * 26,
-        top: place.y - pull * 18 - (scroll - H) * 0.12,
-        width: place.w * (1 + pull * 0.03),
-        height: place.h * (1 + pull * 0.03),
-        maxWidth: "none",
-        filter: `drop-shadow(0 0 ${18 + glow * 26}px rgba(226,38,43,0.6))`,
-      }}
-    />
-  );
+  const showScream = t < cue.swordWipe + 0.3;
+  const showSword = t >= cue.swordWipe - 0.2 && t < cue.tornado + 0.3;
+  const showWind = t >= cue.tornado - 0.25 && t < cue.astaSlam + 0.2;
+  const showAsta = t >= cue.astaSlam - 0.12;
 
   return (
     <AbsoluteFill style={{ background: open < 1 ? undefined : color.bg, overflow: "hidden" }}>
-      <DirectionalBlur id="scroll-v" y={scrollBlur} />
+      <DirectionalBlur id="pan-blur" x={panBlur} />
       <DirectionalBlur id="out-blur" x={outBlur} />
-      <InkBleed id="ink" amount={ink} />
 
       <AbsoluteFill style={{ opacity: open, translate: `${-out * W}px 0`, filter: outBlur > 0.5 ? "url(#out-blur)" : undefined }}>
-        {/* the long page */}
-        <div style={{ position: "absolute", left: 0, top: 0, width: W, height: 4 * H, translate: `0 ${-scroll}px`, filter: scrollBlur > 0.6 ? "url(#scroll-v)" : undefined }}>
-          {/* A) scream */}
-          <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, overflow: "hidden", filter: impactFrame ? "invert(1)" : undefined }}>
-            <PanelView panel="scream" width={W} height={H} shot={screamShot} />
-            <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={focus} />
-          </div>
-
-          {/* B) the blade, in two halves that lock together */}
-          <div style={{ position: "absolute", left: 0, top: H, width: W, height: H, overflow: "hidden", background: color.bg }}>
-            {[0, 1].map((half) => (
-              <div key={half} style={{ position: "absolute", inset: 0, clipPath: half === 0 ? "inset(0 50% 0 0)" : "inset(0 0 0 50%)", translate: `0 ${(half === 0 ? 1 : -1) * (1 - lock) * 380}px` }}>
-                <PanelView panel="sword" width={W} height={H} shot={swordShot}>
-                  {blade}
-                </PanelView>
-              </div>
-            ))}
-            {lock < 1 && <div style={{ position: "absolute", left: W / 2 - 4, top: 0, width: 8, height: H, background: color.red, opacity: 1 - lock, boxShadow: "0 0 30px rgba(226,38,43,0.8)" }} />}
-            <Embers t={t} start={cue.swordPull} end={cue.tornado + 0.2} count={34} seed={7} area={{ x: 420, y: 500, w: 560, h: 1100 }} rise={380} />
-          </div>
-
-          {/* C) the wind panel, bleeding in like ink */}
-          <div style={{ position: "absolute", left: 0, top: 2 * H, width: W, height: H, overflow: "hidden", background: color.bg }}>
-            <div style={{ position: "absolute", inset: 0, filter: ink < 1 ? "url(#ink)" : undefined }}>
-              <PanelView panel="tornado" width={W} height={H} shot={tornadoShot}>
-                {() => <Wind t={t} w={W} h={H} strength={1} />}
-              </PanelView>
+        {/* 1) scream */}
+        {showScream && (
+          <AbsoluteFill style={{ translate: `${-pan * W * 0.7}px 0`, filter: impactFrame ? "invert(1)" : panBlur > 0.5 ? "url(#pan-blur)" : undefined }}>
+            <div style={{ position: "absolute", inset: 0, scale: `${screamPush}` }}>
+              <PanelView panel="scream" width={W} height={H} shot={screamShot} />
+              <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={focus} />
             </div>
-          </div>
+            <Haze amount={0.6} />
+          </AbsoluteFill>
+        )}
 
-          {/* D) Asta under a red sun */}
-          <div style={{ position: "absolute", left: 0, top: 3 * H, width: W, height: H, overflow: "hidden", background: color.bg }}>
-            <div style={{ position: "absolute", left: W / 2 - 430 * sun, top: 860 - 430 * sun, width: 860 * sun, height: 860 * sun, borderRadius: "50%", background: color.red, boxShadow: `0 0 120px rgba(226,38,43,${0.6 * sun})` }} />
-            <Pillars t={t} start={cue.astaSlam} />
+        {/* 2) the blade, in 2.5D */}
+        {showSword && (
+          <AbsoluteFill style={{ translate: `${(1 - pan) * W * 0.7}px 0`, filter: pull > 0 ? `blur(${pull * 18}px)` : panBlur > 0.5 ? "url(#pan-blur)" : undefined, opacity: 1 - clamp01((pull - 0.5) * 2) }}>
+            <LayeredPanel
+              layers="sword"
+              width={W}
+              height={H}
+              fx={lerp(0.52, 0.55, swordE)}
+              fy={lerp(0.36, 0.4, swordE)}
+              zoomBg={lerp(1.06, 1.14, swordE)}
+              zoomFg={lerp(1.0, 1.26, swordE)}
+              driftFg={{ x: lerp(30, -20, swordE), y: lerp(40, 0, swordE) }}
+              blurBg={lerp(3, 6, swordE)}
+              fgExtra={(place) => (
+                <Img
+                  src={staticFile(PANELS.blade.src)}
+                  style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", opacity: 0.85, filter: `drop-shadow(0 0 ${18 + glow * 28}px rgba(226,38,43,0.75))` }}
+                />
+              )}
+            />
+            <Haze amount={0.8} />
+            <Embers t={t} start={cue.swordPan} end={cue.tornado} count={28} seed={7} area={{ x: 380, y: 400, w: 620, h: 1200 }} rise={360} />
+            <Bokeh t={t} start={cue.swordWipe} end={cue.tornado} seed={17} />
+          </AbsoluteFill>
+        )}
+
+        {/* 3) the wind, in 2.5D, coming into focus */}
+        {showWind && (
+          <AbsoluteFill style={{ filter: pull < 1 ? `blur(${(1 - pull) * 18}px)` : undefined, opacity: clamp01(pull * 2) }}>
+            <LayeredPanel
+              layers="tornado"
+              width={W}
+              height={H}
+              fx={lerp(0.2, 0.27, windE)}
+              fy={0.42}
+              zoomBg={lerp(1.3, 1.12, windE)}
+              zoomFg={lerp(1.42, 1.12, windE)}
+              driftFg={{ x: lerp(-40, 0, windE), y: 0 }}
+              blurBg={4}
+              bloom={0.3}
+              between={
+                <div style={{ position: "absolute", inset: 0, opacity: 0.8 }}>
+                  <Wind t={t} w={W} h={H} strength={1} />
+                </div>
+              }
+            />
+            <Haze amount={0.9} />
+          </AbsoluteFill>
+        )}
+
+        {/* 4) Asta under a red sun, each layer at its own depth */}
+        {showAsta && (
+          <AbsoluteFill style={{ background: color.bg, opacity: enterRed }}>
+            <div style={{ position: "absolute", left: W / 2 - 430 * sun, top: 860 - 430 * sun - drift * 20, width: 860 * sun, height: 860 * sun, borderRadius: "50%", background: color.red, boxShadow: `0 0 140px rgba(226,38,43,${0.6 * sun})`, filter: "blur(2px)" }} />
+            <div style={{ position: "absolute", inset: 0, translate: `0 ${drift * 40}px` }}>
+              <Pillars t={t} start={cue.astaSlam} />
+            </div>
             <Burst t={t} start={cue.astaSlam + 0.08} cx={W / 2} cy={980} />
             <Img
               src={staticFile("images/asta-redblack.png")}
@@ -218,16 +228,17 @@ export function MangaScene({ t }: { t: number }) {
                 position: "absolute",
                 width: 1320,
                 height: 1320,
-                left: (W - 1320) / 2 + 40,
-                top: H - 1320 + 40 + (1 - slam) * 420 + float,
-                scale: `${1.18 - 0.18 * slam}`,
+                left: (W - 1320) / 2 + 40 - drift * 30,
+                top: H - 1320 + 40 + (1 - slam) * 420 + Math.sin(drift * 3) * 8,
+                scale: `${(1.18 - 0.18 * slam) * (1 + drift * 0.05)}`,
                 opacity: clamp01(slam * 3),
                 filter: "drop-shadow(0 0 40px rgba(0,0,0,0.6))",
               }}
             />
             <Embers t={t} start={cue.astaSlam} end={cue.mangaOut} count={26} seed={11} area={{ x: 80, y: 800, w: 920, h: 900 }} rise={420} size={10} />
-          </div>
-        </div>
+            <Bokeh t={t} start={cue.astaSlam} end={cue.mangaOut + 0.2} seed={29} />
+          </AbsoluteFill>
+        )}
       </AbsoluteFill>
 
       {flash > 0 && <AbsoluteFill style={{ background: color.white, opacity: flash * 0.9 }} />}
