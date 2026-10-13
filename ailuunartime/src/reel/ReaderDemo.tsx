@@ -6,6 +6,7 @@ import { cue } from "./cues";
 import { Embers, LiveMascot } from "./fx";
 import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
+import { YunoAura } from "./aura";
 import { animSrc, LiveAsta } from "./rig";
 
 /**
@@ -56,41 +57,6 @@ function cameraAt(t: number) {
   const page = Math.floor(fy);
   const sy = pageTop(page) + (fy - page) * PH;
   return { x: VIEW.w / 2 - fx * VIEW.w * z, y: VIEW.h / 2 - sy * z, z, fy };
-}
-
-/** Red energy pouring off Asta's blade: flickering streaks rising from the edge, and sparks. */
-function BladeEnergy({ t, w, h, strength }: { t: number; w: number; h: number; strength: number }) {
-  if (strength <= 0) return null;
-  // the blade's edge in the panel view (measured on the blade panel framing)
-  const base = { x: 0.5 * w, y: 0.86 * h };
-  const tip = { x: 0.95 * w, y: 0.02 * h };
-  return (
-    <svg width={w} height={h} style={{ position: "absolute", inset: 0, mixBlendMode: "screen", opacity: strength }}>
-      {Array.from({ length: 26 }, (_, i) => {
-        const u = (i + 0.5) / 26;
-        const px = base.x + (tip.x - base.x) * u;
-        const py = base.y + (tip.y - base.y) * u;
-        const life = (t * (1.3 + (i % 5) * 0.2) + i * 0.37) % 1;
-        const len = (40 + (i % 4) * 30) * (1 - life * 0.5);
-        const drift = life * 90;
-        const x0 = px + drift * 0.9;
-        const y0 = py - drift * 0.4;
-        const wob = Math.sin(t * 14 + i) * 10;
-        return (
-          <path
-            key={i}
-            d={`M${x0} ${y0} q ${18 + wob} ${-len * 0.5} ${4} ${-len}`}
-            stroke={i % 3 === 0 ? "#ffb3b3" : color.red}
-            strokeWidth={6 - life * 4}
-            fill="none"
-            strokeLinecap="round"
-            opacity={Math.sin(life * Math.PI) * 0.95}
-            style={{ filter: "drop-shadow(0 0 10px rgba(226,38,43,0.95))" }}
-          />
-        );
-      })}
-    </svg>
-  );
 }
 
 function Screen({ t }: { t: number }) {
@@ -154,6 +120,8 @@ function Screen({ t }: { t: number }) {
               style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.ink }}
             />
           ))}
+          {/* Yuno's wind magic around him on the first page */}
+          <YunoAura t={t} w={VIEW.w} h={PH} cx={0.3 * VIEW.w} cy={0.47 * PH} r={0.24 * VIEW.w} strength={on} />
         </div>
 
         {/* last: the blade panel, opened through a circular mask */}
@@ -173,7 +141,6 @@ function Screen({ t }: { t: number }) {
               blurBg={lift * 3}
               bloom={0.15 + energy * glow * 0.2}
             />
-            <BladeEnergy t={t} w={VIEW.w} h={VIEW.h} strength={energy} />
             {reveal < 1 && (
               <svg width={VIEW.w} height={VIEW.h} style={{ position: "absolute", inset: 0 }}>
                 <circle cx={VIEW.w / 2} cy={VIEW.h / 2} r={Math.max(0, revealR - 4)} fill="none" stroke={color.red} strokeWidth={8} opacity={1 - reveal * 0.6} style={{ filter: "drop-shadow(0 0 12px rgba(226,38,43,0.9))" }} />
@@ -217,20 +184,19 @@ function Screen({ t }: { t: number }) {
 }
 
 export function ReaderDemo({ t }: { t: number }) {
-  if (t < cue.reader - 0.1 || t > cue.reaction + 0.1) return null;
+  if (t < cue.reader - 0.1 || t > cue.reaction + 0.2) return null;
 
   // the phone rises in with a tilt that settles
   const rise = step(t - cue.reader, { stiffness: 150, damping: 21 });
   const tilt = (1 - rise) * 28;
 
-  // outer camera: a push toward the viewport, a settle, then a dive into the panel
+  // outer camera: a push toward the viewport, a settle; then the whole screen scrolls up and away
   const zoom = Math.exp(track(t, [
     [cue.reader, 0],
     [cue.pushIn, Math.log(1.1)],
     [cue.maskReveal, Math.log(1.04)],
   ], { stiffness: 120, damping: 24 }));
-  const dive = easeIn(progress(t, cue.readerOut, cue.reaction - cue.readerOut));
-  const diveZoom = 1 + dive * 2.6;
+  const leave = easeInOut(progress(t, cue.readerOut, cue.reaction - cue.readerOut + 0.15));
   const focusY = PHONE.y + PHONE.bezel + VIEW.y + VIEW.h / 2;
 
   // Asta, red and black, steps out of the phone while the blade lifts
@@ -238,11 +204,11 @@ export function ReaderDemo({ t }: { t: number }) {
   const popOut = easeIn(progress(t, cue.readerOut - 0.05, 0.25));
 
   return (
-    <AbsoluteFill style={{ background: color.bg, overflow: "hidden" }}>
+    <AbsoluteFill style={{ background: color.bg, overflow: "hidden", translate: `0 ${-leave * FRAME.height}px` }}>
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 60% 45% at 50% 55%, rgba(226,38,43,${0.16 * rise}) 0%, rgba(10,10,10,0) 70%)` }} />
       <Embers t={t} start={cue.reader} end={cue.readerOut} count={16} seed={41} area={{ x: 0, y: 300, w: FRAME.width, h: 1400 }} rise={180} size={6} intensity={0.5} />
 
-      <AbsoluteFill style={{ perspective: 1800, transformOrigin: `50% ${focusY}px`, scale: `${zoom * diveZoom}` }}>
+      <AbsoluteFill style={{ perspective: 1800, transformOrigin: `50% ${focusY}px`, scale: `${zoom}` }}>
         <div
           style={{
             position: "absolute",
@@ -279,7 +245,6 @@ export function ReaderDemo({ t }: { t: number }) {
         )}
       </AbsoluteFill>
 
-      {dive > 0.6 && <AbsoluteFill style={{ background: color.white, opacity: (dive - 0.6) / 0.4 }} />}
     </AbsoluteFill>
   );
 }

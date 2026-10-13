@@ -23,8 +23,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "public" / "images" / "redink"  # red ink on black (tools/redink.py)
 OUT = ROOT / "public" / "anim"
-FRAMES = 24
-FPS = 12
+FRAMES = 48
+FPS = 24  # every frame drawn: smooth, not on twos
 WIDTH = 1600
 
 # op, centre (x, y), radius (x, y), params
@@ -122,7 +122,8 @@ def field(op, c, r, p, f, xs, ys, W, H):
 
 
 def blink(frame, c, r, p, f):
-    shut = {p["at"]: 0.6, p["at"] + 1: 1.0, p["at"] + 2: 0.6}.get(f, 0)
+    b = p["at"] * 2
+    shut = {b: 0.4, b + 1: 0.85, b + 2: 1.0, b + 3: 0.85, b + 4: 0.4}.get(f, 0)
     if not shut:
         return frame
     h, w = frame.shape[:2]
@@ -137,6 +138,20 @@ def blink(frame, c, r, p, f):
     return frame
 
 
+def panel_breathing(name, xs, ys):
+    """Per-panel masks (soft inside the box, zero on its border, so the frame lines hold still)."""
+    layout = json.loads((ROOT / "public" / "images" / "mattes" / "panels.json").read_text()).get(name, [])
+    out = []
+    for i, (x, y, w, h) in enumerate(layout):
+        edge = 0.012
+        fx = np.clip(np.minimum(xs - x, x + w - xs) / edge, 0, 1)
+        fy = np.clip(np.minimum(ys - y, y + h - ys) / (edge * 0.67), 0, 1)
+        mask = (fx * fy).astype(np.float32)
+        mask = mask * mask * (3 - 2 * mask)  # smoothstep
+        out.append((x + w / 2, y + h / 2, mask, i * 1.3))
+    return out
+
+
 def main():
     manifest = json.loads((OUT / "manifest.json").read_text())
     for name, ops in PAGES.items():
@@ -148,9 +163,18 @@ def main():
         xs_n, ys_n = xs / W, ys / H
         folder = OUT / name
         folder.mkdir(parents=True, exist_ok=True)
+        breathe = panel_breathing(name, xs_n, ys_n)
         for f in range(FRAMES):
             dx = np.zeros((H, W), np.float32)
             dy = np.zeros((H, W), np.float32)
+            # every panel moves: a slow camera breath inside its own frame, and the air stirs
+            u = 2 * np.pi * f / FRAMES
+            for (cx, cy, mask, phase) in breathe:
+                s = 0.022 * (0.5 - 0.5 * np.cos(u + phase))  # zoom in and out, about the panel centre
+                dx += -(xs - cx * W) * s * mask + np.sin(u + phase) * 0.004 * W * mask
+                dy += -(ys - cy * H) * s * mask + np.cos(u + phase) * 0.003 * H * mask
+            dx += 0.0018 * W * np.sin(u + xs_n * 9 + ys_n * 5)
+            dy += 0.0012 * H * np.cos(u + ys_n * 8)
             for op, c, r, p in ops:
                 if op == "blink":
                     continue
@@ -161,7 +185,7 @@ def main():
             for op, c, r, p in ops:
                 if op == "blink":
                     frame = blink(frame, c, r, p, f)
-            Image.fromarray(frame).save(folder / f"{f}.webp", "WEBP", quality=86, method=4)
+            Image.fromarray(frame).save(folder / f"{f}.webp", "WEBP", quality=82, method=4)
         manifest[name] = {"frames": FRAMES, "fps": FPS, "width": W, "height": H}
         size = sum(q.stat().st_size for q in folder.glob("*.webp"))
         print(f"{name}: {W}x{H}, {size / 1e6:.1f} MB")

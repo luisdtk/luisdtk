@@ -17,7 +17,9 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 
-rgb = np.asarray(Image.open(ROOT / "source" / "yami.webp").convert("RGB"))
+# source/yami-x2.png: the supplied art denoised (fastNlMeans) and upscaled 2x with EDSR
+# (OpenCV dnn_superres, model from github.com/Saafke/EDSR_Tensorflow)
+rgb = np.asarray(Image.open(ROOT / "source" / "yami-x2.png").convert("RGB"))
 h, w = rgb.shape[:2]
 session = ort.InferenceSession(sys.argv[1], providers=["CPUExecutionProvider"])
 x = cv2.resize(rgb, (1024, 1024), interpolation=cv2.INTER_AREA).astype(np.float32) / 255 - 0.5
@@ -41,6 +43,6 @@ alpha[np.isin(labels, list(outside)) & grey_light] = 0
 alpha = cv2.GaussianBlur(alpha.astype(np.float32), (0, 0), 0.8)
 # the painted smoke trail, left of the hand, goes
 alpha[: int(0.24 * h), : int(0.6 * w)] = 0
-big = Image.fromarray(np.dstack([rgb, (alpha * 255).astype(np.uint8)]), "RGBA").resize((w * 2, h * 2), Image.LANCZOS)
+big = Image.fromarray(np.dstack([rgb, (alpha * 255).astype(np.uint8)]), "RGBA")
 big.save(ROOT / "public" / "images" / "yami.png", optimize=True)
 print("yami", big.size)

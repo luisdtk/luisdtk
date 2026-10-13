@@ -20,8 +20,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "public" / "images"
 OUT = ROOT / "public" / "anim"
-FRAMES = 24
-FPS = 12
+FRAMES = 48
+FPS = 24  # every frame drawn: smooth, not on twos
 
 # name: source, weight map, max width, displacement (px at that width), eyes, eyelid colour, quality
 ASSETS = {
@@ -90,13 +90,14 @@ def main(only=None):
                 dy = dy - (ys - my * h) * mamp * k * g
             frame = cv2.remap(rgba, xs + dx.astype(np.float32), ys + dy.astype(np.float32), cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
             if a["blink"] is not None and a["eyes"]:
-                shut = {a["blink"]: 0.6, a["blink"] + 1: 1.0, a["blink"] + 2: 0.6}.get(f, 0)
+                b = a["blink"] * 2
+                shut = {b: 0.4, b + 1: 0.85, b + 2: 1.0, b + 3: 0.85, b + 4: 0.4}.get(f, 0)
                 if shut:
                     frame = draw_lids(frame, a["eyes"], a["skin"], shut)
             im = Image.fromarray(frame, "RGBA")
             if not has_alpha:
                 im = im.convert("RGB")
-            im.save(folder / f"{f}.webp", "WEBP", quality=88, method=4)
+            im.save(folder / f"{f}.webp", "WEBP", quality=82, method=4)
         size = sum(p.stat().st_size for p in folder.glob("*.webp"))
         manifest[name] = {"frames": FRAMES, "fps": FPS, "width": w, "height": h}
         print(f"{name}: {w}x{h}, {FRAMES} frames, {size / 1e6:.1f} MB")

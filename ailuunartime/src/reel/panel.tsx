@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Img, staticFile } from "remotion";
 
 import { track, type SpringConfig } from "../kit/spring";
+import { BladeEnergy, YunoAura } from "./aura";
 import { animSrc, type AnimName } from "./rig";
 
 /** Natural sizes of the prepared layers (tools/prepare.py output), in pixels. */
@@ -155,6 +156,14 @@ export function LayeredPanel({
       {blade && (
         <div style={{ position: "absolute", left: fgPlace.x, top: fgPlace.y, width: fgPlace.w, height: fgPlace.h, rotate: `${sway}deg`, transformOrigin: `${blade.pivot.x * 100}% ${blade.pivot.y * 100}%` }}>
           <Img src={staticFile(PANELS.blade.src)} style={{ position: "absolute", inset: 0, width: fgPlace.w, height: fgPlace.h, maxWidth: "none", filter: `drop-shadow(0 0 ${22 + 18 * Math.sin(t * 9)}px rgba(226,38,43,0.75))` }} />
+          {/* energy pouring off the blade's edge (measured on the sword panel) */}
+          <BladeEnergy t={t} w={fgPlace.w} h={fgPlace.h} base={{ x: 0.53 * fgPlace.w, y: 0.6 * fgPlace.h }} tip={{ x: 0.92 * fgPlace.w, y: 0.03 * fgPlace.h }} scale={fgPlace.w / 1100} />
+        </div>
+      )}
+      {layers === "tornado" && (
+        <div style={{ position: "absolute", left: fgPlace.x, top: fgPlace.y, width: fgPlace.w, height: fgPlace.h }}>
+          {/* Yuno's wind magic, green and gold, circling him */}
+          <YunoAura t={t} w={fgPlace.w} h={fgPlace.h} cx={0.27 * fgPlace.w} cy={0.33 * fgPlace.h} r={0.2 * fgPlace.w} />
         </div>
       )}
       {fgExtra?.(fgPlace)}

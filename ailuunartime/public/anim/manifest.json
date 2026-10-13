@@ -1,67 +1,67 @@
 {
   "asta": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1200,
     "height": 1200
   },
   "sword-fg": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1725,
     "height": 2100
   },
   "tornado-fg": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 3312,
     "height": 2346
   },
   "tornado-bg": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1656,
     "height": 1173
   },
   "scream": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1500,
     "height": 2253
   },
   "shock": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 930,
     "height": 1926
   },
   "page-4-birds-yuno": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1600,
     "height": 2400
   },
   "page-5-flock": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1600,
     "height": 2400
   },
   "page-6-dash": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1600,
     "height": 2400
   },
   "asta-red": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1200,
     "height": 1200
   },
   "yami": {
-    "frames": 24,
-    "fps": 12,
+    "frames": 48,
+    "fps": 24,
     "width": 1152,
     "height": 1282
   }

@@ -6,7 +6,7 @@ import { cue } from "./cues";
 import { Embers, Logo } from "./fx";
 import { animSrc } from "./rig";
 import { Gust, Smoke } from "./Smoke";
-import { color, easeIn, easeOut, font, FRAME, seeded } from "./tokens";
+import { color, easeIn, easeInOut, easeOut, font, FRAME, seeded } from "./tokens";
 
 /**
  * Scene 4, the reaction: a generic social post of the animated page, its comment sheet open,
@@ -148,9 +148,10 @@ function Row({ c, t, index, total }: { c: Comment; t: number; index: number; tot
 export const COMMENT_CUES = COMMENTS.map((c) => [c.at, Boolean(c.brief)] as const);
 
 export function PostScene({ t }: { t: number }) {
-  if (t < cue.reaction - 0.05 || t > cue.final + 0.1) return null;
+  if (t < cue.readerOut || t > cue.final + 0.1) return null;
 
-  const enter = easeOut(progress(t, cue.reaction, 0.3));
+  // the post scrolls up from below as the reader leaves, like the next item in a feed
+  const enter = easeInOut(progress(t, cue.readerOut, cue.reaction - cue.readerOut + 0.15));
   const sheet = step(t - cue.reaction - 0.08, { stiffness: 210, damping: 26 });
   const out = easeIn(progress(t, cue.reactionOut, 0.14));
   const likes = 9800 + 2600 * easeOut(progress(t, cue.reaction, 2.4));
@@ -162,9 +163,10 @@ export function PostScene({ t }: { t: number }) {
   const dots = Math.floor(t * 6) % 4;
 
   return (
-    <AbsoluteFill style={{ background: color.bg, opacity: 1 - out, filter: out > 0 ? `blur(${out * 14}px)` : undefined }}>
+    <AbsoluteFill style={{ opacity: 1 - out, filter: out > 0 ? `blur(${out * 14}px)` : undefined }}>
       {/* the post */}
-      <div style={{ position: "absolute", inset: 0, translate: `0 ${(1 - enter) * 120}px`, opacity: enter }}>
+      <div style={{ position: "absolute", inset: 0, translate: `0 ${(1 - enter) * FRAME.height}px` }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: FRAME.width, height: FRAME.height * 1.2, background: color.bg }} />
         <div style={{ position: "absolute", left: 56, top: 228, right: 56, height: 84, display: "flex", alignItems: "center", gap: 20 }}>
           <div style={{ width: 84, height: 84, borderRadius: 42, background: "#000", border: `3px solid ${color.red}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Logo width={60} />

@@ -1,7 +1,8 @@
-"""Red ink on black: the manga's paper goes black and its ink goes Asta red.
+"""Red ink: characters white with red ink, everything around them black with red ink.
 
-Each pixel's darkness (1 - luminance) becomes the strength of red, so solid blacks turn full red,
-screentones turn deep red and paper turns black. Transparency is kept for cut-out layers.
+Each pixel's darkness (1 - luminance) becomes the strength of red ink. Inside a character's matte
+(tools/mattes.py) the paper stays white, so characters stand out white; outside it the paper goes
+black. Transparency is kept for cut-out layers.
 Writes public/images/redink/<name>.png; tools/animate.py and tools/animate_pages.py animate these.
 
     uv run --with numpy --with pillow python3 tools/redink.py
@@ -33,12 +34,25 @@ SOURCES = {
 }
 
 
-def redink(rgba: np.ndarray) -> np.ndarray:
+WHITE = np.array([244, 242, 238], np.float32)
+# which matte (public/images/mattes) marks the characters in each image; none = background only
+MATTE = {
+    "asta-scream": "asta-scream", "shock": "shock", "yuno-smile": "yuno-smile",
+    "sword": "sword-fg-noblade", "tornado": "tornado-fg",
+    "sword-fg-noblade": "sword-fg-noblade", "tornado-fg": "tornado-fg",
+    "page-4-birds-yuno": "page-4-birds-yuno", "page-5-flock": "page-5-flock", "page-6-dash": "page-6-dash",
+}
+
+
+def redink(rgba: np.ndarray, matte: np.ndarray) -> np.ndarray:
     rgb = rgba[..., :3].astype(np.float32) / 255
     lum = rgb @ np.array([0.299, 0.587, 0.114], np.float32)
-    ink = np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9
+    ink = (np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9)[..., None]
+    m = matte[..., None]
+    character = WHITE * (1 - ink) + RED * ink
+    page = RED * ink
     out = rgba.copy()
-    out[..., :3] = (ink[..., None] * RED).astype(np.uint8)
+    out[..., :3] = (character * m + page * (1 - m)).clip(0, 255).astype(np.uint8)
     return out
 
 
@@ -48,7 +62,12 @@ def main():
         im = Image.open(IMG / src)
         mode = "RGBA" if im.mode in ("RGBA", "LA") else "RGB"
         a = np.asarray(im.convert("RGBA"))
-        out = Image.fromarray(redink(a), "RGBA")
+        if name in MATTE:
+            mi = Image.open(IMG / "mattes" / f"{MATTE[name]}.png").convert("L").resize(im.size, Image.BILINEAR)
+            matte = np.asarray(mi).astype(np.float32) / 255
+        else:
+            matte = np.zeros(a.shape[:2], np.float32)
+        out = Image.fromarray(redink(a, matte), "RGBA")
         (out if mode == "RGBA" else out.convert("RGB")).save(OUT / f"{name}.png", optimize=True)
         print(name)
 
