@@ -64,5 +64,11 @@
     "fps": 24,
     "width": 1152,
     "height": 1282
+  },
+  "cover": {
+    "frames": 48,
+    "fps": 24,
+    "width": 1600,
+    "height": 2404
   }
 }

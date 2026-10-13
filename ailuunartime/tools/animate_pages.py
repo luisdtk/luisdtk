@@ -29,6 +29,19 @@ WIDTH = 1600
 
 # op, centre (x, y), radius (x, y), params
 PAGES = {
+    "cover": [
+        # Yuno: hair and cape in his own wind, the swirl in his hand turns, the grimoire's light breathes
+        ("wave", (0.55, 0.13), (0.1, 0.06), {"amp": 0.006, "speed": 2}),
+        ("wave", (0.09, 0.27), (0.07, 0.1), {"amp": 0.012, "speed": 3}),
+        ("wave", (0.68, 0.24), (0.15, 0.13), {"amp": 0.007, "speed": 2}),
+        ("bounce", (0.68, 0.24), (0.1, 0.07), {"amp": 0.004, "speed": 1}),
+        # Asta: hair, cape and the black grimoire's flames
+        ("wave", (0.48, 0.46), (0.12, 0.05), {"amp": 0.006, "speed": 2}),
+        ("wave", (0.27, 0.62), (0.08, 0.1), {"amp": 0.008, "speed": 2, "phase": 0.3}),
+        ("wave", (0.5, 0.72), (0.2, 0.12), {"amp": 0.006, "speed": 3}),
+        ("blink", (0.493, 0.554), (0.017, 0.008), {"at": 18, "skin": 238}),
+        ("blink", (0.56, 0.552), (0.017, 0.008), {"at": 18, "skin": 238}),
+    ],
     "page-4-birds-yuno": [
         # the big bird: wings beat, beak snaps
         ("flap", (0.16, 0.1), (0.07, 0.06), {"amp": 0.012, "speed": 3}),
@@ -42,8 +55,8 @@ PAGES = {
         ("bounce", (0.66, 0.285), (0.04, 0.03), {"amp": 0.008, "speed": 4, "phase": 0.15}),
         # Yuno: hair in the wind, a slow blink
         ("wave", (0.33, 0.42), (0.17, 0.08), {"amp": 0.006}),
-        ("blink", (0.27, 0.467), (0.022, 0.011), {"at": 14, "skin": 0}),
-        ("blink", (0.364, 0.464), (0.022, 0.011), {"at": 14, "skin": 0}),
+        ("blink", (0.27, 0.467), (0.022, 0.011), {"at": 14, "skin": 240}),
+        ("blink", (0.364, 0.464), (0.022, 0.011), {"at": 14, "skin": 240}),
         ("wave", (0.75, 0.45), (0.05, 0.04), {"amp": 0.004}),
     ],
     "page-5-flock": [
@@ -78,8 +91,8 @@ PAGES = {
         ("wave", (0.12, 0.74), (0.08, 0.03), {"amp": 0.004}),
         ("shake", (0.21, 0.638), (0.05, 0.05), {"amp": 0.004}),
         ("wave", (0.3, 0.6), (0.13, 0.04), {"amp": 0.006, "speed": 3}),
-        ("blink", (0.089, 0.412), (0.02, 0.012), {"at": 8, "skin": 0}),
-        ("blink", (0.164, 0.412), (0.02, 0.012), {"at": 8, "skin": 0}),
+        ("blink", (0.089, 0.412), (0.02, 0.012), {"at": 8, "skin": 240}),
+        ("blink", (0.164, 0.412), (0.02, 0.012), {"at": 8, "skin": 240}),
     ],
 }
 
@@ -134,7 +147,7 @@ def blink(frame, c, r, p, f):
     mask[int(lid):, :] = 0
     frame[mask > 0] = p["skin"]
     pts = np.array([[X - RX * 1.1 + i * RX * 2.2 / 20, lid + RY * 0.4 * np.sin(np.pi * i / 20)] for i in range(21)], np.int32)
-    cv2.polylines(frame, [pts], False, (226, 38, 43), max(2, int(RY * 0.45)), cv2.LINE_AA)
+    cv2.polylines(frame, [pts], False, (15, 12, 12), max(2, int(RY * 0.45)), cv2.LINE_AA)
     return frame
 
 

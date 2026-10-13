@@ -6,7 +6,7 @@ import { cue } from "./cues";
 import { Embers, LiveMascot } from "./fx";
 import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
-import { YunoAura } from "./aura";
+import { BladeEnergy, YunoAura } from "./aura";
 import { animSrc, LiveAsta } from "./rig";
 
 /**
@@ -72,13 +72,10 @@ function Screen({ t }: { t: number }) {
   // the blade panel opens through an expanding mask, red energy pouring off the sword
   const reveal = easeInOut(progress(t, cue.maskReveal, 0.45));
   const revealR = reveal * Math.hypot(VIEW.w, VIEW.h) * 0.52;
-  const bladeShot = shotAt(t, [
-    [cue.maskReveal, 0.47, 0.27, 1.5],
-    [cue.foreground, 0.54, 0.4, 1.12],
-  ] as ShotKey[]);
   const lift = easeOut(progress(t, cue.foreground, 0.5));
   const energy = easeOut(progress(t, cue.readerEnergy, 0.3));
   const glow = 0.6 + 0.4 * Math.sin(t * 12);
+  void glow;
 
   const active = reveal > 0.5 ? 3 : pageIndex;
   const pageNumber = 12 + active;
@@ -127,20 +124,25 @@ function Screen({ t }: { t: number }) {
         {/* last: the blade panel, opened through a circular mask */}
         {reveal > 0 && (
           <div style={{ position: "absolute", inset: 0, clipPath: `circle(${revealR}px at 50% 50%)` }}>
-            <LayeredPanel
-              layers="sword"
-              t={t}
-              id="reader-sword"
-              width={VIEW.w}
-              height={VIEW.h}
-              fx={bladeShot.fx}
-              fy={bladeShot.fy}
-              zoomBg={bladeShot.zoom}
-              zoomFg={bladeShot.zoom * (1 + lift * 0.04)}
-              driftFg={{ x: lift * 14, y: -lift * 12 }}
-              blurBg={lift * 3}
-              bloom={0.15 + energy * glow * 0.2}
-            />
+            {/* the chapter cover, alive: Asta and Yuno with the black-and-red blade (tools/cover.py, animate_pages.py) */}
+            {(() => {
+              const zoom = 1.04 + 0.08 * lift;
+              const cw = VIEW.h / 1.5 > VIEW.w ? VIEW.h / 1.5 : VIEW.w;
+              const ch = cw * 1.5;
+              const w = cw * zoom;
+              const h = ch * zoom;
+              const x = (VIEW.w - w) / 2;
+              const y = (VIEW.h - h) / 2 - 20 * lift;
+              return (
+                <div style={{ position: "absolute", left: x, top: y, width: w, height: h }}>
+                  <Img src={animSrc("cover", t)} style={{ position: "absolute", inset: 0, width: w, height: h }} />
+                  {/* the light around Yuno's grimoire breathes */}
+                  <div style={{ position: "absolute", left: 0.42 * w, top: 0.08 * h, width: 0.5 * w, height: 0.36 * h, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0) 65%)", mixBlendMode: "screen", opacity: 0.35 + 0.35 * Math.sin(t * 4) }} />
+                  <YunoAura t={t} w={w} h={h} cx={0.62 * w} cy={0.22 * h} r={0.3 * w} strength={0.75} />
+                  <BladeEnergy t={t} w={w} h={h} base={{ x: 0.6 * w, y: 0.44 * h }} tip={{ x: 0.04 * w, y: 0.06 * h }} strength={energy} scale={w / 1100} />
+                </div>
+              );
+            })()}
             {reveal < 1 && (
               <svg width={VIEW.w} height={VIEW.h} style={{ position: "absolute", inset: 0 }}>
                 <circle cx={VIEW.w / 2} cy={VIEW.h / 2} r={Math.max(0, revealR - 4)} fill="none" stroke={color.red} strokeWidth={8} opacity={1 - reveal * 0.6} style={{ filter: "drop-shadow(0 0 12px rgba(226,38,43,0.9))" }} />
@@ -239,7 +241,7 @@ export function ReaderDemo({ t }: { t: number }) {
               left: 600 + (1 - pop) * 140 + popOut * 260,
               top: 1010 + (1 - pop) * 110,
               opacity: clamp01(pop * 2) * (1 - popOut),
-              filter: "drop-shadow(0 0 30px rgba(226,38,43,0.5)) drop-shadow(0 30px 40px rgba(0,0,0,0.6))",
+              filter: "grayscale(1) contrast(1.15) brightness(1.1) drop-shadow(0 0 30px rgba(226,38,43,0.5)) drop-shadow(0 30px 40px rgba(0,0,0,0.6))",
             }}
           />
         )}

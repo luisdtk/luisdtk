@@ -1,4 +1,4 @@
-"""Red ink: characters white with red ink, everything around them black with red ink.
+"""Black page, white characters: the paper around characters goes black, characters stay white.
 
 Each pixel's darkness (1 - luminance) becomes the strength of red ink. Inside a character's matte
 (tools/mattes.py) the paper stays white, so characters stand out white; outside it the paper goes
@@ -49,8 +49,9 @@ def redink(rgba: np.ndarray, matte: np.ndarray) -> np.ndarray:
     lum = rgb @ np.array([0.299, 0.587, 0.114], np.float32)
     ink = (np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9)[..., None]
     m = matte[..., None]
-    character = WHITE * (1 - ink) + RED * ink
-    page = RED * ink
+    # characters: white paper, black ink (the manga as drawn); around them: black ground
+    character = WHITE * (1 - ink) + np.array([12, 10, 10], np.float32) * ink
+    page = np.array([92, 90, 90], np.float32) * ink  # the scenery stays readable in grey
     out = rgba.copy()
     out[..., :3] = (character * m + page * (1 - m)).clip(0, 255).astype(np.uint8)
     return out
@@ -67,7 +68,13 @@ def main():
             matte = np.asarray(mi).astype(np.float32) / 255
         else:
             matte = np.zeros(a.shape[:2], np.float32)
-        out = Image.fromarray(redink(a, matte), "RGBA")
+        res = redink(a, matte)
+        if name in ("sword",):
+            # Asta's blade keeps its black and red (painted by tools/prepare.py)
+            blade = np.asarray(Image.open(IMG / "panels" / "sword-blade.png").convert("RGBA")).astype(np.float32)
+            k = blade[..., 3:] / 255
+            res[..., :3] = (res[..., :3] * (1 - k) + blade[..., :3] * k).astype(np.uint8)
+        out = Image.fromarray(res, "RGBA")
         (out if mode == "RGBA" else out.convert("RGB")).save(OUT / f"{name}.png", optimize=True)
         print(name)
 
