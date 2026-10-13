@@ -8,7 +8,7 @@ Light editorial look: off-white paper, near-black serif type (Newsreader), Inter
 | Scene | Time | File |
 |---|---|---|
 | 01 Hook | 0.0–4.4 s | `src/scenes/Scene01Hook.jsx` |
-| 02 Worlds colliding (Steve → portal → uploaded gameplay) | 4.4–13.1 s | `Scene02WorldsColliding.jsx` |
+| 02 Worlds colliding (Steve → portal → Minecraft × GTA V gameplay) | 4.4–13.1 s | `Scene02WorldsColliding.jsx` |
 | 03 One world, infinite possibilities | 13.1–20.6 s | `Scene03OneWorld.jsx` |
 | 04 Meta moment — "Claude is editing this video." | 20.6–33.4 s | `Scene04MetaMoment.jsx` |
 | 05 Code becomes creation | 33.4–39.6 s | `Scene05CodeBecomesCreation.jsx` |

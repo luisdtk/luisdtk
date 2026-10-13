@@ -50,7 +50,7 @@ export const Scene02WorldsColliding = () => {
 		<AbsoluteFill style={{background: C.paper}}>
 			<PaperGrid opacity={ui} />
 			<Label x={70} y={250} opacity={ui}>
-				Minecraft × GTA V · uploaded gameplay
+				Minecraft × GTA V
 			</Label>
 
 			<Glitch windows={[[137, 140], [187, 190]]} amount={40} seed="s2">
