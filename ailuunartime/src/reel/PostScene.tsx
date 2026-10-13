@@ -40,20 +40,27 @@ const YAMI = (() => {
   const top = 24;
   return { w, h, left, top, tip: { x: left + 0.6 * w, y: top + 0.205 * h } };
 })();
-/** Below Yami, the chapter's animated pages, one after another. */
-const FEED = ["cover", "page-4-birds-yuno", "page-5-flock", "page-6-dash"] as const;
-const FEED_H = MEDIA.w * 1.5;
+/** Below Yami: the Asta vs Yuno spread, then the chapter's animated pages, one after another. */
+const FEED = [
+  { name: "spread", h: (MEDIA.w * 1172) / 1600 },
+  { name: "cover", h: MEDIA.w * 1.5 },
+  { name: "page-4-birds-yuno", h: MEDIA.w * 1.5 },
+  { name: "page-5-flock", h: MEDIA.w * 1.5 },
+  { name: "page-6-dash", h: MEDIA.w * 1.5 },
+] as const;
 const FEED_GAP = 16;
-const feedTop = (i: number) => MEDIA.h + FEED_GAP + i * (FEED_H + FEED_GAP);
+const feedTop = (i: number) => MEDIA.h + FEED_GAP + FEED.slice(0, i).reduce((sum, f) => sum + f.h + FEED_GAP, 0);
 const STRIP_H = feedTop(FEED.length);
 const r0 = cue.reaction;
-/** Scroll keys: hold on Yami, then a thumb flick down to each page's busiest part. */
+/** Scroll keys: hold on Yami, flick to the spread and hold, then on down through the pages. */
 const FEED_KEYS = [
   [r0, 0],
-  [r0 + 0.75, feedTop(0) + FEED_H * 0.18],
-  [r0 + 1.15, feedTop(1) + FEED_H * 0.3],
-  [r0 + 1.55, feedTop(2) + FEED_H * 0.05],
-  [r0 + 1.95, feedTop(3) + FEED_H * 0.45],
+  [r0 + 0.55, feedTop(0) + FEED[0].h * 0.02],
+  [r0 + 0.85, feedTop(0) + FEED[0].h * 0.3], // drift down the spread: faces, then their coats
+  [r0 + 1.15, feedTop(1) + FEED[1].h * 0.18],
+  [r0 + 1.5, feedTop(2) + FEED[2].h * 0.3],
+  [r0 + 1.85, feedTop(3) + FEED[3].h * 0.05],
+  [r0 + 2.2, feedTop(4) + FEED[4].h * 0.45],
 ] as const;
 const feedAt = (t: number) => track(t, FEED_KEYS, { stiffness: 90, damping: 18 });
 const SHEET_TOP = 1010;
@@ -209,8 +216,8 @@ export function PostScene({ t }: { t: number }) {
                 <Smoke t={t} x={YAMI.tip.x} y={YAMI.tip.y} w={MEDIA.w} h={MEDIA.h} />
               </div>
             </div>
-            {FEED.map((name, i) => (
-              <Img key={name} src={animSrc(name, t, i * 0.31)} style={{ position: "absolute", left: 0, top: feedTop(i), width: MEDIA.w, height: FEED_H, background: color.ink }} />
+            {FEED.map((f, i) => (
+              <Img key={f.name} src={animSrc(f.name, t, i * 0.31)} style={{ position: "absolute", left: 0, top: feedTop(i), width: MEDIA.w, height: f.h, background: color.ink }} />
             ))}
           </div>
           <svg width={0} height={0} style={{ position: "absolute" }}>

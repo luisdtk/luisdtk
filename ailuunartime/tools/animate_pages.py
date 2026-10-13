@@ -29,6 +29,17 @@ WIDTH = 1600
 
 # op, centre (x, y), radius (x, y), params
 PAGES = {
+    "spread": [
+        # Asta: hair and the cape behind him in the wind; Yuno: hair and his long coat tail
+        ("wave", (0.18, 0.12), (0.07, 0.06), {"amp": 0.005, "speed": 2}),
+        ("wave", (0.04, 0.34), (0.06, 0.06), {"amp": 0.01, "speed": 2}),
+        ("wave", (0.78, 0.07), (0.08, 0.07), {"amp": 0.006, "speed": 2, "phase": 0.3}),
+        ("wave", (0.95, 0.45), (0.06, 0.22), {"amp": 0.012, "speed": 2, "phase": 0.5}),
+        ("wave", (0.68, 0.28), (0.04, 0.08), {"amp": 0.008, "speed": 3}),
+        # clouds drifting behind them
+        ("wave", (0.5, 0.6), (0.18, 0.4), {"amp": 0.006, "speed": 1}),
+        ("wave", (0.5, 0.05), (0.5, 0.05), {"amp": 0.005, "speed": 1}),
+    ],
     "devil": [
         # the devil: wild hair streaming both ways, wings beating, tail and black arm swaying
         ("wave", (0.27, 0.15), (0.13, 0.12), {"amp": 0.016, "speed": 2}),
@@ -182,7 +193,7 @@ def main(only=None):
         if only and name not in only:
             continue
         src = Image.open(SRC / f"{name}.png").convert("RGB")
-        src = src.resize((WIDTH, round(src.height * WIDTH / src.width)), Image.LANCZOS)
+        src = src.resize((WIDTH, round(src.height * WIDTH / src.width)), Image.LANCZOS) if src.width != WIDTH else src
         rgb = np.asarray(src)
         H, W = rgb.shape[:2]
         ys, xs = np.mgrid[0:H, 0:W].astype(np.float32)

@@ -76,5 +76,11 @@
     "fps": 24,
     "width": 1600,
     "height": 1949
+  },
+  "spread": {
+    "frames": 48,
+    "fps": 24,
+    "width": 1600,
+    "height": 1172
   }
 }
