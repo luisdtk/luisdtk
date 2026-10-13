@@ -1,0 +1,22 @@
+{
+  "name": "ai-revolution-reel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AI Is Changing The World \u2014 cinematic 9:16 reel built with Remotion",
+  "scripts": {
+    "studio": "remotion studio",
+    "audio": "python3 tools/build_audio.py",
+    "render": "remotion render AIRevolution out/raw.mp4",
+    "master": "ffmpeg -y -i out/raw.mp4 -c:v copy -af loudnorm=I=-14:TP=-1.5:LRA=9 -c:a aac -b:a 320k -movflags +faststart out/ai-revolution-reel.mp4"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/newsreader": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.8",
+    "@remotion/cli": "4.0.535",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  }
+}
