@@ -1,6 +1,5 @@
 import React from 'react';
 import {AbsoluteFill, Sequence, interpolate, useCurrentFrame} from 'remotion';
-import {BlockWorld} from '../components/BlockWorld';
 import {FootageBox} from '../components/Footage';
 import {Label, PaperGrid, RingReveal} from '../components/FX';
 import {KineticText} from '../components/KineticText';
@@ -15,18 +14,15 @@ const City = () => (
 	</Sequence>
 );
 
-const Blocks = () => {
-	const frame = useCurrentFrame();
-	return (
-		<div style={{position: 'absolute', left: -40, top: -620, width: 1080, height: 1920}}>
-			<BlockWorld scroll={2400 + frame * 9} seed={8} id="s3" sky="day" />
-		</div>
-	);
-};
+const Tnt = () => (
+	<Sequence layout="none">
+		<FootageBox source="tnt" start={0} width={CARD.w} height={CARD.h} zoom={1.02} duration={225} />
+	</Sequence>
+);
 
 const WORLDS = [
 	{name: 'Open city', el: <City />},
-	{name: 'Block world', el: <Blocks />},
+	{name: 'Block world', el: <Tnt />},
 	{name: 'Future grid', el: <FutureWorld w={CARD.w} h={CARD.h} />},
 	{name: 'Cinematic landscape', el: <Landscape w={CARD.w} h={CARD.h} />},
 ];
