@@ -57,7 +57,6 @@ export const cue = {
 
   // Scene 4, the reaction: "AI is making things like this possible."
   reaction: say(5),
-  comments: [say(5) + 0.2, say(5) + 0.75, say(5) + 1.3, say(5) + 1.85],
   reactionOut: say(6) - 0.2,
 
   // Scene 5, the final message: "The AI era is here. Imagine manga that moves like anime."

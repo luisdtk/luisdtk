@@ -1,12 +1,12 @@
 import { AbsoluteFill } from "remotion";
 
 import { useTime } from "../kit/time";
-import { CommentSequence } from "./CommentSequence";
 import { FinalTitle } from "./FinalTitle";
 import "./fonts";
 import { Grain, Vignette } from "./fx";
 import { IntroLogo } from "./IntroLogo";
 import { MangaScene } from "./MangaScene";
+import { PostScene } from "./PostScene";
 import { ReaderDemo } from "./ReaderDemo";
 import { SoundDesign } from "./SoundDesign";
 import { color } from "./tokens";
@@ -20,8 +20,8 @@ export function Reel() {
     <AbsoluteFill style={{ background: color.bg }}>
       <IntroLogo t={t} />
       <MangaScene t={t} />
-      <CommentSequence t={t} />
       <ReaderDemo t={t} />
+      <PostScene t={t} />
       <FinalTitle t={t} />
       <Vignette strength={0.55} />
       <Grain t={t} opacity={0.06} />

@@ -11,7 +11,7 @@ A 19.5 s vertical reel (1080×1920, 30 fps, H.264 + AAC) for Instagram Reels, ma
 | 0.0–2.0 s | "Imagine reading Black Clover like this." | Impact, a red slash draws the logo (small, centred), six manga folders open around it, Black Clover lights up and the camera dives into its page | `IntroLogo.tsx`, `Folders.tsx` |
 | 2.0–7.2 s | "The characters move. The scenes come to life. And suddenly" | A scroll-driven manga page (after the user's reference): scream with focus lines and an inverted impact frame; the blade arrives in two halves that lock, its own layer drifting; the wind panel bleeds in like ink; a red sun and red pillars rise behind Asta | `MangaScene.tsx` |
 | 7.2–11.2 s | "reading manga feels like watching anime. And the crazy part?" | Concept reader on a phone: Motion toggle, push-in, mask reveal, blade layer, red energy, panel scroll | `ReaderDemo.tsx` |
-| 11.2–13.8 s | "AI is making things like this possible." | Logo at the centre, four comments pop in one at a time | `CommentSequence.tsx` |
+| 11.2–13.8 s | "AI is making things like this possible." | A generic social post of the animated page: comment sheet slides up, new comments land on top and push the rest down (the brief's four among other readers'), likes climb, hearts rise | `PostScene.tsx` |
 | 13.8–19.5 s | "The AI era is here. Imagine manga that moves like anime." | "HAVE YOU EVER IMAGINED READING MANGA LIKE THIS?", logo lockup, final hit | `FinalTitle.tsx` |
 
 Sound: `SoundDesign.tsx` places every effect on its cue (offset by the measured peak in `public/audio/sfx-peaks.json`) and ducks the music under the narration.

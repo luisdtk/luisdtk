@@ -1,6 +1,7 @@
 import { Html5Audio, Sequence, staticFile, useVideoConfig } from "remotion";
 
 import { cue, NARRATION_START, PHRASES } from "./cues";
+import { COMMENT_CUES } from "./PostScene";
 import peaks from "../../public/audio/sfx-peaks.json";
 
 type Sfx = keyof typeof peaks;
@@ -35,10 +36,9 @@ const HITS: [at: number, sfx: Sfx, volume: number][] = [
   [cue.nextPanel + 0.18, "swipe", 0.4],
   [cue.nextPanel + 0.18, "tick", 0.28],
   [cue.reaction, "whoosh-heavy", 0.45],
-  [cue.comments[0], "pop", 0.38],
-  [cue.comments[1], "pop-low", 0.38],
-  [cue.comments[2], "pop", 0.38],
-  [cue.comments[3], "pop-low", 0.42],
+  [cue.reaction + 0.1, "swipe", 0.3],
+  ...COMMENT_CUES.map(([at, brief], i): [number, Sfx, number] => [at, i % 2 ? "pop-low" : "pop", brief ? 0.42 : 0.2]),
+  [cue.reaction + 0.5, "tick", 0.35],
   [cue.final - 0.02, "whoosh-heavy", 0.5],
   [cue.final, "impact", 0.55],
   [cue.lockup, "shimmer", 0.25],
