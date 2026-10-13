@@ -57,7 +57,7 @@ BLACK = np.array([10, 8, 8], np.float32)
 # characters: white with red ink; sky and ground: black with dim red ink
 WHITE = np.array([244, 242, 238], np.float32)
 character = WHITE * (1 - ink) + BLACK * (ink - lines) + RED * lines
-ground = RED * 0.22 * lines  # the sky and ground: black, with faint red lines
+ground = WHITE * (1 - ink) + BLACK * ink  # sky and ground: the manga as drawn, on white paper
 out = character * matte + ground * (1 - matte)
 
 # Asta's headband: its dark band turns red

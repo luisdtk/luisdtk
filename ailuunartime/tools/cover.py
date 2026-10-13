@@ -23,8 +23,14 @@ a[60:135, 290:1110] = np.median(a[140:200, 300:1100].reshape(-1, 3), axis=0)  # 
 lum = a.mean(axis=2) / 255
 # ground to black, characters to white: a steep curve around the ground's grey
 v = np.clip((lum - 0.2) / 0.62, 0, 1) ** 0.85
-out = np.repeat((v * 255)[..., None], 3, axis=2)
-
+# on white paper: the art is inverted (light figures on dark ground -> dark lines on paper),
+# then its line work is drawn in red
+paper = np.array([244, 242, 238], np.float32)
+red_ink = np.array([226, 38, 43], np.float32)
+line = np.clip((v - 0.12) / 0.55, 0, 1) ** 1.1  # 0 = ground (paper), 1 = brightest figure (strong red)
+edges = np.clip(np.abs(np.gradient(v, axis=0)) + np.abs(np.gradient(v, axis=1)), 0, 1) * 6
+k = np.clip(line * 0.35 + edges, 0, 1)[..., None]
+out = paper * (1 - k) + red_ink * k
 w, h = im.size
 mask = Image.new("L", im.size, 0)
 d = ImageDraw.Draw(mask)

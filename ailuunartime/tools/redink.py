@@ -1,4 +1,4 @@
-"""Black page, white characters: the paper around characters goes black, characters stay white.
+"""White paper, characters drawn in red: scenery keeps its black ink, characters' lines turn red.
 
 Each pixel's darkness (1 - luminance) becomes the strength of red ink. Inside a character's matte
 (tools/mattes.py) the paper stays white, so characters stand out white; outside it the paper goes
@@ -45,13 +45,19 @@ MATTE = {
 
 
 def redink(rgba: np.ndarray, matte: np.ndarray) -> np.ndarray:
+    """White paper everywhere; scenery keeps its black ink; characters' lines turn red."""
+    import cv2
+
     rgb = rgba[..., :3].astype(np.float32) / 255
     lum = rgb @ np.array([0.299, 0.587, 0.114], np.float32)
     ink = (np.clip((1 - lum - 0.04) / 0.92, 0, 1) ** 0.9)[..., None]
+    # large solid blacks (hair, clothes) stay black; lines, hatching and details go red
+    solid = cv2.GaussianBlur(ink[..., 0], (0, 0), 6)[..., None]
+    lines = ink * np.clip((0.82 - solid) / 0.3, 0, 1)
+    BLACK = np.array([12, 10, 10], np.float32)
     m = matte[..., None]
-    # characters: white paper, black ink (the manga as drawn); around them: black ground
-    character = WHITE * (1 - ink) + np.array([12, 10, 10], np.float32) * ink
-    page = np.array([92, 90, 90], np.float32) * ink  # the scenery stays readable in grey
+    character = WHITE * (1 - ink) + BLACK * (ink - lines) + RED * lines
+    page = WHITE * (1 - ink) + BLACK * ink
     out = rgba.copy()
     out[..., :3] = (character * m + page * (1 - m)).clip(0, 255).astype(np.uint8)
     return out
