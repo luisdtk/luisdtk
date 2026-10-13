@@ -19,6 +19,7 @@ const HITS: [at: number, sfx: Sfx, volume: number][] = [
   [cue.select, "shimmer", 0.22],
   [cue.manga, "whoosh-heavy", 0.5],
   [cue.manga, "impact", 0.6],
+  [cue.manga + 0.38, "impact", 0.45],
   [cue.swordWipe + 0.12, "swipe", 0.45],
   [cue.swordPan + 0.12, "whoosh", 0.32],
   [cue.swordPull + 0.2, "energy", 0.35],
