@@ -1,7 +1,8 @@
 import {AbsoluteFill, Sequence} from 'remotion';
 import {SoundTrack} from './audio/SoundTrack';
 import {Captions} from './components/Captions';
-import {Grain} from './components/FX';
+import {Grain, LightStreak, Particles} from './components/FX';
+import {SceneWrap} from './components/SceneWrap';
 import {Scene01Hook} from './scenes/Scene01Hook';
 import {Scene02WorldsColliding} from './scenes/Scene02WorldsColliding';
 import {Scene03OneWorld} from './scenes/Scene03OneWorld';
@@ -30,14 +31,20 @@ const SCENES = {
 
 export const Video = () => (
 	<AbsoluteFill style={{background: C.paper}}>
-		{timeline.scenes.map(({id, from, duration}) => {
+		{timeline.scenes.map(({id, from, duration}, i) => {
 			const Scene = SCENES[id];
 			return (
 				<Sequence key={id} name={id} from={from} durationInFrames={duration}>
-					<Scene />
+					<SceneWrap duration={duration} index={i}>
+						<Scene />
+					</SceneWrap>
 				</Sequence>
 			);
 		})}
+		<Particles count={34} seed="ambient" speed={0.8} opacity={0.35} size={2.5} />
+		{timeline.scenes.slice(1).map(({from}, i) => (
+			<LightStreak key={from} at={from - 6} duration={12} y={[520, 1380, 760, 1180][i % 4]} length={900} thickness={3} reverse={i % 2 === 1} />
+		))}
 		<Captions />
 		<Grain opacity={0.035} />
 		<SoundTrack />

@@ -6,18 +6,20 @@ import '@fontsource/inter/400.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/jetbrains-mono/400.css';
 
-// Clean, light identity: off-white paper, near-black ink, green accent.
+// Dark editorial identity: near-black background, light ink, green accent.
+// `paper` is the page background and `white` the raised card surface.
 export const C = {
-	paper: '#f8f7f5',
-	white: '#ffffff',
-	ink: '#1b1b1a',
-	muted: '#6f6d69',
-	faint: '#a9a6a1',
-	line: '#e4e1dc',
-	green: '#16a34a',
-	greenSoft: '#e7f6ec',
+	paper: '#090a09',
+	white: '#131513',
+	raised: '#1b1e1b',
+	ink: '#f3f3ef',
+	muted: '#9b9b95',
+	faint: '#5f625d',
+	line: '#262a26',
+	green: '#22c55e',
+	greenSoft: '#0f2b1a',
 	greenMid: '#4ade80',
-	dark: '#0e0f0e',
+	pure: '#ffffff',
 };
 
 export const FONT = {
@@ -26,7 +28,7 @@ export const FONT = {
 	mono: '"JetBrains Mono", monospace',
 };
 
-export const shadow = '0 1px 2px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08)';
+export const shadow = '0 0 0 1px #242824, 0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(34,197,94,0.06)';
 
 export const easeOut = Easing.bezier(0.16, 1, 0.3, 1);
 export const easeInOut = Easing.bezier(0.65, 0, 0.35, 1);

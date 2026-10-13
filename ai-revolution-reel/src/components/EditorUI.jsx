@@ -1,6 +1,6 @@
 import {interpolate, random, useCurrentFrame} from 'remotion';
 import timeline from '../timeline.json';
-import {FootageBox} from './Footage';
+import {AiBuddy} from './AiBuddy';
 import {C, FONT, easeOut} from '../theme';
 
 const TOTAL = timeline.durationInFrames;
@@ -24,7 +24,7 @@ const pop = (frame, at) => interpolate(frame, [at, at + 10], [0, 1], {extrapolat
 const Track = ({label, clips, y, frame, at, color = C.green, soft = C.greenSoft, w}) => (
 	<div style={{position: 'absolute', left: 0, top: y, width: w, height: 58}}>
 		<div style={{position: 'absolute', left: 0, top: 16, width: 110, fontFamily: FONT.mono, fontSize: 18, color: C.muted}}>{label}</div>
-		<div style={{position: 'absolute', left: 120, right: 0, top: 0, height: 52, borderRadius: 10, background: '#f3f2ef'}} />
+		<div style={{position: 'absolute', left: 120, right: 0, top: 0, height: 52, borderRadius: 10, background: C.raised}} />
 		{clips.map((c, i) => {
 			const p = pop(frame, at + i * 3);
 			const left = 120 + (c.from / TOTAL) * (w - 120);
@@ -45,7 +45,7 @@ const Track = ({label, clips, y, frame, at, color = C.green, soft = C.greenSoft,
 						overflow: 'hidden',
 						fontFamily: FONT.body,
 						fontSize: 15,
-						color: c.strong ? C.white : C.ink,
+						color: c.strong ? C.paper : C.ink,
 						padding: '12px 8px',
 						whiteSpace: 'nowrap',
 					}}
@@ -67,7 +67,7 @@ export const EditorUI = ({w = 1000, h = 1040, start = 0}) => {
 	const sfxClips = new Array(26).fill(0).map((_, i) => ({from: (i / 26) * TOTAL + random(`sx${i}`) * 30, dur: 6, label: ''}));
 	const tlW = w - 64;
 	return (
-		<div style={{position: 'relative', width: w, height: h, borderRadius: 28, background: C.white, boxShadow: '0 1px 2px rgba(0,0,0,0.05), 0 24px 70px rgba(0,0,0,0.10)', overflow: 'hidden'}}>
+		<div style={{position: 'relative', width: w, height: h, borderRadius: 28, background: C.white, boxShadow: '0 0 0 1px #262a26, 0 24px 70px rgba(0,0,0,0.6), 0 0 120px rgba(34,197,94,0.08)', overflow: 'hidden'}}>
 			{/* top bar */}
 			<div style={{position: 'absolute', left: 32, right: 32, top: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: FONT.body, fontSize: 24, color: C.ink}}>
 				<div style={{display: 'flex', alignItems: 'center', gap: 14}}>
@@ -80,10 +80,7 @@ export const EditorUI = ({w = 1000, h = 1040, start = 0}) => {
 
 			{/* preview */}
 			<div style={{position: 'absolute', left: 32, top: 116, width: 300, height: 533, borderRadius: 16, overflow: 'hidden', background: C.paper, opacity: pop(f, 4)}}>
-				<FootageBox start={25.6} width={300} height={533} zoom={1} duration={400} />
-				<div style={{position: 'absolute', left: 0, right: 0, bottom: 0, padding: 16, background: 'linear-gradient(transparent, rgba(0,0,0,0.55))', fontFamily: FONT.display, fontSize: 30, color: '#fff'}}>
-					Worlds merging
-				</div>
+				<AiBuddy />
 			</div>
 
 			{/* assets */}
@@ -126,9 +123,9 @@ export const EditorUI = ({w = 1000, h = 1040, start = 0}) => {
 				</div>
 				<div style={{position: 'relative', width: tlW, height: 280}}>
 					<Track label="video" clips={sceneClips} y={0} frame={f} at={24} w={tlW} />
-					<Track label="text" clips={textClips} y={66} frame={f} at={40} w={tlW} color={C.ink} soft="#f1f1ef" />
+					<Track label="text" clips={textClips} y={66} frame={f} at={40} w={tlW} color={C.ink} soft={C.raised} />
 					<Track label="voice" clips={voiceClips} y={132} frame={f} at={52} w={tlW} />
-					<Track label="sfx" clips={sfxClips} y={198} frame={f} at={64} w={tlW} color={C.muted} soft="#ecebe8" />
+					<Track label="sfx" clips={sfxClips} y={198} frame={f} at={64} w={tlW} color={C.muted} soft={C.raised} />
 					<div style={{position: 'absolute', top: -6, bottom: 0, left: 120 + head * (tlW - 120), width: 2, background: C.green}}>
 						<div style={{position: 'absolute', top: -8, left: -7, width: 16, height: 16, borderRadius: 16, background: C.green}} />
 					</div>

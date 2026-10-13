@@ -3,7 +3,7 @@ import {AbsoluteFill, Sequence, interpolate, useCurrentFrame} from 'remotion';
 import {FootageBox} from '../components/Footage';
 import {Label, PaperGrid, RingReveal} from '../components/FX';
 import {KineticText} from '../components/KineticText';
-import {FutureWorld, Landscape} from '../components/Worlds';
+import {Landscape, ProfileCity} from '../components/Worlds';
 import {C, FONT, easeIn, easeInOut, easeOut, shadow} from '../theme';
 
 const CARD = {x: 40, top: 640, w: 1000, h: 780};
@@ -23,7 +23,7 @@ const Tnt = () => (
 const WORLDS = [
 	{name: 'Open city', el: <City />},
 	{name: 'Block world', el: <Tnt />},
-	{name: 'Future grid', el: <FutureWorld w={CARD.w} h={CARD.h} />},
+	{name: 'Creator', el: <ProfileCity w={CARD.w} h={CARD.h} />},
 	{name: 'Cinematic landscape', el: <Landscape w={CARD.w} h={CARD.h} />},
 ];
 const CUTS = [0, 50, 100, 150];
@@ -37,7 +37,7 @@ const Pill = ({children, opacity = 1}) => (
 			bottom: 24,
 			padding: '12px 22px',
 			borderRadius: 40,
-			background: 'rgba(255,255,255,0.94)',
+			background: 'rgba(14,16,14,0.88)',
 			fontFamily: FONT.body,
 			fontSize: 26,
 			color: C.ink,

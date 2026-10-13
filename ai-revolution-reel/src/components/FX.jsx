@@ -20,19 +20,23 @@ export const Particles = ({count = 40, seed = 'p', color = C.green, speed = 1, s
 	);
 };
 
-/** Fine dotted/lined paper grid. */
-export const PaperGrid = ({opacity = 1, cell = 72, offset = 0}) => (
-	<AbsoluteFill
-		style={{
-			opacity,
-			backgroundImage: `linear-gradient(${C.line} 1px, transparent 1px), linear-gradient(90deg, ${C.line} 1px, transparent 1px)`,
-			backgroundSize: `${cell}px ${cell}px`,
-			backgroundPosition: `${offset}px ${offset}px`,
-			maskImage: 'radial-gradient(ellipse at 50% 45%, black 20%, transparent 75%)',
-			WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, black 20%, transparent 75%)',
-		}}
-	/>
-);
+/** Fine lined grid that slowly drifts. */
+export const PaperGrid = ({opacity = 1, cell = 72, speed = 0.8}) => {
+	const frame = useCurrentFrame();
+	const o = frame * speed;
+	return (
+		<AbsoluteFill
+			style={{
+				opacity,
+				backgroundImage: `linear-gradient(${C.line} 1px, transparent 1px), linear-gradient(90deg, ${C.line} 1px, transparent 1px)`,
+				backgroundSize: `${cell}px ${cell}px`,
+				backgroundPosition: `${o * 0.4}px ${o}px`,
+				maskImage: 'radial-gradient(ellipse at 50% 45%, black 20%, transparent 75%)',
+				WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, black 20%, transparent 75%)',
+			}}
+		/>
+	);
+};
 
 /** Perspective floor grid that scrolls toward the camera. */
 export const Grid = ({opacity = 0.6, speed = 4, horizon = 1100, color = C.line, tilt = 72, cell = 120}) => {
@@ -62,7 +66,7 @@ export const Grid = ({opacity = 0.6, speed = 4, horizon = 1100, color = C.line, 
 export const Grain = ({opacity = 0.05}) => {
 	const frame = useCurrentFrame();
 	return (
-		<AbsoluteFill style={{pointerEvents: 'none', opacity, mixBlendMode: 'multiply'}}>
+		<AbsoluteFill style={{pointerEvents: 'none', opacity, mixBlendMode: 'overlay'}}>
 			<svg width="1080" height="1920">
 				<filter id={`grain-${frame % 6}`}>
 					<feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed={frame % 6} stitchTiles="stitch" />

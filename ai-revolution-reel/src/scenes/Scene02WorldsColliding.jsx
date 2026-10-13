@@ -72,7 +72,7 @@ export const Scene02WorldsColliding = () => {
 								left: 70,
 								padding: '14px 24px',
 								borderRadius: 40,
-								background: 'rgba(255,255,255,0.92)',
+								background: 'rgba(14,16,14,0.88)',
 								fontFamily: FONT.body,
 								fontSize: 26,
 								color: C.ink,
@@ -91,7 +91,7 @@ export const Scene02WorldsColliding = () => {
 			<KineticText text="Games are no longer separate." start={90} end={178} y={380} size={92} highlight={['separate.']} seed={21} />
 			<KineticText text="What if worlds could merge?" start={186} end={258} y={380} size={96} highlight={['merge?']} mode="type" seed={22} />
 
-			<Flash at={COLLIDE} duration={10} color={C.white} peak={0.9} />
+			<Flash at={COLLIDE} duration={10} color={C.green} peak={0.5} />
 		</AbsoluteFill>
 	);
 };

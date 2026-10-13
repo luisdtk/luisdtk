@@ -15,14 +15,14 @@ const PromptBox = ({frame}) => {
 	const sent = frame > 340;
 	return (
 		<div style={{position: 'absolute', left: 70, right: 70, top: 640, opacity: p, transform: `translateY(${(1 - p) * 30}px)`}}>
-			<div style={{borderRadius: 24, background: C.white, border: `1px solid ${C.line}`, boxShadow: '0 10px 40px rgba(0,0,0,0.06)', padding: '30px 34px 24px', minHeight: 190}}>
+			<div style={{borderRadius: 24, background: C.white, border: `1px solid ${C.line}`, boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 80px rgba(34,197,94,0.08)', padding: '30px 34px 24px', minHeight: 190}}>
 				<div style={{fontFamily: FONT.body, fontSize: 32, lineHeight: 1.4, color: chars > 0 ? C.ink : C.faint}}>
 					{chars > 0 ? PROMPT.slice(0, chars) : 'How can I help you today?'}
 					{!sent ? <span style={{display: 'inline-block', width: 3, height: 34, marginLeft: 3, verticalAlign: 'middle', background: C.green, opacity: Math.floor(frame / 8) % 2 ? 0.2 : 1}} /> : null}
 				</div>
 				<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24, fontFamily: FONT.body, fontSize: 22, color: C.muted}}>
 					<span style={{fontSize: 34, color: C.muted}}>+</span>
-					<div style={{width: 52, height: 52, borderRadius: 14, background: sent ? C.green : C.line, color: C.white, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28}}>↑</div>
+					<div style={{width: 52, height: 52, borderRadius: 14, background: sent ? C.green : C.line, color: C.pure, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28}}>↑</div>
 				</div>
 			</div>
 			<div style={{display: 'flex', justifyContent: 'space-between', marginTop: 16, padding: '0 12px', fontFamily: FONT.body, fontSize: 22, color: C.muted}}>
@@ -75,7 +75,7 @@ export const Scene04MetaMoment = () => {
 				</AbsoluteFill>
 			) : null}
 			<Flash at={DROP} duration={6} color={C.paper} peak={1} />
-			<Flash at={300} duration={6} color={C.white} peak={0.6} />
+			<Flash at={300} duration={6} color={C.green} peak={0.35} />
 		</AbsoluteFill>
 	);
 };

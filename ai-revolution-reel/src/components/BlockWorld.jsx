@@ -99,7 +99,7 @@ const PortalFill = ({x, y, w, h, frame, id}) => (
  * Side-scrolling block landscape. `scroll` is the camera x in world px.
  * `portalCol` places an obsidian portal on the ground at that column.
  */
-export const BlockWorld = ({scroll = 0, id = 'bw', seed = 1, portalCol, sky = 'day', steve, cols = 14, flat = [0, -1]}) => {
+export const BlockWorld = ({scroll = 0, id = 'bw', seed = 1, portalCol, sky = 'dusk', steve, cols = 14, flat = [0, -1]}) => {
 	const frame = useCurrentFrame();
 	const startCol = Math.floor(scroll / B) - 1;
 	const columns = new Array(cols + 3).fill(0).map((_, i) => startCol + i);

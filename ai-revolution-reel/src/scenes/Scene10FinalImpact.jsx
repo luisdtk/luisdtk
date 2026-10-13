@@ -18,9 +18,9 @@ export const Scene10FinalImpact = () => {
 				<KineticText text="AI isn't just changing the world." start={2} end={150} y={760} size={96} highlight={[]} stagger={3} seed={101} />
 			</AbsoluteFill>
 			<KineticText text="It's giving us a new one." start={SECOND} end={150} y={900} size={120} mode="slam" stagger={4} highlight={['new', 'one.']} seed={102} />
-			<Flash at={SECOND} duration={8} color={C.white} peak={0.5} />
+			<Flash at={SECOND} duration={8} color={C.green} peak={0.3} />
 			<LightStreak at={120} duration={20} y={1180} length={900} />
-			<AbsoluteFill style={{background: C.white, opacity: end}} />
+			<AbsoluteFill style={{background: C.paper, opacity: end}} />
 		</AbsoluteFill>
 	);
 };

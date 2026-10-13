@@ -97,7 +97,7 @@ export const Globe = ({cx = 540, cy = 860, R = 360, rot = 0, tilt = 0.35, grow =
 
 	return (
 		<g transform={`translate(${cx} ${cy})`} opacity={opacity}>
-			<circle r={R} fill="#ffffff" />
+			<circle r={R} fill={C.white} />
 			<path d={back} stroke={C.faint} strokeWidth={1} fill="none" opacity={0.35} />
 			<path d={front} stroke={C.ink} strokeWidth={1.1} fill="none" opacity={0.22} />
 			<circle r={R} fill="none" stroke={C.ink} strokeWidth={1.4} opacity={0.5} />

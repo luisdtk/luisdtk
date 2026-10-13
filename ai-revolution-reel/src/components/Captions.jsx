@@ -37,7 +37,7 @@ export const Captions = ({hideAfter = 1622}) => {
 				style={{
 					padding: '14px 26px',
 					borderRadius: 18,
-					background: 'rgba(255,255,255,0.94)',
+					background: 'rgba(19,21,19,0.92)',
 					border: `1px solid ${C.line}`,
 					fontFamily: FONT.body,
 					fontSize: 34,

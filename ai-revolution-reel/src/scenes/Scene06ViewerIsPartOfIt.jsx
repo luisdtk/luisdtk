@@ -26,7 +26,7 @@ const Phone = ({frame}) => {
 		</div>
 	);
 	return (
-		<div style={{position: 'relative', width: 440, height: 900, borderRadius: 56, background: C.ink, boxShadow: '0 30px 90px rgba(22,163,74,0.25), 0 10px 30px rgba(0,0,0,0.15)'}}>
+		<div style={{position: 'relative', width: 440, height: 900, borderRadius: 56, background: '#262a26', boxShadow: '0 30px 120px rgba(34,197,94,0.35), 0 10px 30px rgba(0,0,0,0.6)'}}>
 			{frame >= FREEZE[0] && frame < FREEZE[1] ? <Freeze frame={FREEZE[0]}>{inner}</Freeze> : inner}
 		</div>
 	);

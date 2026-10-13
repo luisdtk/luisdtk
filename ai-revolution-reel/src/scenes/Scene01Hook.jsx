@@ -48,7 +48,7 @@ export const Scene01Hook = () => {
 			<KineticText text="AI isn't just a trend." start={12} end={68} y={1300} size={112} highlight={['trend.']} stagger={3} seed={11} />
 			<KineticText text="It's a revolution." start={72} end={126} y={1300} size={128} mode="slam" highlight={['revolution.']} stagger={4} exit="zoom" seed={12} />
 
-			<Flash at={127} duration={8} color={C.white} peak={1} />
+			<Flash at={127} duration={8} color={C.green} peak={0.45} />
 		</AbsoluteFill>
 	);
 };

@@ -33,7 +33,7 @@ export const Scene08FutureIsHere = () => {
 	const roofs = visible.map((b) => proj(b.x, b.h, b.z));
 
 	return (
-		<AbsoluteFill style={{background: 'linear-gradient(180deg, #ffffff 0%, #f4faf6 55%, #eaf5ee 100%)'}}>
+		<AbsoluteFill style={{background: 'linear-gradient(180deg, #050605 0%, #08100b 55%, #0b1a10 100%)'}}>
 			<svg width={1080} height={1920} style={{position: 'absolute'}}>
 				{/* road + light trails toward the horizon */}
 				{[-1.6, -0.55, 0.55, 1.6].map((k) => (
@@ -56,7 +56,7 @@ export const Scene08FutureIsHere = () => {
 						const rows = Math.floor(b.h / 90);
 						return (
 							<g key={i}>
-								<rect x={lx} y={top} width={w} height={h} fill="#ffffff" stroke={C.ink} strokeWidth={Math.min(2.5, 0.6 + s)} />
+								<rect x={lx} y={top} width={w} height={h} fill={C.white} stroke={C.ink} strokeWidth={Math.min(2.5, 0.6 + s)} />
 								{new Array(rows).fill(0).map((__, r) =>
 									random(`w${i}${r}`) < 0.35 ? <rect key={r} x={lx + w * 0.2} y={top + h * ((r + 0.4) / rows)} width={w * 0.6} height={Math.max(1, h / rows / 5)} fill={b.lit > 0.5 ? C.green : C.line} /> : null,
 								)}
@@ -76,7 +76,7 @@ export const Scene08FutureIsHere = () => {
 					})}
 				</g>
 			</svg>
-			<div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 700, background: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.92) 70%, rgba(255,255,255,0) 100%)'}} />
+			<div style={{position: 'absolute', left: 0, right: 0, top: 0, height: 700, background: 'linear-gradient(180deg, #050605 0%, rgba(5,6,5,0.92) 70%, rgba(5,6,5,0) 100%)'}} />
 			<Label x={70} y={250}>
 				The future is already here
 			</Label>

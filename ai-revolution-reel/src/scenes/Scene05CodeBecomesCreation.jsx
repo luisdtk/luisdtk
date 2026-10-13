@@ -62,7 +62,7 @@ const Organize = ({f}) => {
 			{tracks.map((t, ti) => (
 				<div key={t.label} style={{position: 'relative', height: 150}}>
 					<div style={{position: 'absolute', top: 40, fontFamily: FONT.mono, fontSize: 22, color: C.muted}}>{t.label}</div>
-					<div style={{position: 'absolute', left: 110, right: 0, top: 20, height: 76, borderRadius: 12, background: '#f3f2ef'}} />
+					<div style={{position: 'absolute', left: 110, right: 0, top: 20, height: 76, borderRadius: 12, background: C.raised}} />
 					{new Array(t.n).fill(0).map((_, i) => {
 						const at = ti * 4 + i * 1.5;
 						const p = interpolate(f, [at, at + 10], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: easeOut});
@@ -78,7 +78,7 @@ const Organize = ({f}) => {
 									height: 64,
 									borderRadius: 10,
 									border: `1.5px solid ${t.color}`,
-									background: ti % 2 ? '#fafaf8' : C.greenSoft,
+									background: ti % 2 ? C.raised : C.greenSoft,
 									opacity: p,
 								}}
 							/>
