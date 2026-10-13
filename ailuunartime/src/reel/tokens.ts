@@ -17,6 +17,8 @@ export const font = {
   display: "Anton",
   ui: "Inter",
   mono: "JetBrains Mono",
+  serif: "Instrument Serif",
+  geo: "Syne",
 } as const;
 
 export const FRAME = { width: 1080, height: 1920 } as const;

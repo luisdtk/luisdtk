@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { AbsoluteFill, Img, staticFile } from "remotion";
 
 import { step } from "../kit/spring";
@@ -7,9 +8,13 @@ import { Embers, Logo } from "./fx";
 import { PanelView, shotAt } from "./panel";
 import { color, easeOut, font, FRAME, land } from "./tokens";
 
+// Three voices, sentence case: a quiet sans lead-in, an italic serif, then the punch in red.
 // Every word keeps its slot from the first frame, so lines never re-centre while they build.
-const LINES = [["HAVE", "YOU", "EVER"], ["IMAGINED", "READING"], ["MANGA", "LIKE", "THIS?"]];
-const ACCENT = new Set(["MANGA", "LIKE", "THIS?"]);
+const LINES: { words: string[]; style: CSSProperties }[] = [
+  { words: ["Have", "you", "ever"], style: { fontFamily: font.ui, fontWeight: 500, fontSize: 64, letterSpacing: "-0.01em", color: color.white, gap: 18 } },
+  { words: ["imagined", "reading"], style: { fontFamily: font.serif, fontStyle: "italic", fontWeight: 400, fontSize: 150, letterSpacing: "-0.02em", lineHeight: 0.95, color: color.white, gap: 30 } },
+  { words: ["manga", "like", "this?"], style: { fontFamily: font.geo, fontWeight: 800, fontSize: 78, letterSpacing: "-0.03em", color: color.red, gap: 20, textShadow: "0 0 40px rgba(226,38,43,0.45)" } },
+];
 const WORD_GAP = 0.11; // seconds between words, a little faster than eighths
 
 /** Scene 5: the line, Asta in red and black over the page, and the logo lockup on the last hit. */
@@ -80,10 +85,10 @@ export function FinalTitle({ t }: { t: number }) {
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(10,10,10,0) 80%, rgba(10,10,10,0.9) 100%)" }} />
 
       {/* the line */}
-      <div style={{ position: "absolute", top: 270, left: 0, width: FRAME.width, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, scale: `${1 + hit * 0.03}` }}>
+      <div style={{ position: "absolute", top: 290, left: 0, width: FRAME.width, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, scale: `${1 + hit * 0.03}` }}>
         {LINES.map((line, li) => (
-          <div key={li} style={{ display: "flex", gap: 26, fontFamily: font.display, fontSize: li === 1 ? 118 : 132, lineHeight: 1.02, letterSpacing: "0.01em" }}>
-            {line.map((word) => {
+          <div key={li} style={{ display: "flex", lineHeight: 1.05, textShadow: "0 4px 30px rgba(0,0,0,0.6)", ...line.style }}>
+            {line.words.map((word) => {
               const start = cue.title + index++ * WORD_GAP;
               const u = land(progress(t, start, 0.3));
               return (
@@ -91,11 +96,9 @@ export function FinalTitle({ t }: { t: number }) {
                   key={word}
                   style={{
                     display: "inline-block",
-                    color: ACCENT.has(word) ? color.red : color.white,
                     opacity: u,
                     translate: `0 ${(1 - u) * 36}px`,
                     filter: u < 1 ? `blur(${(1 - u) * 16}px)` : undefined,
-                    textShadow: ACCENT.has(word) ? "0 0 40px rgba(226,38,43,0.45)" : "0 4px 30px rgba(0,0,0,0.6)",
                   }}
                 >
                   {word}
