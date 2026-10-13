@@ -49,12 +49,12 @@ export const cue = {
   // Scene 3, the reader: "reading manga feels like watching anime. And the crazy part?"
   reader: say(3) - 0.05,
   motionOn: say(3) + 0.55,
-  pushIn: say(3) + 0.9,
-  maskReveal: say(3) + 1.45,
-  foreground: say(3) + 2.0,
-  readerEnergy: say(4) + 0.05,
-  nextPanel: say(4) + 0.6,
-  thumb: say(4) + 0.8,
+  pushIn: say(3) + 0.7, // into Yuno and the birds (page 1 of 3)
+  page5: say(3) + 1.4, // scroll on: the flock pecks Asta
+  page6: say(4) - 0.25, // scroll on: Asta dashes, birds diving at him
+  maskReveal: say(4) + 0.5, // the blade panel opens, red energy pouring off the sword
+  foreground: say(4) + 0.7,
+  readerEnergy: say(4) + 0.6,
   readerOut: say(5) - 0.45,
 
   // Scene 4, the reaction: "AI is making things like this possible."

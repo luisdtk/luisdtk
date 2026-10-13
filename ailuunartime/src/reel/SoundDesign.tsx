@@ -1,6 +1,6 @@
 import { Html5Audio, Sequence, staticFile, useVideoConfig } from "remotion";
 
-import { cue, NARRATION_START, PHRASES } from "./cues";
+import { cue, NARRATION_START } from "./cues";
 import { COMMENT_CUES } from "./PostScene";
 import peaks from "../../public/audio/sfx-peaks.json";
 
@@ -37,8 +37,11 @@ const HITS: [at: number, sfx: Sfx, volume: number][] = [
   [cue.maskReveal + 0.15, "swipe", 0.36],
   [cue.foreground + 0.1, "whoosh", 0.28],
   [cue.readerEnergy + 0.15, "energy", 0.36],
-  [cue.nextPanel + 0.18, "swipe", 0.4],
-  [cue.nextPanel + 0.18, "tick", 0.28],
+  [cue.page5 + 0.2, "whoosh", 0.3],
+  [cue.page5 + 0.5, "pop", 0.22],
+  [cue.page5 + 0.75, "pop-low", 0.2],
+  [cue.page6 + 0.2, "whoosh", 0.3],
+  [cue.page6 + 0.45, "impact", 0.3],
   [cue.reaction, "whoosh-heavy", 0.45],
   [cue.reaction + 0.1, "swipe", 0.3],
   ...COMMENT_CUES.map(([at, brief], i): [number, Sfx, number] => [at, i % 2 ? "pop-low" : "pop", brief ? 0.42 : 0.2]),
@@ -50,18 +53,10 @@ const HITS: [at: number, sfx: Sfx, volume: number][] = [
   [cue.finalHit, "final-hit", 0.85],
 ];
 
-/** Music ducks while the narrator speaks. */
-function musicVolume(t: number) {
-  const base = 0.62;
-  const speaking = PHRASES.some(([from, to]) => t > NARRATION_START + from - 0.08 && t < NARRATION_START + to + 0.08);
-  return speaking ? base * 0.45 : base;
-}
-
 export function SoundDesign() {
   const { fps } = useVideoConfig();
   return (
     <>
-      <Html5Audio src={staticFile("audio/music-bed.wav")} volume={(f) => musicVolume(f / fps)} />
       <Sequence from={Math.round(NARRATION_START * fps)} name="Narration" layout="none">
         <Html5Audio src={staticFile("audio/narration.wav")} volume={1} />
       </Sequence>

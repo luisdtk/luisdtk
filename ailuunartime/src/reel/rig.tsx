@@ -18,10 +18,10 @@ export function animSrc(name: AnimName, t: number, phase = 0) {
 }
 
 /** Asta in his own colours, alive: hair and cape flow, and he blinks. Drop-in for the plain <Img>. */
-export function LiveAsta({ t, size, style, phase = 0 }: { t: number; size: number; style?: CSSProperties; phase?: number }) {
+export function LiveAsta({ t, size, style, phase = 0, anim = "asta" }: { t: number; size: number; style?: CSSProperties; phase?: number; anim?: "asta" | "asta-red" }) {
   return (
     <div style={{ position: "absolute", width: size, height: size, ...style }}>
-      <Img src={animSrc("asta", t, phase)} style={{ position: "absolute", inset: 0, width: size, height: size }} />
+      <Img src={animSrc(anim, t, phase)} style={{ position: "absolute", inset: 0, width: size, height: size }} />
     </div>
   );
 }

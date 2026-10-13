@@ -34,5 +34,29 @@
     "fps": 12,
     "width": 930,
     "height": 1926
+  },
+  "page-4-birds-yuno": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1600,
+    "height": 2400
+  },
+  "page-5-flock": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1600,
+    "height": 2400
+  },
+  "page-6-dash": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1600,
+    "height": 2400
+  },
+  "asta-red": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1200,
+    "height": 1200
   }
 }
