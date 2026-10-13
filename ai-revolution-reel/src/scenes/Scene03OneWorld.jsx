@@ -3,7 +3,8 @@ import {AbsoluteFill, Sequence, interpolate, useCurrentFrame} from 'remotion';
 import {FootageBox} from '../components/Footage';
 import {Label, PaperGrid, RingReveal} from '../components/FX';
 import {KineticText} from '../components/KineticText';
-import {Landscape, ProfileCity} from '../components/Worlds';
+import {SoarClip} from '../components/SoarClip';
+import {ProfileCity} from '../components/Worlds';
 import {C, FONT, easeIn, easeInOut, easeOut, shadow} from '../theme';
 
 const CARD = {x: 40, top: 640, w: 1000, h: 780};
@@ -24,7 +25,7 @@ const WORLDS = [
 	{name: 'Open city', el: <City />},
 	{name: 'Block world', el: <Tnt />},
 	{name: 'Creator', el: <ProfileCity w={CARD.w} h={CARD.h} />},
-	{name: 'Cinematic landscape', el: <Landscape w={CARD.w} h={CARD.h} />},
+	{name: 'Cinematic', el: <SoarClip w={CARD.w} h={CARD.h} />, gridEl: <SoarClip w={CARD.w} h={CARD.h} startAt={150} />},
 ];
 const CUTS = [0, 50, 100, 150];
 const GRID_AT = 192;
@@ -118,7 +119,7 @@ export const Scene03OneWorld = () => {
 									background: C.white,
 								}}
 							>
-								<div style={{width: CARD.w, height: CARD.h, transform: `scale(${cw / CARD.w})`, transformOrigin: '0 0'}}>{w.el}</div>
+								<div style={{width: CARD.w, height: CARD.h, transform: `scale(${cw / CARD.w})`, transformOrigin: '0 0'}}>{w.gridEl ?? w.el}</div>
 							</div>
 						);
 					})}
