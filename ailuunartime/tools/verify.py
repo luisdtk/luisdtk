@@ -42,11 +42,15 @@ def frame(t):
 
 # no black frames once the hook has started, background reads as #0a0a0a not lifted grey
 lum = []
+empty = []
 for t in np.arange(0.2, duration - 0.05, 0.25):
-    lum.append((round(t, 2), float(frame(t).mean())))
-dark = [t for t, l in lum if l < 4]
+    f = frame(t)
+    lum.append((round(t, 2), float(f.mean())))
+    if f.max() < 40:  # nothing brighter than deep grey: an empty frame (a small logo on black still passes)
+        empty.append(round(float(t), 2))
+dark = empty
 print("mean luma every 0.25 s:", " ".join(f"{t}:{l:.0f}" for t, l in lum))
-check(not dark, f"no near-black frames after 0.2 s {dark}")
+check(not dark, f"no empty (all-dark) frames after 0.2 s {dark}")
 corner = frame(12.0)[60:120, 60:120].reshape(-1, 3).mean(0)
 check(all(c <= 14 for c in corner), f"dark background not lifted to grey by colour range (got {corner.round(1)}; the vignette takes corners to black)")
 
