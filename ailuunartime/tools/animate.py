@@ -28,11 +28,11 @@ ASSETS = {
     "asta": dict(src="asta.png", map="asta", width=1200, amp=16, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(250, 186, 150), blink=10),
     "asta-red": dict(src="asta-redblack.png", map="asta", width=1200, amp=16, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(240, 86, 80), blink=10),
     "yami": dict(src="yami.png", map="yami", width=1152, amp=14, eyes=[], skin=None, blink=None),
-    "sword-fg": dict(src="layers/sword-fg-noblade-color.png", map="sword-fg", width=1725, amp=8, eyes=[(0.436, 0.284, 0.016, 0.011), (0.522, 0.286, 0.016, 0.011)], skin=(247, 205, 176), blink=15),
-    "tornado-fg": dict(src="layers/tornado-fg-color.png", map="tornado-fg", width=3312, amp=18, eyes=[], skin=None, blink=None),
-    "tornado-bg": dict(src="layers/tornado-bg.png", map="tornado-bg", width=1656, amp=16, eyes=[], skin=None, blink=None),
-    "scream": dict(src="color/asta-scream.png", map="scream", width=1500, amp=11, eyes=[], skin=None, blink=None),
-    "shock": dict(src="color/shock.png", map="shock", width=930, amp=8, eyes=[], skin=None, blink=None),
+    "sword-fg": dict(src="redink/sword-fg-noblade.png", map="sword-fg", width=1725, amp=8, eyes=[(0.436, 0.284, 0.016, 0.011), (0.522, 0.286, 0.016, 0.011)], skin=(0, 0, 0), blink=15),
+    "tornado-fg": dict(src="redink/tornado-fg.png", map="tornado-fg", width=3312, amp=18, eyes=[], skin=None, blink=None),
+    "tornado-bg": dict(src="redink/tornado-bg.png", map="tornado-bg", width=1656, amp=16, eyes=[], skin=None, blink=None),
+    "scream": dict(src="redink/asta-scream.png", map="scream", width=1500, amp=11, eyes=[], skin=None, blink=None, mouth=(0.52, 0.66, 0.13, 0.1, 0.55)),
+    "shock": dict(src="redink/shock.png", map="shock", width=930, amp=8, eyes=[], skin=None, blink=None),
 }
 
 
@@ -55,7 +55,7 @@ def draw_lids(rgba, eyes, skin, shut):
         out[..., :3] = (out[..., :3] * (1 - m) + np.array(skin, np.float32) * m).astype(np.uint8)
         out[..., 3:] = np.maximum(out[..., 3:], (m * 255).astype(np.uint8))
         pts = np.array([[X - RX * 1.1 + i * RX * 2.2 / 20, lid - RY * 0.15 + RY * 0.5 * np.sin(np.pi * i / 20)] for i in range(21)], np.int32)
-        cv2.polylines(out, [pts], False, (20, 8, 8, 255), max(2, int(RY * 0.35)), cv2.LINE_AA)
+        cv2.polylines(out, [pts], False, (226, 38, 43, 255) if sum(skin) < 30 else (20, 8, 8, 255), max(2, int(RY * 0.35)), cv2.LINE_AA)
     return out
 
 
@@ -82,6 +82,12 @@ def main(only=None):
             p = 2 * np.pi * f / FRAMES
             dx = amp * (np.sin(p + phx) + 0.35 * np.sin(2 * p + 1.7 * phy))
             dy = amp * 0.6 * np.cos(p + phy)
+            if a.get("mouth"):
+                # a shouting mouth: the jaw stretches open and snaps shut, three times a loop
+                mx, my, mrx, mry, mamp = a["mouth"]
+                g = np.exp(-(((xs / w - mx) / mrx) ** 2 + ((ys / h - my) / mry) ** 2) * 2.2)
+                k = 0.5 + 0.5 * np.sin(3 * p)
+                dy = dy - (ys - my * h) * mamp * k * g
             frame = cv2.remap(rgba, xs + dx.astype(np.float32), ys + dy.astype(np.float32), cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
             if a["blink"] is not None and a["eyes"]:
                 shut = {a["blink"]: 0.6, a["blink"] + 1: 1.0, a["blink"] + 2: 0.6}.get(f, 0)

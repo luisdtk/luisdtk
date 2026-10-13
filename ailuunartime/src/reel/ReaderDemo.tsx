@@ -150,8 +150,8 @@ function Screen({ t }: { t: number }) {
           {PAGES.map((name, i) => (
             <Img
               key={name}
-              src={on > 0 ? animSrc(name, t, i * 0.37) : staticFile(`images/pages/${name}.png`)}
-              style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.paper }}
+              src={on > 0 ? animSrc(name, t, i * 0.37) : staticFile(`images/redink/${name}.png`)}
+              style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.ink }}
             />
           ))}
         </div>
@@ -198,11 +198,11 @@ function Screen({ t }: { t: number }) {
       {/* page strip */}
       <div style={{ position: "absolute", top: VIEW.y + VIEW.h + 84, left: 26, display: "flex", gap: 14 }}>
         {[...PAGES, "sword"].map((name, i) => (
-          <div key={name} style={{ width: 118, height: 86, borderRadius: 12, overflow: "hidden", outline: i === active ? `3px solid ${color.red}` : `1px solid ${color.line}`, outlineOffset: i === active ? 2 : 0, opacity: i === active ? 1 : 0.55, background: color.paper }}>
+          <div key={name} style={{ width: 118, height: 86, borderRadius: 12, overflow: "hidden", outline: i === active ? `3px solid ${color.red}` : `1px solid ${color.line}`, outlineOffset: i === active ? 2 : 0, opacity: i === active ? 1 : 0.55, background: color.ink }}>
             {name === "sword" ? (
               <PanelView panel="sword" width={118} height={86} shot={{ fx: 0.5, fy: 0.4, zoom: 1 }} />
             ) : (
-              <Img src={staticFile(`images/pages/${name}.png`)} style={{ width: 118, height: 177, marginTop: -30 }} />
+              <Img src={staticFile(`images/redink/${name}.png`)} style={{ width: 118, height: 177, marginTop: -30 }} />
             )}
           </div>
         ))}

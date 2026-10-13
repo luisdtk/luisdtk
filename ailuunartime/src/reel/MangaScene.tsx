@@ -69,7 +69,7 @@ function Bokeh({ t, start, end, seed }: { t: number; start: number; end: number;
 
 /** Soft light from the top of frame, like sun haze over the page. */
 function Haze({ amount }: { amount: number }) {
-  return <AbsoluteFill style={{ background: `radial-gradient(ellipse 90% 45% at 70% 0%, rgba(255,255,255,${0.35 * amount}) 0%, rgba(255,255,255,0) 70%)`, mixBlendMode: "screen", pointerEvents: "none" }} />;
+  return <AbsoluteFill style={{ background: `radial-gradient(ellipse 90% 45% at 70% 0%, rgba(226,38,43,${0.22 * amount}) 0%, rgba(255,255,255,0) 70%)`, mixBlendMode: "screen", pointerEvents: "none" }} />;
 }
 
 /** Red pillars rising from the floor. */

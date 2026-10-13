@@ -21,7 +21,7 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "public" / "images" / "pages"
+SRC = ROOT / "public" / "images" / "redink"  # red ink on black (tools/redink.py)
 OUT = ROOT / "public" / "anim"
 FRAMES = 24
 FPS = 12
@@ -42,8 +42,8 @@ PAGES = {
         ("bounce", (0.66, 0.285), (0.04, 0.03), {"amp": 0.008, "speed": 4, "phase": 0.15}),
         # Yuno: hair in the wind, a slow blink
         ("wave", (0.33, 0.42), (0.17, 0.08), {"amp": 0.006}),
-        ("blink", (0.27, 0.467), (0.022, 0.011), {"at": 14, "skin": 255}),
-        ("blink", (0.364, 0.464), (0.022, 0.011), {"at": 14, "skin": 255}),
+        ("blink", (0.27, 0.467), (0.022, 0.011), {"at": 14, "skin": 0}),
+        ("blink", (0.364, 0.464), (0.022, 0.011), {"at": 14, "skin": 0}),
         ("wave", (0.75, 0.45), (0.05, 0.04), {"amp": 0.004}),
     ],
     "page-5-flock": [
@@ -78,8 +78,8 @@ PAGES = {
         ("wave", (0.12, 0.74), (0.08, 0.03), {"amp": 0.004}),
         ("shake", (0.21, 0.638), (0.05, 0.05), {"amp": 0.004}),
         ("wave", (0.3, 0.6), (0.13, 0.04), {"amp": 0.006, "speed": 3}),
-        ("blink", (0.089, 0.412), (0.02, 0.012), {"at": 8, "skin": 255}),
-        ("blink", (0.164, 0.412), (0.02, 0.012), {"at": 8, "skin": 255}),
+        ("blink", (0.089, 0.412), (0.02, 0.012), {"at": 8, "skin": 0}),
+        ("blink", (0.164, 0.412), (0.02, 0.012), {"at": 8, "skin": 0}),
     ],
 }
 
@@ -133,7 +133,7 @@ def blink(frame, c, r, p, f):
     mask[int(lid):, :] = 0
     frame[mask > 0] = p["skin"]
     pts = np.array([[X - RX * 1.1 + i * RX * 2.2 / 20, lid + RY * 0.4 * np.sin(np.pi * i / 20)] for i in range(21)], np.int32)
-    cv2.polylines(frame, [pts], False, (15, 15, 15), max(2, int(RY * 0.45)), cv2.LINE_AA)
+    cv2.polylines(frame, [pts], False, (226, 38, 43), max(2, int(RY * 0.45)), cv2.LINE_AA)
     return frame
 
 

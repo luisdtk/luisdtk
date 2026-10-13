@@ -20,7 +20,7 @@ export type FolderSpec = {
 };
 
 /**
- * A manga-style page drawn in code: a panel grid with screentone, hatching and speed lines.
+ * A manga-style page drawn in code, red ink on black like the reel's manga: a panel grid with screentone, hatching and speed lines.
  * No characters and no lettering: it stands in for series whose pages were not supplied.
  */
 export function DrawnPage({ seed, w, h }: { seed: number; w: number; h: number }) {
@@ -36,10 +36,10 @@ export function DrawnPage({ seed, w, h }: { seed: number; w: number; h: number }
   ];
   const id = `tone-${seed}`;
   return (
-    <svg width={w} height={h} style={{ display: "block", background: color.paper }}>
+    <svg width={w} height={h} style={{ display: "block", background: color.ink }}>
       <defs>
         <pattern id={id} width={6} height={6} patternUnits="userSpaceOnUse">
-          <circle cx={3} cy={3} r={1.3} fill="#1a1a1a" />
+          <circle cx={3} cy={3} r={1.3} fill="#e2262b" />
         </pattern>
       </defs>
       {panels.map((p, i) => {
@@ -56,21 +56,21 @@ export function DrawnPage({ seed, w, h }: { seed: number; w: number; h: number }
                 Array.from({ length: 40 }, (_, k) => {
                   const a = (k / 40) * Math.PI * 2 + rand() * 0.08;
                   const r0 = 12 + rand() * 20;
-                  return <line key={k} x1={cx + Math.cos(a) * r0} y1={cy + Math.sin(a) * r0} x2={cx + Math.cos(a) * 400} y2={cy + Math.sin(a) * 400} stroke="#111" strokeWidth={0.8 + rand() * 1.6} />;
+                  return <line key={k} x1={cx + Math.cos(a) * r0} y1={cy + Math.sin(a) * r0} x2={cx + Math.cos(a) * 400} y2={cy + Math.sin(a) * 400} stroke="#e2262b" strokeWidth={0.8 + rand() * 1.6} />;
                 })}
               {kind === 1 && (
                 <>
                   <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={`url(#${id})`} opacity={0.8} />
-                  <path d={`M${p.x} ${p.y + p.h * 0.7} Q ${cx} ${p.y + p.h * 0.2} ${p.x + p.w} ${p.y + p.h * 0.55} L ${p.x + p.w} ${p.y + p.h} L ${p.x} ${p.y + p.h} Z`} fill="#121212" />
+                  <path d={`M${p.x} ${p.y + p.h * 0.7} Q ${cx} ${p.y + p.h * 0.2} ${p.x + p.w} ${p.y + p.h * 0.55} L ${p.x + p.w} ${p.y + p.h} L ${p.x} ${p.y + p.h} Z`} fill="#e2262b" />
                 </>
               )}
               {kind === 2 &&
                 Array.from({ length: 26 }, (_, k) => (
-                  <line key={k} x1={p.x + k * 10 - 40} y1={p.y} x2={p.x + k * 10 + 40} y2={p.y + p.h} stroke="#151515" strokeWidth={1.2} />
+                  <line key={k} x1={p.x + k * 10 - 40} y1={p.y} x2={p.x + k * 10 + 40} y2={p.y + p.h} stroke="#e2262b" strokeWidth={1.2} />
                 ))}
-              {kind === 2 && <ellipse cx={cx} cy={cy} rx={p.w * 0.22} ry={p.h * 0.3} fill={color.paper} stroke="#111" strokeWidth={3} />}
+              {kind === 2 && <ellipse cx={cx} cy={cy} rx={p.w * 0.22} ry={p.h * 0.3} fill={color.ink} stroke="#e2262b" strokeWidth={3} />}
             </g>
-            <rect x={p.x} y={p.y} width={p.w} height={p.h} fill="none" stroke="#0d0d0d" strokeWidth={3} />
+            <rect x={p.x} y={p.y} width={p.w} height={p.h} fill="none" stroke="#e2262b" strokeWidth={3} />
           </g>
         );
       })}

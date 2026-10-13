@@ -19,7 +19,7 @@ export function FocusLines({ t, w, h, cx, cy, strength, count = 90, inner = 0.48
         const n = { x: -Math.sin(a), y: Math.cos(a) };
         const p0 = { x: cx + Math.cos(a) * r0, y: cy + Math.sin(a) * r0 };
         const p1 = { x: cx + Math.cos(a) * reach, y: cy + Math.sin(a) * reach };
-        return <path key={i} d={`M${p0.x} ${p0.y} L${p1.x + n.x * wd} ${p1.y + n.y * wd} L${p1.x - n.x * wd} ${p1.y - n.y * wd} Z`} fill="#0b0b0b" />;
+        return <path key={i} d={`M${p0.x} ${p0.y} L${p1.x + n.x * wd} ${p1.y + n.y * wd} L${p1.x - n.x * wd} ${p1.y - n.y * wd} Z`} fill="#e2262b" />;
       })}
     </svg>
   );

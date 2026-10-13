@@ -6,13 +6,13 @@ import { animSrc, type AnimName } from "./rig";
 
 /** Natural sizes of the prepared layers (tools/prepare.py output), in pixels. */
 export const PANELS = {
-  // characters coloured in their series colours (tools/colorize.py); backgrounds stay black and white
-  scream: { src: "images/color/asta-scream.png", w: 1500, h: 2253 },
-  sword: { src: "images/color/sword.png", w: 1725, h: 2100 },
+  // red ink on black (tools/redink.py): the paper goes black, the ink goes Asta red
+  scream: { src: "images/redink/asta-scream.png", w: 1500, h: 2253 },
+  sword: { src: "images/redink/sword.png", w: 1725, h: 2100 },
   blade: { src: "images/panels/sword-blade.png", w: 1725, h: 2100 },
-  tornado: { src: "images/color/tornado.png", w: 3312, h: 2346 },
-  shock: { src: "images/color/shock.png", w: 930, h: 1926 },
-  yuno: { src: "images/color/yuno-smile.png", w: 2568, h: 612 },
+  tornado: { src: "images/redink/tornado.png", w: 3312, h: 2346 },
+  shock: { src: "images/redink/shock.png", w: 930, h: 1926 },
+  yuno: { src: "images/redink/yuno-smile.png", w: 2568, h: 612 },
 } as const;
 export type PanelName = keyof typeof PANELS;
 
@@ -66,7 +66,7 @@ export function PanelView({
 }) {
   const place = placeImage(panel, width, height, shot);
   return (
-    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee", ...style }}>
+    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#0a0a0a", ...style }}>
       <Img
         src={flow ? animSrc(flow.anim, flow.t) : staticFile(PANELS[panel].src)}
         style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", ...imageStyle }}
@@ -93,8 +93,8 @@ export function DirectionalBlur({ id, x = 0, y = 0 }: { id: string; x?: number; 
  * Asta's blade is its own layer and sways on its hilt.
  */
 export const LAYERS = {
-  sword: { fg: "sword-fg", bg: undefined, bgStill: "images/layers/sword-bg.png", panel: "sword", blade: { pivot: { x: 0.5, y: 0.64 } } },
-  tornado: { fg: "tornado-fg", bg: "tornado-bg", bgStill: "images/layers/tornado-bg.png", panel: "tornado", blade: undefined },
+  sword: { fg: "sword-fg", bg: undefined, bgStill: "images/redink/sword-bg.png", panel: "sword", blade: { pivot: { x: 0.5, y: 0.64 } } },
+  tornado: { fg: "tornado-fg", bg: "tornado-bg", bgStill: "images/redink/tornado-bg.png", panel: "tornado", blade: undefined },
 } as const;
 
 /**
@@ -148,7 +148,7 @@ export function LayeredPanel({
   // the blade sways on its hilt, slowly, with a quicker tremor of energy on top
   const sway = Math.sin(t * 2.2) * 1.6 + Math.sin(t * 7.3) * 0.35;
   return (
-    <div data-rig={id} style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee" }}>
+    <div data-rig={id} style={{ position: "relative", width, height, overflow: "hidden", background: "#0a0a0a" }}>
       <Img src={bgSrc} style={{ ...at(back), filter: blurBg > 0.3 ? `blur(${blurBg}px) brightness(0.96)` : undefined }} />
       {between}
       <Img src={fgSrc} style={{ ...at(front, driftFg), filter: blurFg > 0.3 ? `blur(${blurFg}px)` : undefined }} />
