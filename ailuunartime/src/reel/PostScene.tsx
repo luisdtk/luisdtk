@@ -40,27 +40,17 @@ const YAMI = (() => {
   const top = 24;
   return { w, h, left, top, tip: { x: left + 0.6 * w, y: top + 0.205 * h } };
 })();
-/** Below Yami: the Asta vs Yuno spread, then the chapter's animated pages, one after another. */
-const FEED = [
-  { name: "spread", h: (MEDIA.w * 1172) / 1600 },
-  { name: "cover", h: MEDIA.w * 1.5 },
-  { name: "page-4-birds-yuno", h: MEDIA.w * 1.5 },
-  { name: "page-5-flock", h: MEDIA.w * 1.5 },
-  { name: "page-6-dash", h: MEDIA.w * 1.5 },
-] as const;
+/** Below Yami: the Asta vs Yuno spread, and nothing else. */
+const FEED = [{ name: "spread", h: (MEDIA.w * 1172) / 1600 }] as const;
 const FEED_GAP = 16;
 const feedTop = (i: number) => MEDIA.h + FEED_GAP + FEED.slice(0, i).reduce((sum, f) => sum + f.h + FEED_GAP, 0);
 const STRIP_H = feedTop(FEED.length);
 const r0 = cue.reaction;
-/** Scroll keys: hold on Yami, flick to the spread and hold, then on down through the pages. */
+/** Scroll keys: hold on Yami, scroll down to the spread, then drift slowly down it (faces, then coats). */
 const FEED_KEYS = [
   [r0, 0],
-  [r0 + 0.55, feedTop(0) + FEED[0].h * 0.02],
-  [r0 + 0.85, feedTop(0) + FEED[0].h * 0.3], // drift down the spread: faces, then their coats
-  [r0 + 1.15, feedTop(1) + FEED[1].h * 0.18],
-  [r0 + 1.5, feedTop(2) + FEED[2].h * 0.3],
-  [r0 + 1.85, feedTop(3) + FEED[3].h * 0.05],
-  [r0 + 2.2, feedTop(4) + FEED[4].h * 0.45],
+  [r0 + 0.9, feedTop(0)],
+  [r0 + 1.8, feedTop(0) + FEED[0].h - MEDIA.h],
 ] as const;
 const feedAt = (t: number) => track(t, FEED_KEYS, { stiffness: 90, damping: 18 });
 const SHEET_TOP = 1010;
