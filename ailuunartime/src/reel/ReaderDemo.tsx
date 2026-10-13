@@ -6,7 +6,7 @@ import { cue } from "./cues";
 import { Embers, LiveMascot } from "./fx";
 import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
-import { BladeEnergy, YunoAura } from "./aura";
+import { BladeEnergy } from "./aura";
 import { animSrc, LiveAsta } from "./rig";
 
 /**
@@ -117,8 +117,6 @@ function Screen({ t }: { t: number }) {
               style={{ position: "absolute", left: 0, top: pageTop(i), width: VIEW.w, height: PH, background: color.ink }}
             />
           ))}
-          {/* Yuno's wind magic around him on the first page */}
-          <YunoAura t={t} w={VIEW.w} h={PH} cx={0.3 * VIEW.w} cy={0.47 * PH} r={0.24 * VIEW.w} strength={on} />
         </div>
 
         {/* last: the blade panel, opened through a circular mask */}
@@ -138,7 +136,6 @@ function Screen({ t }: { t: number }) {
                   <Img src={animSrc("cover", t)} style={{ position: "absolute", inset: 0, width: w, height: h }} />
                   {/* the light around Yuno's grimoire breathes */}
                   <div style={{ position: "absolute", left: 0.42 * w, top: 0.08 * h, width: 0.5 * w, height: 0.36 * h, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0) 65%)", mixBlendMode: "screen", opacity: 0.35 + 0.35 * Math.sin(t * 4) }} />
-                  <YunoAura t={t} w={w} h={h} cx={0.62 * w} cy={0.22 * h} r={0.3 * w} strength={0.75} />
                   <BladeEnergy t={t} w={w} h={h} base={{ x: 0.6 * w, y: 0.44 * h }} tip={{ x: 0.04 * w, y: 0.06 * h }} strength={energy} scale={w / 1100} />
                 </div>
               );
