@@ -1,0 +1,41 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 1764,
+  "voiceOffsetSeconds": 0.4,
+  "scenes": [
+    { "id": "Scene01Hook", "from": 0, "duration": 133 },
+    { "id": "Scene02WorldsColliding", "from": 133, "duration": 261 },
+    { "id": "Scene03OneWorld", "from": 394, "duration": 225 },
+    { "id": "Scene04MetaMoment", "from": 619, "duration": 383 },
+    { "id": "Scene05CodeBecomesCreation", "from": 1002, "duration": 186 },
+    { "id": "Scene06ViewerIsPartOfIt", "from": 1188, "duration": 78 },
+    { "id": "Scene07BeyondGaming", "from": 1266, "duration": 158 },
+    { "id": "Scene08FutureIsHere", "from": 1424, "duration": 108 },
+    { "id": "Scene09ClaudeBrand", "from": 1532, "duration": 90 },
+    { "id": "Scene10FinalImpact", "from": 1622, "duration": 142 }
+  ],
+  "phrases": [
+    { "start": 0.40, "end": 2.36, "text": "AI isn't just changing the world." },
+    { "start": 2.57, "end": 4.24, "text": "It's changing what's possible." },
+    { "start": 4.45, "end": 8.10, "text": "Imagine Steve from Minecraft stepping straight into GTA V." },
+    { "start": 8.31, "end": 12.94, "text": "Two completely different worlds, coming together in ways that once seemed impossible." },
+    { "start": 13.15, "end": 14.91, "text": "And this is just the beginning." },
+    { "start": 15.13, "end": 20.42, "text": "Games, software, code, and entire digital environments are evolving faster than ever." },
+    { "start": 20.64, "end": 26.35, "text": "Things that used to take hours of work can now be created, modified, and transformed with the help of AI." },
+    { "start": 26.57, "end": 28.57, "text": "But here's what makes this even crazier." },
+    { "start": 28.79, "end": 29.36, "text": "Right now," },
+    { "start": 29.51, "end": 33.18, "text": "the video you're watching is being organized and edited with the help of Claude." },
+    { "start": 33.40, "end": 39.56, "text": "Every scene, every transition, every effect, carefully brought together to turn an idea into reality." },
+    { "start": 39.78, "end": 42.10, "text": "And this technology goes way beyond gaming." },
+    { "start": 42.31, "end": 43.59, "text": "It's changing how we work," },
+    { "start": 43.74, "end": 44.53, "text": "how we learn," },
+    { "start": 44.66, "end": 45.55, "text": "how we create," },
+    { "start": 45.75, "end": 47.25, "text": "and how we solve problems." },
+    { "start": 47.48, "end": 51.77, "text": "We're entering a world where imagination is becoming something we can actually build." },
+    { "start": 51.98, "end": 53.86, "text": "And we're only scratching the surface." },
+    { "start": 54.08, "end": 55.96, "text": "AI isn't just changing the world." },
+    { "start": 56.18, "end": 58.06, "text": "It's helping us create a new one." }
+  ]
+}
