@@ -25,12 +25,12 @@ FPS = 12
 
 # name: source, weight map, max width, displacement (px at that width), eyes, eyelid colour, quality
 ASSETS = {
-    "asta": dict(src="asta-redblack.png", map="asta", width=1200, amp=16, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(240, 86, 80), blink=10),
-    "sword-fg": dict(src="layers/sword-fg-noblade.png", map="sword-fg", width=1725, amp=8, eyes=[(0.436, 0.284, 0.016, 0.011), (0.522, 0.286, 0.016, 0.011)], skin=(244, 242, 238), blink=15),
-    "tornado-fg": dict(src="layers/tornado-fg.png", map="tornado-fg", width=3312, amp=18, eyes=[], skin=None, blink=None),
+    "asta": dict(src="asta.png", map="asta", width=1200, amp=16, eyes=[(0.385, 0.437, 0.048, 0.036), (0.53, 0.398, 0.052, 0.04)], skin=(250, 186, 150), blink=10),
+    "sword-fg": dict(src="layers/sword-fg-noblade-color.png", map="sword-fg", width=1725, amp=8, eyes=[(0.436, 0.284, 0.016, 0.011), (0.522, 0.286, 0.016, 0.011)], skin=(247, 205, 176), blink=15),
+    "tornado-fg": dict(src="layers/tornado-fg-color.png", map="tornado-fg", width=3312, amp=18, eyes=[], skin=None, blink=None),
     "tornado-bg": dict(src="layers/tornado-bg.png", map="tornado-bg", width=1656, amp=16, eyes=[], skin=None, blink=None),
-    "scream": dict(src="panels/asta-scream.png", map="scream", width=1500, amp=11, eyes=[], skin=None, blink=None),
-    "shock": dict(src="panels/shock.png", map="shock", width=930, amp=8, eyes=[], skin=None, blink=None),
+    "scream": dict(src="color/asta-scream.png", map="scream", width=1500, amp=11, eyes=[], skin=None, blink=None),
+    "shock": dict(src="color/shock.png", map="shock", width=930, amp=8, eyes=[], skin=None, blink=None),
 }
 
 

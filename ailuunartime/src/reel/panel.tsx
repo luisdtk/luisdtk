@@ -6,12 +6,13 @@ import { animSrc, type AnimName } from "./rig";
 
 /** Natural sizes of the prepared layers (tools/prepare.py output), in pixels. */
 export const PANELS = {
-  scream: { src: "images/panels/asta-scream.png", w: 1500, h: 2253 },
-  sword: { src: "images/panels/sword.png", w: 1725, h: 2100 },
+  // characters coloured in their series colours (tools/colorize.py); backgrounds stay black and white
+  scream: { src: "images/color/asta-scream.png", w: 1500, h: 2253 },
+  sword: { src: "images/color/sword.png", w: 1725, h: 2100 },
   blade: { src: "images/panels/sword-blade.png", w: 1725, h: 2100 },
-  tornado: { src: "images/panels/tornado.png", w: 3312, h: 2346 },
-  shock: { src: "images/panels/shock.png", w: 930, h: 1926 },
-  yuno: { src: "images/panels/yuno-smile.png", w: 2568, h: 612 },
+  tornado: { src: "images/color/tornado.png", w: 3312, h: 2346 },
+  shock: { src: "images/color/shock.png", w: 930, h: 1926 },
+  yuno: { src: "images/color/yuno-smile.png", w: 2568, h: 612 },
 } as const;
 export type PanelName = keyof typeof PANELS;
 

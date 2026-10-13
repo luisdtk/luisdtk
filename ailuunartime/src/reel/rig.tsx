@@ -17,7 +17,7 @@ export function animSrc(name: AnimName, t: number, phase = 0) {
   return staticFile(`anim/${name}/${i}.webp`);
 }
 
-/** Asta in red and black, alive: hair and cape flow, and he blinks. Drop-in for the plain <Img>. */
+/** Asta in his own colours, alive: hair and cape flow, and he blinks. Drop-in for the plain <Img>. */
 export function LiveAsta({ t, size, style, phase = 0 }: { t: number; size: number; style?: CSSProperties; phase?: number }) {
   return (
     <div style={{ position: "absolute", width: size, height: size, ...style }}>
