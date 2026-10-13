@@ -29,6 +29,17 @@ WIDTH = 1600
 
 # op, centre (x, y), radius (x, y), params
 PAGES = {
+    "devil": [
+        # the devil: wild hair streaming both ways, wings beating, tail and black arm swaying
+        ("wave", (0.27, 0.15), (0.13, 0.12), {"amp": 0.016, "speed": 2}),
+        ("wave", (0.72, 0.15), (0.16, 0.13), {"amp": 0.016, "speed": 2, "phase": 0.4}),
+        ("wave", (0.5, 0.06), (0.1, 0.05), {"amp": 0.006, "speed": 2}),
+        ("flap", (0.12, 0.55), (0.14, 0.12), {"amp": 0.02, "speed": 2}),
+        ("flap", (0.83, 0.52), (0.14, 0.11), {"amp": 0.02, "speed": 2}),
+        ("wave", (0.93, 0.55), (0.06, 0.14), {"amp": 0.012, "speed": 2}),
+        ("wave", (0.12, 0.72), (0.1, 0.08), {"amp": 0.01, "speed": 2, "phase": 0.6}),
+        ("wave", (0.3, 0.55), (0.08, 0.2), {"amp": 0.004, "speed": 1}),
+    ],
     "cover": [
         # Yuno: hair and cape in his own wind, the swirl in his hand turns, the grimoire's light breathes
         ("wave", (0.55, 0.13), (0.1, 0.06), {"amp": 0.006, "speed": 2}),
@@ -165,9 +176,11 @@ def panel_breathing(name, xs, ys):
     return out
 
 
-def main():
+def main(only=None):
     manifest = json.loads((OUT / "manifest.json").read_text())
     for name, ops in PAGES.items():
+        if only and name not in only:
+            continue
         src = Image.open(SRC / f"{name}.png").convert("RGB")
         src = src.resize((WIDTH, round(src.height * WIDTH / src.width)), Image.LANCZOS)
         rgb = np.asarray(src)
@@ -206,4 +219,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    main(sys.argv[1:] or None)

@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
-import { AbsoluteFill, Img, staticFile } from "remotion";
+import { AbsoluteFill, Img } from "remotion";
 
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { FocusLines, shake } from "./inkfx";
-import { LayeredPanel, PanelView, PANELS } from "./panel";
+import { LayeredPanel, PanelView } from "./panel";
 import { color, easeInOut, easeOut, FRAME, lerp } from "./tokens";
+import { animSrc } from "./rig";
 import { Wind } from "./wind";
 
 const W = FRAME.width;
@@ -20,12 +21,11 @@ const STRIDE = W * CARD + GAP;
  * 2.5D way (layers, dolly, focus lines), the carousel slides from the scream to the blade, and
  * the blade card grows to fill the frame, handing over to the manga scene on the same framing.
  */
-const CARDS = ["scream", "sword", "tornado", "shock"] as const;
+const CARDS = ["devil", "sword", "tornado", "shock"] as const;
 const FOCUS_END = 1; // the blade card
 
 function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): ReactNode {
   const u = progress(t, cue.carousel, cue.manga - cue.carousel);
-  const glow = 0.6 + 0.4 * Math.sin(t * 9);
   if (name === "sword") {
     // the manga scene's opening framing, approached by a short dolly so the handover is seamless
     return (
@@ -67,14 +67,14 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
       />
     );
   }
-  if (name === "scream") {
-    const invert = t > cue.carousel + 0.32 && t < cue.carousel + 0.39;
+  if (name === "devil") {
+    // the devil (supplied art), animated: hair streaming, wings beating, tail swaying (tools/animate_pages.py)
+    const push = 1.02 + 0.1 * easeInOut(u);
+    const h = H * push;
+    const w = (h * 1600) / 1949;
     return (
-      <div style={{ position: "absolute", inset: 0, filter: invert ? "invert(1)" : undefined }}>
-        <div style={{ position: "absolute", inset: 0, scale: `${1.05 + 0.18 * easeInOut(u)}` }}>
-          <PanelView panel="scream" width={W} height={H} shot={{ fx: 0.5, fy: 0.42, zoom: 1.12 }} flow={{ t, anim: "scream" }} />
-        </div>
-        <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={0.55} />
+      <div style={{ position: "absolute", inset: 0, background: "#000" }}>
+        <Img src={animSrc("devil", t)} style={{ position: "absolute", left: (W - w) / 2, top: (H - h) / 2 - 40 * u, width: w, height: h, maxWidth: "none" }} />
       </div>
     );
   }
