@@ -4,7 +4,7 @@ import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers, Logo } from "./fx";
-import { PanelView, PANELS, shotAt } from "./panel";
+import { LayeredPanel, shotAt } from "./panel";
 import { color, easeIn, easeOut, font, FRAME, seeded } from "./tokens";
 
 /**
@@ -172,14 +172,7 @@ export function PostScene({ t }: { t: number }) {
 
         {/* the post's media: the animated page, still moving */}
         <div style={{ position: "absolute", left: MEDIA.x, top: MEDIA.y, width: MEDIA.w, height: MEDIA.h, overflow: "hidden" }}>
-          <PanelView panel="sword" width={MEDIA.w} height={MEDIA.h} shot={shot}>
-            {(place) => (
-              <Img
-                src={staticFile(PANELS.blade.src)}
-                style={{ position: "absolute", left: place.x + 14, top: place.y - 10, width: place.w * 1.02, height: place.h * 1.02, maxWidth: "none", filter: `drop-shadow(0 0 ${16 + glow * 22}px rgba(226,38,43,0.65))` }}
-              />
-            )}
-          </PanelView>
+          <LayeredPanel layers="sword" t={t} id="post-sword" width={MEDIA.w} height={MEDIA.h} fx={shot.fx} fy={shot.fy} zoomBg={shot.zoom} zoomFg={shot.zoom * 1.04} driftFg={{ x: 10, y: -8 }} blurBg={3} bloom={0.2} />
           <Embers t={t} start={cue.reaction} end={cue.reactionOut} count={18} seed={61} area={{ x: 500, y: 100, w: 500, h: 600 }} rise={260} size={8} />
         </div>
 

@@ -6,6 +6,7 @@ import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers, Logo } from "./fx";
 import { PanelView, shotAt } from "./panel";
+import { LiveAsta } from "./rig";
 import { color, easeOut, font, FRAME, land } from "./tokens";
 
 // Three voices, sentence case: a quiet sans lead-in, an italic serif, then the punch in red.
@@ -69,12 +70,11 @@ export function FinalTitle({ t }: { t: number }) {
       )}
 
       {/* Asta, rising into frame */}
-      <Img
-        src={staticFile("images/asta-redblack.png")}
+      <LiveAsta
+        t={t}
+        size={1240}
+        phase={0.9}
         style={{
-          position: "absolute",
-          width: 1240,
-          height: 1240,
           left: (FRAME.width - 1240) / 2 + 30,
           top: 760 + (1 - asta) * 380 + Math.sin((t - cue.final) * 2.4) * 6,
           scale: `${(1.06 - 0.06 * asta + hit * 0.02) * push}`,

@@ -5,6 +5,7 @@ import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers } from "./fx";
 import { DirectionalBlur, LayeredPanel, PANELS } from "./panel";
+import { LiveAsta } from "./rig";
 import { color, easeIn, easeInOut, easeOut, FRAME, lerp, seeded } from "./tokens";
 import { Wind } from "./wind";
 
@@ -143,6 +144,8 @@ export function MangaScene({ t }: { t: number }) {
           <AbsoluteFill style={{ filter: pull > 0 ? `blur(${pull * 18}px)` : undefined, opacity: 1 - clamp01((pull - 0.5) * 2) }}>
             <LayeredPanel
               layers="sword"
+              t={t}
+              id="scene-sword"
               width={W}
               height={H}
               fx={lerp(0.52, 0.55, swordE)}
@@ -151,12 +154,6 @@ export function MangaScene({ t }: { t: number }) {
               zoomFg={lerp(1.0, 1.26, swordE)}
               driftFg={{ x: lerp(30, -20, swordE), y: lerp(40, 0, swordE) }}
               blurBg={lerp(3, 6, swordE)}
-              fgExtra={(place) => (
-                <Img
-                  src={staticFile(PANELS.blade.src)}
-                  style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", opacity: 0.85, filter: `drop-shadow(0 0 ${18 + glow * 28}px rgba(226,38,43,0.75))` }}
-                />
-              )}
             />
             <Haze amount={0.8} />
             <Embers t={t} start={cue.swordPan} end={cue.tornado} count={28} seed={7} area={{ x: 380, y: 400, w: 620, h: 1200 }} rise={360} />
@@ -169,6 +166,8 @@ export function MangaScene({ t }: { t: number }) {
           <AbsoluteFill style={{ filter: pull < 1 ? `blur(${(1 - pull) * 18}px)` : undefined, opacity: clamp01(pull * 2) }}>
             <LayeredPanel
               layers="tornado"
+              t={t}
+              id="scene-tornado"
               width={W}
               height={H}
               fx={lerp(0.2, 0.27, windE)}
@@ -196,12 +195,10 @@ export function MangaScene({ t }: { t: number }) {
               <Pillars t={t} start={cue.astaSlam} />
             </div>
             <Burst t={t} start={cue.astaSlam + 0.08} cx={W / 2} cy={980} />
-            <Img
-              src={staticFile("images/asta-redblack.png")}
+            <LiveAsta
+              t={t}
+              size={1320}
               style={{
-                position: "absolute",
-                width: 1320,
-                height: 1320,
                 left: (W - 1320) / 2 + 40 - drift * 30,
                 top: H - 1320 + 40 + (1 - slam) * 420 + Math.sin(drift * 3) * 8,
                 scale: `${(1.18 - 0.18 * slam) * (1 + drift * 0.05)}`,

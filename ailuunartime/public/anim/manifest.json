@@ -1,0 +1,38 @@
+{
+  "asta": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1200,
+    "height": 1200
+  },
+  "sword-fg": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1725,
+    "height": 2100
+  },
+  "tornado-fg": {
+    "frames": 24,
+    "fps": 12,
+    "width": 3312,
+    "height": 2346
+  },
+  "tornado-bg": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1656,
+    "height": 1173
+  },
+  "scream": {
+    "frames": 24,
+    "fps": 12,
+    "width": 1500,
+    "height": 2253
+  },
+  "shock": {
+    "frames": 24,
+    "fps": 12,
+    "width": 930,
+    "height": 1926
+  }
+}

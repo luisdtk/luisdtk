@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Img, staticFile } from "remotion";
 
 import { track, type SpringConfig } from "../kit/spring";
+import { animSrc, type AnimName } from "./rig";
 
 /** Natural sizes of the prepared layers (tools/prepare.py output), in pixels. */
 export const PANELS = {
@@ -50,6 +51,7 @@ export function PanelView({
   style,
   imageStyle,
   children,
+  flow,
 }: {
   panel: PanelName;
   width: number;
@@ -58,12 +60,14 @@ export function PanelView({
   style?: CSSProperties;
   imageStyle?: CSSProperties;
   children?: (place: ReturnType<typeof placeImage>) => ReactNode;
+  /** play the panel's animated loop (tools/animate.py) instead of the still */
+  flow?: { t: number; anim: AnimName };
 }) {
   const place = placeImage(panel, width, height, shot);
   return (
     <div style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee", ...style }}>
       <Img
-        src={staticFile(PANELS[panel].src)}
+        src={flow ? animSrc(flow.anim, flow.t) : staticFile(PANELS[panel].src)}
         style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", ...imageStyle }}
       />
       {children?.(place)}
@@ -82,10 +86,14 @@ export function DirectionalBlur({ id, x = 0, y = 0 }: { id: string; x?: number; 
   );
 }
 
-/** Character / background layer pairs cut by tools/segment.py (same pixel size as the panel). */
+/**
+ * Character / background layer pairs cut by tools/segment.py (same pixel size as the panel).
+ * The character (and the tornado behind Yuno) play their animated loops (tools/animate.py);
+ * Asta's blade is its own layer and sways on its hilt.
+ */
 export const LAYERS = {
-  sword: { fg: "images/layers/sword-fg.png", bg: "images/layers/sword-bg.png", panel: "sword" },
-  tornado: { fg: "images/layers/tornado-fg.png", bg: "images/layers/tornado-bg.png", panel: "tornado" },
+  sword: { fg: "sword-fg", bg: undefined, bgStill: "images/layers/sword-bg.png", panel: "sword", blade: { pivot: { x: 0.5, y: 0.64 } } },
+  tornado: { fg: "tornado-fg", bg: "tornado-bg", bgStill: "images/layers/tornado-bg.png", panel: "tornado", blade: undefined },
 } as const;
 
 /**
@@ -107,6 +115,8 @@ export function LayeredPanel({
   bloom = 0.35,
   fgExtra,
   between,
+  t,
+  id,
 }: {
   layers: keyof typeof LAYERS;
   width: number;
@@ -122,19 +132,33 @@ export function LayeredPanel({
   fgExtra?: (place: ReturnType<typeof placeImage>) => ReactNode;
   /** drawn between the background and the character (wind, smoke) */
   between?: ReactNode;
+  /** time, for the rig: hair and cloth flow, blinks, the blade's sway */
+  t: number;
+  /** unique per instance (filter ids) */
+  id: string;
 }) {
-  const { fg, bg, panel } = LAYERS[layers];
+  const { fg, bg, bgStill, panel, blade } = LAYERS[layers];
   const back = placeImage(panel, width, height, { fx, fy, zoom: zoomBg });
   const front = placeImage(panel, width, height, { fx, fy, zoom: zoomFg });
   const at = (p: typeof back, extra = { x: 0, y: 0 }): CSSProperties => ({ position: "absolute", left: p.x + extra.x, top: p.y + extra.y, width: p.w, height: p.h, maxWidth: "none" });
+  const fgPlace = { ...front, x: front.x + driftFg.x, y: front.y + driftFg.y };
+  const fgSrc = animSrc(fg, t);
+  const bgSrc = bg ? animSrc(bg, t) : staticFile(bgStill);
+  // the blade sways on its hilt, slowly, with a quicker tremor of energy on top
+  const sway = Math.sin(t * 2.2) * 1.6 + Math.sin(t * 7.3) * 0.35;
   return (
-    <div style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee" }}>
-      <Img src={staticFile(bg)} style={{ ...at(back), filter: blurBg > 0.3 ? `blur(${blurBg}px) brightness(0.96)` : undefined }} />
+    <div data-rig={id} style={{ position: "relative", width, height, overflow: "hidden", background: "#f4f2ee" }}>
+      <Img src={bgSrc} style={{ ...at(back), filter: blurBg > 0.3 ? `blur(${blurBg}px) brightness(0.96)` : undefined }} />
       {between}
-      <Img src={staticFile(fg)} style={{ ...at(front, driftFg), filter: blurFg > 0.3 ? `blur(${blurFg}px)` : undefined }} />
-      {fgExtra?.({ ...front, x: front.x + driftFg.x, y: front.y + driftFg.y })}
+      <Img src={fgSrc} style={{ ...at(front, driftFg), filter: blurFg > 0.3 ? `blur(${blurFg}px)` : undefined }} />
+      {blade && (
+        <div style={{ position: "absolute", left: fgPlace.x, top: fgPlace.y, width: fgPlace.w, height: fgPlace.h, rotate: `${sway}deg`, transformOrigin: `${blade.pivot.x * 100}% ${blade.pivot.y * 100}%` }}>
+          <Img src={staticFile(PANELS.blade.src)} style={{ position: "absolute", inset: 0, width: fgPlace.w, height: fgPlace.h, maxWidth: "none", filter: `drop-shadow(0 0 ${22 + 18 * Math.sin(t * 9)}px rgba(226,38,43,0.75))` }} />
+        </div>
+      )}
+      {fgExtra?.(fgPlace)}
       {bloom > 0 && (
-        <Img src={staticFile(fg)} style={{ ...at(front, driftFg), filter: "blur(22px) brightness(1.25)", mixBlendMode: "screen", opacity: bloom }} />
+        <Img src={fgSrc} style={{ ...at(front, driftFg), filter: "blur(22px) brightness(1.25)", mixBlendMode: "screen", opacity: bloom }} />
       )}
     </div>
   );

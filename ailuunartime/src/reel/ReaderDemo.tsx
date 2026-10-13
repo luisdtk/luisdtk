@@ -6,8 +6,9 @@ import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers, LiveMascot } from "./fx";
 import { FocusLines, shake } from "./inkfx";
-import { DirectionalBlur, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
+import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
+import { LiveAsta } from "./rig";
 import { Wind } from "./wind";
 
 /**
@@ -155,19 +156,19 @@ function Screen({ t }: { t: number }) {
           </Box>
           <Box r={PAGE.tornado} style={lifted(1)}>
             <SliceWake t={t} start={cue.motionOn} w={PAGE.tornado.w} h={PAGE.tornado.h}>
-              <PanelView panel="tornado" width={PAGE.tornado.w} height={PAGE.tornado.h} shot={{ fx: 0.55 + 0.03 * on * Math.sin(t * 1.6), fy: 0.5, zoom: 1 + 0.08 * on }} />
+              <PanelView panel="tornado" width={PAGE.tornado.w} height={PAGE.tornado.h} shot={{ fx: 0.55 + 0.03 * on * Math.sin(t * 1.6), fy: 0.5, zoom: 1 + 0.08 * on }}  />
               <Wind t={t} w={PAGE.tornado.w} h={PAGE.tornado.h} strength={on} />
             </SliceWake>
           </Box>
           <Box r={PAGE.shock} style={lifted(2)}>
             <div style={{ position: "absolute", inset: 0, translate: `${shockShake.x}px ${shockShake.y}px`, scale: `${1 + 0.06 * pulse(cue.motionOn + 0.25)}` }}>
-              <PanelView panel="shock" width={PAGE.shock.w} height={PAGE.shock.h} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 + 0.1 * on }} />
+              <PanelView panel="shock" width={PAGE.shock.w} height={PAGE.shock.h} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 + 0.1 * on }} flow={on > 0 ? { t, anim: "shock" } : undefined} />
             </div>
             <FocusLines t={t} w={PAGE.shock.w} h={PAGE.shock.h} cx={PAGE.shock.w * 0.5} cy={PAGE.shock.h * 0.55} strength={on * 0.85} count={44} inner={0.42} />
           </Box>
           <Box r={PAGE.scream} style={lifted(3)}>
             <div style={{ position: "absolute", inset: 0, translate: `${screamShake.x}px ${screamShake.y}px`, scale: `${1 + 0.1 * pulse(cue.motionOn + 0.4)}`, filter: invertAt(cue.motionOn + 0.42) ? "invert(1)" : undefined }}>
-              <PanelView panel="scream" width={PAGE.scream.w} height={PAGE.scream.h} shot={{ fx: 0.5, fy: 0.38, zoom: 1.2 + 0.12 * on }} />
+              <PanelView panel="scream" width={PAGE.scream.w} height={PAGE.scream.h} shot={{ fx: 0.5, fy: 0.38, zoom: 1.2 + 0.12 * on }} flow={on > 0 ? { t, anim: "scream" } : undefined} />
             </div>
             <FocusLines t={t + 0.04} w={PAGE.scream.w} h={PAGE.scream.h} cx={PAGE.scream.w * 0.5} cy={PAGE.scream.h * 0.5} strength={on * 0.8} count={50} inner={0.45} />
           </Box>
@@ -176,22 +177,21 @@ function Screen({ t }: { t: number }) {
         {/* next panel: the blade, opened through a circular mask */}
         {reveal > 0 && (
           <div style={{ position: "absolute", inset: 0, clipPath: `circle(${revealR}px at 50% 50%)`, translate: `0 ${-scroll * VIEW.h}px`, filter: scrollBlur > 0.5 ? "url(#scroll-blur)" : undefined }}>
-            <PanelView panel="sword" width={VIEW.w} height={VIEW.h} shot={bladeShot} imageStyle={{ filter: `brightness(${1 - lift * 0.18})` }}>
-              {(place) => (
-                <Img
-                  src={staticFile(PANELS.blade.src)}
-                  style={{
-                    position: "absolute",
-                    left: place.x + lift * 16,
-                    top: place.y - lift * 12,
-                    width: place.w * (1 + lift * 0.03),
-                    height: place.h * (1 + lift * 0.03),
-                    maxWidth: "none",
-                    filter: `drop-shadow(0 ${lift * 14}px ${lift * 18}px rgba(0,0,0,0.45)) drop-shadow(0 0 ${8 + energy * glow * 24}px rgba(226,38,43,${0.25 + energy * 0.6}))`,
-                  }}
-                />
-              )}
-            </PanelView>
+            {/* the rigged blade panel: Asta lifts off the page as a layer, his hair and cape flow, the blade sways, he blinks */}
+            <LayeredPanel
+              layers="sword"
+              t={t}
+              id="reader-sword"
+              width={VIEW.w}
+              height={VIEW.h}
+              fx={bladeShot.fx}
+              fy={bladeShot.fy}
+              zoomBg={bladeShot.zoom}
+              zoomFg={bladeShot.zoom * (1 + lift * 0.04)}
+              driftFg={{ x: lift * 14, y: -lift * 12 }}
+              blurBg={lift * 3}
+              bloom={0.15 + energy * glow * 0.2}
+            />
             {/* the mask's red rim while it opens */}
             {reveal > 0 && reveal < 1 && (
               <svg width={VIEW.w} height={VIEW.h} style={{ position: "absolute", inset: 0 }}>
@@ -206,7 +206,7 @@ function Screen({ t }: { t: number }) {
         {scroll > 0 && (
           <div style={{ position: "absolute", inset: 0, translate: `0 ${(1 - scroll) * VIEW.h}px`, filter: scrollBlur > 0.5 ? "url(#scroll-blur)" : undefined }}>
             <div style={{ position: "absolute", inset: 0, filter: invertAt(cue.nextPanel + 0.32) ? "invert(1)" : undefined }}>
-              <PanelView panel="scream" width={VIEW.w} height={VIEW.h} shot={screamShot} />
+              <PanelView panel="scream" width={VIEW.w} height={VIEW.h} shot={screamShot} flow={{ t, anim: "scream" }} />
               <FocusLines t={t} w={VIEW.w} h={VIEW.h} cx={VIEW.w * 0.5} cy={VIEW.h * 0.48} strength={0.85} count={70} />
             </div>
           </div>
@@ -290,12 +290,11 @@ export function ReaderDemo({ t }: { t: number }) {
         </div>
 
         {pop > 0 && popOut < 1 && (
-          <Img
-            src={staticFile("images/asta-redblack.png")}
+          <LiveAsta
+            t={t}
+            size={600}
+            phase={0.4}
             style={{
-              position: "absolute",
-              width: 600,
-              height: 600,
               left: 600 + (1 - pop) * 140 + popOut * 260,
               top: 1010 + (1 - pop) * 110,
               opacity: clamp01(pop * 2) * (1 - popOut),

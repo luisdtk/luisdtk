@@ -23,6 +23,7 @@ Sound: `SoundDesign.tsx` places every effect on its cue (offset by the measured 
 - `public/images/asta.png`: the supplied Asta PNG; `asta-redblack.png` is its red-and-black duotone.
 - `public/images/logo-white.png`, `logo-red.png`: the supplied Ailuunartime logo cut out of its white background (`tools/logo.py`).
 - `public/images/asta-mascot*.png`: the pixel Asta mascot in three expressions (smirk, smile, blink), animated as the reader app icon (`tools/mascot.py`).
+- `public/anim/`: animation inside the art (`tools/animate.py`, after `tools/rig.py` weight maps): 24-frame loops at 12 fps where hair, Asta's cape, Yuno's book and the tornado flow and the eyes blink (Asta red-black, the blade panel's Asta, Yuno, the scream and shock panels). Asta's blade sways on its hilt in code.
 - `public/images/layers/`: character and background layers for the sword and wind panels (isnet-anime matte + OpenCV inpaint, `tools/segment.py`).
 - `public/images/panels/`: panels cropped to the art (no balloons), upscaled 3× with line-art cleanup; only Asta's sword is painted red and black (`tools/prepare.py`).
 - `public/audio/`: every sound synthesized from scratch with numpy (`tools/audio.py`); `narration.wav` is the supplied ElevenLabs narration (+5 dB). `tools/voiceover.py` keeps the earlier Kokoro TTS fallback.
@@ -36,6 +37,7 @@ npm run studio                                    # preview
 source scripts/env.sh                             # points Remotion at the preinstalled Chromium
 bun scripts/stills.ts out/review/vN 60 150 300 --composition AilunarReel
 bun scripts/render.ts v2 30                       # 30 fps master -> MP4 (pass 60 for a motion-blurred master)
+uv run --with numpy --with pillow --with opencv-python-headless python3 tools/animate.py   # regenerate the loops
 uv run --with numpy --with pillow python3 tools/verify.py out/ailuunartime/v2/ailuunartime-reel.mp4
 ```
 

@@ -31,6 +31,8 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
     return (
       <LayeredPanel
         layers="sword"
+        t={t}
+        id="carousel-sword"
         width={W}
         height={H}
         fx={0.52}
@@ -39,9 +41,6 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
         zoomFg={lerp(0.9, 1.0, easeOut(u))}
         driftFg={{ x: 30, y: 40 }}
         blurBg={3}
-        fgExtra={(place) => (
-          <Img src={staticFile(PANELS.blade.src)} style={{ position: "absolute", left: place.x, top: place.y, width: place.w, height: place.h, maxWidth: "none", opacity: 0.85, filter: `drop-shadow(0 0 ${18 + glow * 28}px rgba(226,38,43,0.75))` }} />
-        )}
       />
     );
   }
@@ -50,6 +49,8 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
     return (
       <LayeredPanel
         layers="tornado"
+        t={t}
+        id="carousel-tornado"
         width={W}
         height={H}
         fx={lerp(0.18, 0.26, e)}
@@ -71,7 +72,7 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
     return (
       <div style={{ position: "absolute", inset: 0, filter: invert ? "invert(1)" : undefined }}>
         <div style={{ position: "absolute", inset: 0, scale: `${1.05 + 0.18 * easeInOut(u)}` }}>
-          <PanelView panel="scream" width={W} height={H} shot={{ fx: 0.5, fy: 0.42, zoom: 1.12 }} />
+          <PanelView panel="scream" width={W} height={H} shot={{ fx: 0.5, fy: 0.42, zoom: 1.12 }} flow={{ t, anim: "scream" }} />
         </div>
         <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={0.55} />
       </div>
@@ -81,7 +82,7 @@ function CardContent({ name, t }: { name: (typeof CARDS)[number]; t: number }): 
   return (
     <div style={{ position: "absolute", inset: 0 }}>
       <div style={{ position: "absolute", inset: 0, translate: `${jolt.x}px ${jolt.y}px`, scale: `${1.05 + 0.12 * u}` }}>
-        <PanelView panel="shock" width={W} height={H} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 }} />
+        <PanelView panel="shock" width={W} height={H} shot={{ fx: 0.5, fy: 0.42, zoom: 1.05 }} flow={{ t, anim: "shock" }} />
       </div>
       <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.55} strength={0.6} />
     </div>
