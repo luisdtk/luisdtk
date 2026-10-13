@@ -26,7 +26,10 @@ export function FinalTitle({ t }: { t: number }) {
     [cue.final + 0.2, 0.55, 0.4, 1.18],
   ]);
   const asta = step(t - cue.final - 0.05, { stiffness: 170, damping: 22 });
-  const lockup = step(t - cue.finalHit, { stiffness: 300, damping: 24 });
+  const lockup = step(t - cue.lockup, { stiffness: 300, damping: 24 });
+  // the second line of narration gets its own beat: a soft ring and a slow push
+  const ring2 = progress(t, cue.secondLine, 0.8);
+  const push = 1 + 0.05 * easeOut(progress(t, cue.secondLine, cue.finalHit - cue.secondLine));
 
   let index = 0;
   return (
@@ -56,6 +59,10 @@ export function FinalTitle({ t }: { t: number }) {
 
       <Embers t={t} start={cue.final} end={cue.end} count={40} seed={51} area={{ x: 60, y: 900, w: 960, h: 1000 }} rise={480} size={9} />
 
+      {ring2 > 0 && ring2 < 1 && (
+        <div style={{ position: "absolute", left: FRAME.width / 2 - 700 * easeOut(ring2), top: 1350 - 700 * easeOut(ring2), width: 1400 * easeOut(ring2), height: 1400 * easeOut(ring2), borderRadius: "50%", border: `${5 * (1 - ring2)}px solid ${color.white}`, opacity: 0.6 * (1 - ring2) }} />
+      )}
+
       {/* Asta, rising into frame */}
       <Img
         src={staticFile("images/asta-redblack.png")}
@@ -65,7 +72,7 @@ export function FinalTitle({ t }: { t: number }) {
           height: 1240,
           left: (FRAME.width - 1240) / 2 + 30,
           top: 760 + (1 - asta) * 380 + Math.sin((t - cue.final) * 2.4) * 6,
-          scale: `${1.06 - 0.06 * asta + hit * 0.02}`,
+          scale: `${(1.06 - 0.06 * asta + hit * 0.02) * push}`,
           opacity: clamp01(asta * 2),
           filter: `drop-shadow(0 0 ${36 + hit * 50}px rgba(226,38,43,0.5))`,
         }}

@@ -6,6 +6,7 @@ import { cue } from "./cues";
 import { Embers } from "./fx";
 import { DirectionalBlur, PanelView, PANELS, shotAt, snappy } from "./panel";
 import { color, easeIn, easeInOut, easeOut, FRAME } from "./tokens";
+import { Wind } from "./wind";
 
 const W = FRAME.width;
 const H = FRAME.height;
@@ -43,7 +44,7 @@ function Burst({ t, start, cx, cy }: { t: number; start: number; cx: number; cy:
 
 /** Scene 2: the manga page wakes up. Scream, then a pan along the red-black blade, then Asta in front. */
 export function MangaScene({ t }: { t: number }) {
-  if (t < cue.manga - 0.05 || t > cue.reaction + 0.12) return null;
+  if (t < cue.manga - 0.05 || t > cue.reader + 0.12) return null;
 
   // a) the scream: the intro's diagonal cut opens onto it with a punch-in
   const open = easeOut(progress(t, cue.manga - 0.04, 0.2));
@@ -61,11 +62,20 @@ export function MangaScene({ t }: { t: number }) {
     [cue.swordWipe, 0.44, 0.24, 2.1],
     [cue.swordPan, 0.78, 0.18, 1.7],
     [cue.swordPull, 0.56, 0.42, 1.04],
-    [cue.astaSlam, 0.56, 0.44, 1.08],
+    [cue.tornado - 0.3, 0.5, 0.3, 1.16],
   ]);
   const pull = easeOut(progress(t, cue.swordPull, 0.6));
   const panBlur = Math.max(0, 1 - Math.abs(t - (cue.swordPan + 0.12)) / 0.14) * 16;
   const glow = 0.6 + 0.4 * Math.sin(t * 11);
+
+  // b2) "the scenes come to life": a vertical slice wipe to the wind panel, its tornado turning
+  const slice = easeInOut(progress(t, cue.tornado, 0.26));
+  const sliceBlur = Math.sin(slice * Math.PI) * 30;
+  const tornadoShot = shotAt(t, [
+    [cue.tornado, 0.42, 0.45, 1.5],
+    [cue.tornado + 0.3, 0.5, 0.5, 1.05],
+    [cue.astaSlam, 0.55, 0.5, 1.12],
+  ]);
 
   // c) Asta slams in front, the page dims behind him
   const slam = step(t - cue.astaSlam, { stiffness: 230, damping: 19 });
@@ -82,6 +92,7 @@ export function MangaScene({ t }: { t: number }) {
       <DirectionalBlur id="wipe-blur" x={wipeBlur} />
       <DirectionalBlur id="pan-blur" x={panBlur} y={panBlur * 0.3} />
       <DirectionalBlur id="out-blur" x={outBlur} />
+      <DirectionalBlur id="slice-blur" y={sliceBlur} />
 
       <AbsoluteFill style={{ translate: `${-out * W}px 0`, filter: outBlur > 0.5 ? "url(#out-blur)" : undefined }}>
         {/* a) scream, until the blade covers it */}
@@ -115,7 +126,16 @@ export function MangaScene({ t }: { t: number }) {
           </AbsoluteFill>
         )}
 
-        <Embers t={t} start={cue.swordPull} end={cue.mangaOut} count={34} seed={7} area={{ x: 420, y: 500, w: 560, h: 1100 }} rise={380} />
+        {t >= cue.tornado && (
+          <AbsoluteFill style={{ translate: `0 ${(1 - slice) * -H}px`, filter: sliceBlur > 0.5 ? "url(#slice-blur)" : undefined }}>
+            <PanelView panel="tornado" width={W} height={H} shot={tornadoShot} imageStyle={{ filter: dim > 0 ? `brightness(${1 - dim * 0.72}) contrast(${1 + dim * 0.2})` : undefined }}>
+              {() => <Wind t={t} w={W} h={H} strength={1 - dim * 0.7} />}
+            </PanelView>
+            {slice > 0 && slice < 1 && <div style={{ position: "absolute", left: 0, bottom: -10, width: W, height: 14, background: color.red, boxShadow: `0 0 40px 10px rgba(226,38,43,0.7)` }} />}
+          </AbsoluteFill>
+        )}
+
+        <Embers t={t} start={cue.swordPull} end={cue.tornado + 0.2} count={34} seed={7} area={{ x: 420, y: 500, w: 560, h: 1100 }} rise={380} />
 
         {/* c) Asta, red and black, in front of the page */}
         {t >= cue.astaSlam && (

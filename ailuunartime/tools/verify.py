@@ -59,7 +59,7 @@ print("audio dBFS per 0.5 s:", " ".join(f"{r:.0f}" for r in rms))
 check(max(rms) < -1 and min(rms[:-1]) > -45, "audio present throughout, no clipping")
 
 # sheet of the scenes for a final look
-times = [0.5, 1.2, 2.3, 3.3, 4.4, 5.9, 6.9, 8.0, 9.4, 10.2, 11.2, 12.9, 13.8, duration - 0.05]
+times = [0.5, 1.2, 2.5, 3.6, 5.6, 6.8, 8.0, 9.0, 9.6, 10.5, 12.0, 13.2, 15.0, duration - 0.05]
 tiles = [Image.fromarray(frame(t)).resize((216, 384)) for t in times]
 sheet = Image.new("RGB", (7 * 220, 2 * 388), (50, 50, 50))
 for i, tile in enumerate(tiles):

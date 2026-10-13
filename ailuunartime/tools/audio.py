@@ -20,7 +20,12 @@ rng = np.random.default_rng(11)
 
 BPM = 120
 BEAT = 60 / BPM
-LENGTH = 15.0
+LENGTH = 19.5
+
+# scene hits from src/reel/cues.ts (seconds)
+SCENES = [2.0, 3.05, 5.25, 6.33, 7.17, 11.18, 13.84]
+READER = (7.17, 11.18)
+FINAL = 13.84
 
 
 # ---------- building blocks ----------
@@ -210,33 +215,35 @@ def music():
     drone = (np.sin(2 * np.pi * d * t) + 0.5 * np.sin(2 * np.pi * d * 1.5 * t) + 0.35 * np.sin(2 * np.pi * d * 2 * t + 0.4))
     drone *= 0.55 + 0.45 * np.sin(2 * np.pi * t / 4) ** 2
     pad = band(noise(LENGTH), 140, 900) * 0.08
-    level = np.interp(t, [0, 0.3, 1.9, 2.0, 12.4, 12.5, 14.4, 15.0], [0.0, 0.5, 0.7, 1.0, 1.0, 0.85, 0.9, 0.0])
+    level = np.interp(t, [0, 0.3, 1.9, 2.0, FINAL - 0.1, FINAL, LENGTH - 0.8, LENGTH], [0.0, 0.5, 0.7, 1.0, 1.0, 0.85, 0.9, 0.0])
     bed += (drone * 0.35 + pad) * level
 
     # dark arpeggio (D minor: D F A C) on eighths from bar 2, softer under the reactions
     notes = [146.83, 174.61, 220.0, 261.63, 220.0, 174.61, 146.83, 130.81]
-    for i, start in enumerate(np.arange(2.0, 12.5, BEAT / 2)):
+    for i, start in enumerate(np.arange(2.0, FINAL, BEAT / 2)):
         s = 0.22
-        f = notes[i % len(notes)] * (2 if 7.5 <= start < 12.5 else 1)
+        f = notes[i % len(notes)] * (2 if READER[0] <= start < READER[1] else 1)
         tone = (np.sin(2 * np.pi * f * t_axis(s)) + 0.3 * np.sin(2 * np.pi * f * 2 * t_axis(s))) * env(s, 0.004, 3)
         place(bed, tone, start, 0.12)
 
     # pulse: kick on every beat from 2 s, taiko accents on the scene hits
-    for start in np.arange(2.0, 12.5, BEAT):
+    for start in np.arange(2.0, FINAL, BEAT):
         place(bed, kick(), start, 0.55)
-    for start in np.arange(5.0, 12.5, BEAT / 2):
+    for start in np.arange(READER[0], FINAL, BEAT / 2):
         place(bed, hat(), start + BEAT / 4, 0.12)
-    for start in [2.0, 4.0, 5.0, 7.5, 9.5, 11.5]:
+    for start in SCENES[:-1]:
         place(bed, taiko(), start, 0.5)
 
     # risers into the two big moments
     place(bed, riser(1.0), 1.0, 0.35)
-    place(bed, riser(1.0), 11.5, 0.4)
+    place(bed, riser(1.0), FINAL - 1.0, 0.4)
 
-    # final: one big chord that rings out
-    s = 2.5
+    # final: a slow pulse under the last lines, then one big chord that rings out
+    for start in np.arange(FINAL, LENGTH - 1.0, BEAT * 2):
+        place(bed, kick(), start, 0.35)
+    s = 4.5
     chord = sum(np.sin(2 * np.pi * f * t_axis(s)) for f in (73.42, 110.0, 146.83, 174.61)) * env(s, 0.01, 2)
-    place(bed, reverb(chord, 1.5, 0.35, 3000), 12.5, 0.35)
+    place(bed, reverb(chord, 1.5, 0.35, 3000), FINAL, 0.35)
 
     bed = soft_clip(bed, 1.2)
     fade = int(0.6 * SR)

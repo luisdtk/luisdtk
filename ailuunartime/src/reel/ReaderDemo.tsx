@@ -7,6 +7,7 @@ import { cue } from "./cues";
 import { Embers, Mascot } from "./fx";
 import { DirectionalBlur, PanelView, PANELS, shotAt, type ShotKey } from "./panel";
 import { color, easeIn, easeInOut, easeOut, font, FRAME } from "./tokens";
+import { Wind } from "./wind";
 
 /**
  * Scene 4: a concept manga reader, built here as a real interface (not a screenshot).
@@ -31,29 +32,6 @@ const PAGE = (() => {
     scream: { x: (VIEW.w - GAP) * 0.42 + GAP, y: rowY, w: (VIEW.w - GAP) * 0.58, h: VIEW.h - rowY },
   };
 })();
-
-/** Wind lines circling over the tornado panel, monochrome like the ink. */
-function Wind({ t, w, h, strength }: { t: number; w: number; h: number; strength: number }) {
-  if (strength <= 0) return null;
-  const cx = w * 0.62;
-  const cy = h * 0.5;
-  return (
-    <svg width={w} height={h} style={{ position: "absolute", inset: 0, mixBlendMode: "multiply" }}>
-      {Array.from({ length: 14 }, (_, i) => {
-        const r = 30 + i * 16;
-        const spin = t * (5 + i * 0.35) + i * 1.3;
-        const len = 0.9 + (i % 3) * 0.4;
-        const a0 = spin;
-        const a1 = spin + len;
-        const x0 = cx + Math.cos(a0) * r * 1.5;
-        const y0 = cy + Math.sin(a0) * r * 0.45 - i * 14 + 90;
-        const x1 = cx + Math.cos(a1) * r * 1.5;
-        const y1 = cy + Math.sin(a1) * r * 0.45 - i * 14 + 90;
-        return <path key={i} d={`M${x0} ${y0} A ${r * 1.5} ${r * 0.45} 0 0 1 ${x1} ${y1}`} stroke="#1a1a1a" strokeWidth={2.4} fill="none" strokeLinecap="round" opacity={0.75 * strength} />;
-      })}
-    </svg>
-  );
-}
 
 function Box({ r, children, style }: { r: { x: number; y: number; w: number; h: number }; children: ReactNode; style?: CSSProperties }) {
   return <div style={{ position: "absolute", left: r.x, top: r.y, width: r.w, height: r.h, overflow: "hidden", ...style }}>{children}</div>;
@@ -220,7 +198,7 @@ function Screen({ t }: { t: number }) {
 }
 
 export function ReaderDemo({ t }: { t: number }) {
-  if (t < cue.reader - 0.1 || t > cue.final + 0.1) return null;
+  if (t < cue.reader - 0.1 || t > cue.reaction + 0.1) return null;
 
   // the phone rises in with a tilt that settles
   const rise = step(t - cue.reader, { stiffness: 150, damping: 21 });
@@ -232,7 +210,7 @@ export function ReaderDemo({ t }: { t: number }) {
     [cue.pushIn, Math.log(1.1)],
     [cue.nextPanel, Math.log(1.04)],
   ], { stiffness: 120, damping: 24 }));
-  const dive = easeIn(progress(t, cue.readerOut, cue.final - cue.readerOut));
+  const dive = easeIn(progress(t, cue.readerOut, cue.reaction - cue.readerOut));
   const diveZoom = 1 + dive * 2.6;
   const focusY = PHONE.y + PHONE.bezel + VIEW.y + VIEW.h / 2;
 

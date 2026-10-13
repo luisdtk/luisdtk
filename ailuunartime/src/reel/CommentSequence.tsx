@@ -88,7 +88,7 @@ function Bubble({ c, t, start }: { c: Comment; t: number; start: number }) {
 
 /** Scene 3: the reaction. The logo holds the centre while comments pop in, one at a time. */
 export function CommentSequence({ t }: { t: number }) {
-  if (t < cue.reaction - 0.05 || t > cue.reader + 0.1) return null;
+  if (t < cue.reaction - 0.05 || t > cue.final + 0.1) return null;
 
   const enter = easeOut(progress(t, cue.reaction, 0.3));
   const out = easeIn(progress(t, cue.reactionOut, 0.12));
@@ -125,6 +125,8 @@ export function CommentSequence({ t }: { t: number }) {
       {COMMENTS.map((c, i) => (
         <Bubble key={c.text} c={c} t={t} start={cue.comments[i]} />
       ))}
+      {/* the reader's dive lands here as a white flash that falls away */}
+      {t < cue.reaction + 0.2 && <AbsoluteFill style={{ background: color.white, opacity: 1 - easeOut(progress(t, cue.reaction, 0.2)) }} />}
     </AbsoluteFill>
   );
 }
