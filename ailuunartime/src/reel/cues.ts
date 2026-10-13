@@ -29,13 +29,15 @@ export const cue = {
   impact: 0,
   slash: 0.08,
   sweep: 0.55,
-  folders: 0.5,
-  select: NARRATION_START + 0.9,
-  dive: 1.5,
+  folders: 0.45,
+  cursor: 0.7,
+  select: 1.1, // hover: the cursor reaches Black Clover
+  click: NARRATION_START + 0.92, // the click lands as the narration says "Black Clover"
+  carousel: 1.5, // the folder's pages fly out into a sideways carousel
+  expand: 2.78, // the blade card grows to fill the frame
 
   // Scene 2, Asta comes alive: "The characters move. The scenes come to life. And suddenly"
-  manga: 2.0,
-  scream: 2.0,
+  manga: say(1) - 0.1,
   swordWipe: say(1) - 0.05,
   swordPan: say(1) + 0.75,
   swordPull: say(1) + 1.5,

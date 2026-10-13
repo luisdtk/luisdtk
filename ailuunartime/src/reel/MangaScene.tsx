@@ -4,8 +4,7 @@ import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
 import { Embers } from "./fx";
-import { FocusLines } from "./inkfx";
-import { DirectionalBlur, LayeredPanel, PanelView, PANELS, shotAt, snappy } from "./panel";
+import { DirectionalBlur, LayeredPanel, PANELS } from "./panel";
 import { color, easeIn, easeInOut, easeOut, FRAME, lerp, seeded } from "./tokens";
 import { Wind } from "./wind";
 
@@ -16,7 +15,7 @@ const H = FRAME.height;
  * Scene 2, after the manga-to-anime edits the user referenced: the camera never stops,
  * characters are cut from their backgrounds (tools/segment.py) so a dolly opens real depth,
  * backgrounds sit out of focus under a soft bloom, and shots hand over with focus pulls and
- * blurred pans instead of cuts.
+ * blurred pans instead of cuts. It opens on the blade card the intro's carousel expands.
  */
 
 /** Red energy rays bursting from a point behind Asta. */
@@ -108,20 +107,8 @@ export function MangaScene({ t }: { t: number }) {
 
   const open = progress(t, cue.manga - 0.05, 0.1);
 
-  // 1) the scream: a slow push that never stops, a breath of focus lines, one impact frame
-  const screamShot = shotAt(t, [
-    [cue.manga - 0.1, 0.5, 0.42, 1.42],
-    [cue.manga, 0.5, 0.4, 1.12],
-  ], snappy);
-  const screamPush = 1 + 0.12 * easeInOut(progress(t, cue.manga, cue.swordWipe - cue.manga));
-  const impactFrame = t > cue.manga + 0.36 && t < cue.manga + 0.43;
-  const focus = easeOut(progress(t, cue.manga + 0.05, 0.2)) * 0.55;
-
-  // 1 -> 2: a blurred pan, the scream slides out left as the blade shot slides in
-  const pan = easeInOut(progress(t, cue.swordWipe - 0.18, 0.42));
-  const panBlur = Math.sin(pan * Math.PI) * 38;
-
-  // 2) the blade in 2.5D: a slow dolly in, Asta and his sword run ahead of the colosseum
+  // 2) the blade in 2.5D (the intro's blade card lands on this exact framing): a slow dolly in,
+  // Asta and his sword run ahead of the colosseum
   const swordE = easeInOut(progress(t, cue.swordWipe, cue.tornado - cue.swordWipe));
   const glow = 0.6 + 0.4 * Math.sin(t * 9);
 
@@ -142,31 +129,18 @@ export function MangaScene({ t }: { t: number }) {
   const out = easeIn(progress(t, cue.mangaOut, 0.14));
   const outBlur = out * 60;
 
-  const showScream = t < cue.swordWipe + 0.3;
-  const showSword = t >= cue.swordWipe - 0.2 && t < cue.tornado + 0.3;
+  const showSword = t < cue.tornado + 0.3;
   const showWind = t >= cue.tornado - 0.25 && t < cue.astaSlam + 0.2;
   const showAsta = t >= cue.astaSlam - 0.12;
 
   return (
     <AbsoluteFill style={{ background: open < 1 ? undefined : color.bg, overflow: "hidden" }}>
-      <DirectionalBlur id="pan-blur" x={panBlur} />
       <DirectionalBlur id="out-blur" x={outBlur} />
 
       <AbsoluteFill style={{ opacity: open, translate: `${-out * W}px 0`, filter: outBlur > 0.5 ? "url(#out-blur)" : undefined }}>
-        {/* 1) scream */}
-        {showScream && (
-          <AbsoluteFill style={{ translate: `${-pan * W * 0.7}px 0`, filter: impactFrame ? "invert(1)" : panBlur > 0.5 ? "url(#pan-blur)" : undefined }}>
-            <div style={{ position: "absolute", inset: 0, scale: `${screamPush}` }}>
-              <PanelView panel="scream" width={W} height={H} shot={screamShot} />
-              <FocusLines t={t} w={W} h={H} cx={W * 0.5} cy={H * 0.5} strength={focus} />
-            </div>
-            <Haze amount={0.6} />
-          </AbsoluteFill>
-        )}
-
         {/* 2) the blade, in 2.5D */}
         {showSword && (
-          <AbsoluteFill style={{ translate: `${(1 - pan) * W * 0.7}px 0`, filter: pull > 0 ? `blur(${pull * 18}px)` : panBlur > 0.5 ? "url(#pan-blur)" : undefined, opacity: 1 - clamp01((pull - 0.5) * 2) }}>
+          <AbsoluteFill style={{ filter: pull > 0 ? `blur(${pull * 18}px)` : undefined, opacity: 1 - clamp01((pull - 0.5) * 2) }}>
             <LayeredPanel
               layers="sword"
               width={W}

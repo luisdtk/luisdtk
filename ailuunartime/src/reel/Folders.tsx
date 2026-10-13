@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { PanelView, type PanelName } from "./panel";
-import { color, easeInOut, font, seeded } from "./tokens";
+import { color, easeInOut, easeOut, font, seeded } from "./tokens";
 
 export const FOLDER = { w: 340, h: 250, tab: 46 } as const;
 /** Pages start fully inside the folder (behind the flap) and rise out of it. */
@@ -84,8 +84,9 @@ function Page({ page, w, h }: { page: PanelName | number; w: number; h: number }
 }
 
 /**
- * A folder that flies out from the logo, opens its front flap, and lets its pages slide up.
- * `selected` lights it red (Black Clover); `dim` pushes the others back.
+ * A folder that flies out from the logo and floats (a slow bob and sway, `phase` offsets it).
+ * Closed, its pages peek over the edge; from `openAt` (a click) the flap drops and the pages rise.
+ * `selected` lights it red (Black Clover, on hover); `dim` pushes the others back.
  */
 export function Folder({
   spec,
@@ -94,6 +95,8 @@ export function Folder({
   origin,
   selected = 0,
   dim = 0,
+  openAt,
+  phase = 0,
   style,
 }: {
   spec: FolderSpec;
@@ -102,12 +105,17 @@ export function Folder({
   origin: { x: number; y: number };
   selected?: number;
   dim?: number;
+  openAt?: number;
+  phase?: number;
   style?: CSSProperties;
 }) {
   const fly = step(t - start, { stiffness: 210, damping: 20 });
-  const open = easeInOut(progress(t, start + 0.22, 0.32));
+  const open = openAt === undefined ? 0 : easeInOut(progress(t, openAt, 0.3));
+  const peek = easeOut(progress(t, start + 0.25, 0.4)) * 0.16;
+  const bob = Math.sin(t * 2.1 + phase * 1.7) * 9;
+  const sway = Math.sin(t * 1.4 + phase * 2.3) * 1.6;
   const x = origin.x + (spec.x - origin.x) * fly;
-  const y = origin.y + (spec.y - origin.y) * fly;
+  const y = origin.y + (spec.y - origin.y) * fly + bob * fly;
   const pageW = PAGE_W;
   const pageH = PAGE_H;
   const glow = selected > 0 ? `0 0 ${40 * selected}px rgba(226,38,43,${0.7 * selected}), 0 0 0 ${3 * selected}px ${color.red}` : "0 30px 60px rgba(0,0,0,0.55)";
@@ -122,7 +130,7 @@ export function Folder({
         width: FOLDER.w,
         height: FOLDER.h,
         scale: `${(0.25 + 0.75 * fly) * (1 + selected * 0.06)}`,
-        rotate: `${spec.tilt * fly}deg`,
+        rotate: `${(spec.tilt + sway) * fly}deg`,
         opacity: clamp01(fly * 3) * (1 - dim * 0.75),
         filter: dim > 0 ? `blur(${dim * 6}px)` : undefined,
         perspective: 900,
@@ -137,7 +145,8 @@ export function Folder({
 
       {/* pages slide up out of the folder, fanned */}
       {spec.pages.map((page, i) => {
-        const u = easeInOut(progress(t, start + 0.3 + i * 0.06, 0.34));
+        const rise = openAt === undefined ? 0 : easeInOut(progress(t, openAt + 0.08 + i * 0.05, 0.32));
+        const u = Math.max(peek, rise);
         const fan = (i - (spec.pages.length - 1) / 2) * 9;
         return (
           <div

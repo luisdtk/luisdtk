@@ -3,10 +3,10 @@ import { AbsoluteFill, staticFile } from "remotion";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { FOLDER, Folder, PAGE_H, PAGE_RISE, PAGE_W, type FolderSpec } from "./Folders";
+import { Folder, type FolderSpec } from "./Folders";
 import { Embers, Logo, LOGO_ASPECT, Slash } from "./fx";
-import { PanelView } from "./panel";
-import { color, easeIn, easeInOut, easeOut, FRAME } from "./tokens";
+import { MangaCarousel } from "./MangaCarousel";
+import { color, easeIn, easeInOut, easeOut, FRAME, lerp } from "./tokens";
 
 const LOGO_W = 300;
 const LOGO_H = LOGO_W / LOGO_ASPECT;
@@ -24,29 +24,35 @@ const FOLDERS: FolderSpec[] = [
 const SELECTED = 1;
 const STAGGER = 0.05;
 
-/** Where the front page of a fully open folder sits in the frame (centre, size, rotation). */
-function frontPage(spec: FolderSpec, scale: number) {
-  const pageW = PAGE_W;
-  const pageH = PAGE_H;
-  const fan = ((spec.pages.length - 1) / 2) * 9;
-  // pivot: the page's bottom centre once fully risen, in folder coordinates (see Folder)
-  const pivot = { x: FOLDER.w / 2 + fan * 4, y: FOLDER.h - 6 - pageH * PAGE_RISE };
-  const r = (fan * Math.PI) / 180;
-  const local = { x: pivot.x + (Math.sin(r) * pageH) / 2, y: pivot.y - (Math.cos(r) * pageH) / 2 };
-  const rel = { x: local.x - FOLDER.w / 2, y: local.y - FOLDER.h / 2 };
-  const ft = (spec.tilt * Math.PI) / 180;
-  return {
-    x: spec.x + (rel.x * Math.cos(ft) - rel.y * Math.sin(ft)) * scale,
-    y: spec.y + (rel.x * Math.sin(ft) + rel.y * Math.cos(ft)) * scale,
-    w: pageW * scale,
-    h: pageH * scale,
-    rotate: fan + spec.tilt,
-  };
+/** The mouse: glides on a slight arc to the Black Clover folder, presses, releases. */
+const CURSOR_FROM = { x: 980, y: 1560 };
+const CURSOR_TO = { x: 815, y: 585 };
+
+function Cursor({ t }: { t: number }) {
+  const glide = easeInOut(progress(t, cue.cursor, cue.select - cue.cursor + 0.02));
+  if (t < cue.cursor || t > cue.carousel + 0.25) return null;
+  const arc = Math.sin(glide * Math.PI) * 120;
+  const x = lerp(CURSOR_FROM.x, CURSOR_TO.x, glide) + arc;
+  const y = lerp(CURSOR_FROM.y, CURSOR_TO.y, glide);
+  const press = Math.max(0, 1 - Math.abs(t - cue.click - 0.04) / 0.07);
+  const fade = 1 - clamp01((t - cue.carousel) / 0.2);
+  const ring = progress(t, cue.click, 0.45);
+  return (
+    <>
+      {ring > 0 && ring < 1 && (
+        <div style={{ position: "absolute", left: x - 90 * easeOut(ring), top: y - 90 * easeOut(ring), width: 180 * easeOut(ring), height: 180 * easeOut(ring), borderRadius: "50%", border: `${6 * (1 - ring)}px solid ${color.red}`, opacity: 1 - ring }} />
+      )}
+      <svg width={64} height={64} viewBox="0 0 24 24" style={{ position: "absolute", left: x - 6, top: y - 3, scale: `${1 - press * 0.18}`, transformOrigin: "6px 3px", opacity: fade, filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.6))" }}>
+        <path d="M4 2 L4 19 L8.6 14.8 L11.6 21.4 L14.4 20.2 L11.4 13.7 L17.6 13.5 Z" fill={color.white} stroke="#000" strokeWidth={1.3} strokeLinejoin="round" />
+      </svg>
+    </>
+  );
 }
 
 /**
- * Scene 1: impact, a red slash draws the logo (small, centred), six manga folders burst open
- * around it, Black Clover lights up as the narration names it, and the camera dives into its page.
+ * Scene 1: impact, a red slash draws the logo (small, centred), six manga folders burst out and
+ * float, the mouse glides to Black Clover and clicks it as the narration names it, the folder
+ * opens, and its pages fly out into a sideways carousel of moving panels (MangaCarousel).
  */
 export function IntroLogo({ t }: { t: number }) {
   if (t > cue.manga + 0.12) return null;
@@ -57,24 +63,21 @@ export function IntroLogo({ t }: { t: number }) {
   const pop = step(t - cue.slash, { stiffness: 260, damping: 22 });
   const sweep = progress(t, cue.sweep, 0.45);
 
-  const select = easeOut(progress(t, cue.select, 0.2));
-  const dive = progress(t, cue.dive, cue.manga - cue.dive);
-  const diveEase = easeInOut(dive);
-  const logoOut = easeIn(progress(t, cue.dive - 0.05, 0.2));
+  const hover = easeOut(progress(t, cue.select, 0.15));
+  const clicked = easeOut(progress(t, cue.click, 0.2));
+  const away = easeIn(progress(t, cue.carousel, 0.35));
+  const logoOut = easeIn(progress(t, cue.click + 0.05, 0.25));
+  // the whole room drifts slowly, like a camera breathing
+  const drift = { x: Math.sin(t * 0.9) * 14, y: Math.cos(t * 0.7) * 10, s: 1 + 0.03 * easeInOut(progress(t, cue.folders, 1.2)) };
 
-  // the traveller: Black Clover's front page grows from the folder to the full frame
-  const from = frontPage(FOLDERS[SELECTED], 1.06);
-  const to = { x: CENTER.x, y: CENTER.y, w: FRAME.width, h: FRAME.height, rotate: 0 };
-  const lerp = (a: number, b: number) => a + (b - a) * diveEase;
-  const page = { x: lerp(from.x, to.x), y: lerp(from.y, to.y), w: lerp(from.w, to.w), h: lerp(from.h, to.h), rotate: lerp(from.rotate, to.rotate) };
-
+  const bc = FOLDERS[SELECTED];
   return (
     <AbsoluteFill style={{ background: color.bg }}>
-      <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 50%, rgba(226,38,43,${0.3 * reveal * (1 - logoOut)}) 0%, rgba(226,38,43,0) 30%)` }} />
-      <Embers t={t} start={cue.slash + 0.3} end={cue.dive} count={30} seed={3} area={{ x: 120, y: 500, w: 840, h: 1000 }} rise={300} />
+      <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 50%, rgba(226,38,43,${0.3 * reveal * (1 - away)}) 0%, rgba(226,38,43,0) 34%)` }} />
+      <Embers t={t} start={cue.slash + 0.3} end={cue.manga} count={30} seed={3} area={{ x: 120, y: 500, w: 840, h: 1000 }} rise={300} />
 
-      {/* the folders, pushed past the camera as it dives */}
-      <AbsoluteFill style={{ scale: `${1 + diveEase * 1.6}`, transformOrigin: `${from.x}px ${from.y}px`, opacity: 1 - clamp01(dive * 1.6) }}>
+      {/* the folders: float, the chosen one opens, then the room falls away behind the carousel */}
+      <AbsoluteFill style={{ translate: `${drift.x}px ${drift.y}px`, scale: `${drift.s * (1 + away * 0.25)}`, transformOrigin: `${bc.x}px ${bc.y}px`, opacity: 1 - away * 0.85, filter: away > 0 ? `blur(${away * 10}px)` : undefined }}>
         {FOLDERS.map((spec, i) => (
           <Folder
             key={spec.title}
@@ -82,15 +85,16 @@ export function IntroLogo({ t }: { t: number }) {
             t={t}
             start={cue.folders + i * STAGGER}
             origin={CENTER}
-            selected={i === SELECTED ? select : 0}
-            dim={i === SELECTED ? 0 : select}
-            style={i === SELECTED && dive > 0 ? { visibility: "hidden" } : undefined}
+            phase={i}
+            selected={i === SELECTED ? hover : 0}
+            dim={i === SELECTED ? 0 : clicked}
+            openAt={i === SELECTED ? cue.click : undefined}
           />
         ))}
       </AbsoluteFill>
 
-      {/* the logo, small and centred */}
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: 1 - logoOut, scale: `${(0.86 + 0.14 * pop) * (1 - logoOut * 0.4)}` }}>
+      {/* the logo, small and centred, steps back once the folder is clicked */}
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: 1 - logoOut, scale: `${(0.86 + 0.14 * pop) * (1 - logoOut * 0.3)}` }}>
         <div style={{ position: "relative", width: LOGO_W, height: LOGO_H }}>
           <div style={{ clipPath: reveal >= 1 ? undefined : `polygon(0 0, ${reveal * 125}% 0, ${reveal * 125 - 25}% 100%, 0 100%)`, filter: `drop-shadow(0 0 ${24 + 24 * (1 - reveal)}px rgba(226,38,43,0.6))` }}>
             <Logo width={LOGO_W} />
@@ -111,24 +115,8 @@ export function IntroLogo({ t }: { t: number }) {
         </div>
       </AbsoluteFill>
 
-      {/* the dive: Black Clover's front page becomes the frame */}
-      {dive > 0 && (
-        <div
-          style={{
-            position: "absolute",
-            left: page.x - page.w / 2,
-            top: page.y - page.h / 2,
-            width: page.w,
-            height: page.h,
-            rotate: `${page.rotate}deg`,
-            overflow: "hidden",
-            borderRadius: 4 * (1 - diveEase),
-            boxShadow: `0 0 ${60 * (1 - diveEase)}px rgba(226,38,43,0.7)`,
-          }}
-        >
-          <PanelView panel="scream" width={page.w} height={page.h} shot={{ fx: 0.5, fy: 0.42, zoom: 1.02 + diveEase * 0.4 }} />
-        </div>
-      )}
+      <MangaCarousel t={t} origin={{ x: bc.x + drift.x, y: bc.y - 60 + drift.y }} />
+      <Cursor t={t} />
 
       <Slash progress={slash} angle={-24} y={CENTER.y + 10} thickness={10} />
       {flash > 0 && <AbsoluteFill style={{ background: color.white, opacity: flash * 0.85 }} />}
