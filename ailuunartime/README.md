@@ -8,7 +8,7 @@ A 19.5 s vertical reel (1080×1920, 30 fps, H.264 + AAC) for Instagram Reels, ma
 
 | Time | Narration | Scene | Component |
 |---|---|---|---|
-| 0.0–2.0 s | "Imagine reading Black Clover like this." | Impact, red slash, pixel-Asta logo resolves from dither, light sweep, wordmark | `IntroLogo.tsx` |
+| 0.0–2.0 s | "Imagine reading Black Clover like this." | Impact, a red slash draws the logo (small, centred), six manga folders open around it, Black Clover lights up and the camera dives into its page | `IntroLogo.tsx`, `Folders.tsx` |
 | 2.0–7.2 s | "The characters move. The scenes come to life. And suddenly" | Scream panel, wipe to the red-black blade, pan, parallax, wind panel turning, Asta red-black slams in front | `MangaScene.tsx` |
 | 7.2–11.2 s | "reading manga feels like watching anime. And the crazy part?" | Concept reader on a phone: Motion toggle, push-in, mask reveal, blade layer, red energy, panel scroll | `ReaderDemo.tsx` |
 | 11.2–13.8 s | "AI is making things like this possible." | Logo at the centre, four comments pop in one at a time | `CommentSequence.tsx` |
@@ -18,7 +18,8 @@ Sound: `SoundDesign.tsx` places every effect on its cue (offset by the measured 
 
 ## Assets
 
-- `source/`: the three Black Clover pages as supplied.
+- `source/`: the three Black Clover pages and the logo as supplied.
+- Folder pages for Naruto, JoJo, One Piece, Demon Slayer and Chainsaw Man are drawn in code (`DrawnPage`), not real pages; swap in supplied pages via `FOLDERS` in `IntroLogo.tsx`.
 - `public/images/asta.png`: the supplied Asta PNG; `asta-redblack.png` is its red-and-black duotone.
 - `public/images/logo-white.png`, `logo-red.png`: the supplied Ailuunartime logo cut out of its white background (`tools/logo.py`).
 - `public/images/asta-mascot.png`: the pixel Asta mascot, used as the reader app icon (`tools/mascot.py`).

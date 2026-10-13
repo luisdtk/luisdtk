@@ -3,7 +3,7 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { step } from "../kit/spring";
 import { clamp01, progress } from "../kit/time";
 import { cue } from "./cues";
-import { Embers, Logo, Wordmark } from "./fx";
+import { Embers, Logo } from "./fx";
 import { PanelView, shotAt } from "./panel";
 import { color, easeOut, font, FRAME, land } from "./tokens";
 
@@ -120,8 +120,7 @@ export function FinalTitle({ t }: { t: number }) {
           opacity: clamp01(lockup * 2),
         }}
       >
-        <Logo width={150} />
-        <Wordmark size={54} />
+        <Logo width={170} style={{ filter: "drop-shadow(0 0 24px rgba(226,38,43,0.5))" }} />
       </div>
 
       {flash > 0 && <AbsoluteFill style={{ background: color.white, opacity: flash }} />}

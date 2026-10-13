@@ -28,10 +28,10 @@ export const cue = {
   // Scene 1, the hook: "Imagine reading Black Clover like this."
   impact: 0,
   slash: 0.08,
-  logoIn: 0.375,
-  sweep: 0.6,
-  wordmark: 0.5,
-  introOut: 1.8,
+  sweep: 0.55,
+  folders: 0.5,
+  select: NARRATION_START + 0.9,
+  dive: 1.5,
 
   // Scene 2, Asta comes alive: "The characters move. The scenes come to life. And suddenly"
   manga: 2.0,

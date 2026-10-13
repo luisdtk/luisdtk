@@ -46,8 +46,8 @@ function Burst({ t, start, cx, cy }: { t: number; start: number; cx: number; cy:
 export function MangaScene({ t }: { t: number }) {
   if (t < cue.manga - 0.05 || t > cue.reader + 0.12) return null;
 
-  // a) the scream: the intro's diagonal cut opens onto it with a punch-in
-  const open = easeOut(progress(t, cue.manga - 0.04, 0.2));
+  // a) the scream: the intro's dive lands on it, so it fades in under the travelling page
+  const open = progress(t, cue.manga - 0.05, 0.1);
   const screamShot = shotAt(t, [
     [cue.manga - 0.1, 0.5, 0.42, 1.42],
     [cue.manga, 0.5, 0.4, 1.12],
@@ -88,7 +88,7 @@ export function MangaScene({ t }: { t: number }) {
   const outBlur = out * 60;
 
   return (
-    <AbsoluteFill style={{ background: color.bg, overflow: "hidden" }}>
+    <AbsoluteFill style={{ background: open < 1 ? undefined : color.bg, overflow: "hidden" }}>
       <DirectionalBlur id="wipe-blur" x={wipeBlur} />
       <DirectionalBlur id="pan-blur" x={panBlur} y={panBlur * 0.3} />
       <DirectionalBlur id="out-blur" x={outBlur} />
@@ -97,7 +97,7 @@ export function MangaScene({ t }: { t: number }) {
       <AbsoluteFill style={{ translate: `${-out * W}px 0`, filter: outBlur > 0.5 ? "url(#out-blur)" : undefined }}>
         {/* a) scream, until the blade covers it */}
         {t < cue.swordWipe + 0.3 && (
-          <AbsoluteFill style={{ clipPath: `polygon(0 0, ${open * 260}% 0, ${open * 260 - 160}% 100%, 0 100%)` }}>
+          <AbsoluteFill style={{ opacity: open }}>
             <PanelView panel="scream" width={W} height={H} shot={{ ...screamShot, fy: screamShot.fy + screamDrift / 4000 }} style={{ translate: `${-wipe * W * 0.35}px 0` }} />
           </AbsoluteFill>
         )}

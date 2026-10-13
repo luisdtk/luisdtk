@@ -112,32 +112,6 @@ export function Logo({ width, red = false, style }: { width: number; red?: boole
   );
 }
 
-/** The wordmark. Letters can be revealed one by one (`reveal` 0..1). */
-export function Wordmark({ size, reveal = 1, tracking = 0.04, style }: { size: number; reveal?: number; tracking?: number; style?: CSSProperties }) {
-  const letters = "AILUUNARTIME".split("");
-  return (
-    <div style={{ display: "flex", fontFamily: font.display, fontSize: size, lineHeight: 1, letterSpacing: `${tracking}em`, color: color.white, ...style }}>
-      {letters.map((letter, i) => {
-        const u = clamp01(reveal * letters.length - i);
-        return (
-          <span
-            key={i}
-            style={{
-              display: "inline-block",
-              opacity: u,
-              translate: `0 ${(1 - u) * 0.35 * size}px`,
-              filter: u < 1 ? `blur(${(1 - u) * 8}px)` : undefined,
-              color: i >= 6 ? color.red : color.white,
-            }}
-          >
-            {letter}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
 /** A thin red energy line that cuts across the frame at an angle. */
 export function Slash({ progress, angle = -24, y = FRAME.height / 2, thickness = 10, glow = 1 }: { progress: number; angle?: number; y?: number; thickness?: number; glow?: number }) {
   if (progress <= 0 || progress >= 1) return null;
