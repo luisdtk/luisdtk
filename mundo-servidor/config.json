@@ -1,0 +1,72 @@
+{
+  "_comentario": "Caminhos do seu PC (Windows). Use barras normais (/) — funciona no Windows também.",
+  "pastas": {
+    "medal": "C:/Users/luiss/Videos/Medal",
+    "narracao": "C:/Users/luiss/Videos/Medal/narracao",
+    "musicas": "C:/Users/luiss/Videos/Medal/musicas",
+    "trabalho": "C:/Users/luiss/Videos/Medal/O_Mundo_e_um_Servidor_PROJETO",
+    "minecraft": "C:/Users/luiss/AppData/Roaming/.minecraft"
+  },
+  "gameplay": {
+    "principal": "C:/Users/luiss/Videos/Medal/Clips/Lunar Client Minecraft/MedalTVLunarClientMinecraft20261023115414705.mp4",
+    "curto": "C:/Users/luiss/Videos/Medal/Clips/Lunar Client Minecraft/MedalTVLunarClientMinecraft20261023113558019.mp4",
+    "crosshair_px": 24,
+    "escala_no_4k": 215,
+    "velocidade": 0.5
+  },
+  "narracao_ordem": [
+    "1.m4a", "2.m4a", "3.m4a",
+    "110 Jericho Tpke.m4a",
+    "110 Jericho Tpke 2.m4a", "110 Jericho Tpke 3.m4a", "110 Jericho Tpke 4.m4a", "110 Jericho Tpke 5.m4a",
+    "110 Jericho Tpke 6.m4a", "110 Jericho Tpke 7.m4a", "110 Jericho Tpke 8.m4a", "110 Jericho Tpke 9.m4a",
+    "110 Jericho Tpke 10.m4a", "110 Jericho Tpke 11.m4a", "110 Jericho Tpke 12.m4a", "110 Jericho Tpke 13.m4a",
+    "110 Jericho Tpke 14.m4a", "110 Jericho Tpke 15.m4a", "110 Jericho Tpke 16.m4a", "110 Jericho Tpke 17.m4a",
+    "110 Jericho Tpke 18.m4a", "110 Jericho Tpke 19.m4a", "110 Jericho Tpke 20.m4a", "110 Jericho Tpke 21.m4a",
+    "110 Jericho Tpke 22.m4a", "110 Jericho Tpke 23.m4a", "110 Jericho Tpke 24.m4a", "110 Jericho Tpke 25.m4a",
+    "110 Jericho Tpke 26.m4a", "110 Jericho Tpke 27.m4a", "110 Jericho Tpke 28.m4a", "110 Jericho Tpke 29.m4a",
+    "110 Jericho Tpke 30.m4a"
+  ],
+  "musicas": {
+    "warmth": "C418 - Warmth",
+    "respite": "Respite",
+    "serenity": "Serenity"
+  },
+  "fontes": {
+    "_comentario": "Nomes PostScript (After Effects). Instale EB Garamond, Cormorant Garamond e Monocraft (todas OFL, gratuitas).",
+    "serifa": "EBGaramond-Regular",
+    "serifa_italico": "EBGaramond-Italic",
+    "versalete": "CormorantGaramond-Medium",
+    "minecraft": "Monocraft",
+    "minecraft_ttf": "C:/Windows/Fonts/Monocraft.ttf",
+    "fallback": "TimesNewRomanPSMT"
+  },
+  "video": {
+    "largura": 3840,
+    "altura": 2160,
+    "fps": 30,
+    "duracao_alvo_s": 600,
+    "aspecto_cinema": 2.39,
+    "dissolve_s": 1.2
+  },
+  "audio": {
+    "voz_lufs": -16,
+    "musica_lufs": -20,
+    "ducking_db": -15,
+    "musica_entre_falas_db": -3,
+    "pausa_entre_falas_s": 1.5,
+    "pausa_capitulo_s": 6.0,
+    "master_lufs": -14,
+    "master_true_peak": -1.0
+  },
+  "blender": {
+    "executavel": "C:/Program Files/Blender Foundation/Blender 4.2/blender.exe",
+    "motor": "EEVEE",
+    "amostras_cycles": 128,
+    "formato": "PNG"
+  },
+  "whisper": {
+    "modelo": "large-v3",
+    "dispositivo": "auto",
+    "idioma": "pt"
+  }
+}
