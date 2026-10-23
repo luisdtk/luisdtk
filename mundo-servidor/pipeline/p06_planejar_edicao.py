@@ -423,6 +423,8 @@ def criar_audio(itens, sync, blocos, shots, cfg, musicas, base, fim_video):
     for r in blocos:
         ato = r["bloco"]["ato"]
         mid = ATO[ato]["musica"]
+        if mid not in musicas and ATO[ato].get("musica_alternativa") in musicas:
+            mid = ATO[ato]["musica_alternativa"]   # ex.: Respite não enviada -> usa a alternativa
         if cues and cues[-1]["musica"] == mid:
             cues[-1]["fim"] = r["V1"]
         elif cues and cues[-1]["ato"] == ato:
@@ -434,7 +436,9 @@ def criar_audio(itens, sync, blocos, shots, cfg, musicas, base, fim_video):
     for k, c in enumerate(cues):
         if c["musica"] not in musicas:
             print(f"AVISO: música '{c['musica']}' não tratada (passo 5) — o AE vai deixar um marcador")
-        dur_m = musicas.get(c["musica"], {}).get("dur", 1e9)
+        m_info = musicas.get(c["musica"], {})
+        inicio_m = m_info.get("inicio", 0.0)            # começa na parte principal da música
+        dur_m = m_info.get("dur", 1e9) - inicio_m
         ini = 0.0 if k == 0 else c["ini"] - xf / 2
         fim = fim_video if k == len(cues) - 1 else c["fim"] + xf / 2
         t, parte = ini, 0
@@ -442,7 +446,8 @@ def criar_audio(itens, sync, blocos, shots, cfg, musicas, base, fim_video):
             dur = min(dur_m, fim - t)
             camadas.append({"musica": c["musica"], "arquivo": musicas.get(c["musica"], {}).get("arquivo",
                             (base / "musicas_tratadas" / f"{c['musica']}.wav").as_posix()),
-                            "ini": round(t, 3), "fim": round(t + dur, 3), "parte": parte})
+                            "ini": round(t, 3), "fim": round(t + dur, 3), "parte": parte,
+                            "inicio_arquivo": inicio_m})
             if t + dur >= fim - 0.01:
                 break
             t += dur - 4.0  # próxima volta da música entra com crossfade de 4 s
@@ -474,7 +479,7 @@ def criar_audio(itens, sync, blocos, shots, cfg, musicas, base, fim_video):
     for r in blocos:
         bl = r["bloco"]
         for s in bl.get("sfx", []):
-            t = 0.0 if s["em"] == "video_inicio" else r["V0"]
+            t = (0.0 if s["em"] == "video_inicio" else r["V0"]) + s.get("offset", 0.0)
             sfx.append({"som": s["som"], "arquivo": sfx_arquivo(s["som"]), "ini": round(t, 3), "db": s.get("db", -12),
                         "dur": s.get("dur")})
     primeiro_do_ato = {}
@@ -603,7 +608,7 @@ def main():
         "largura": cfg["video"]["largura"], "altura": cfg["video"]["altura"], "aspecto": cfg["video"]["aspecto_cinema"],
         "fontes": cfg["fontes"], "gameplay_escala": cfg["gameplay"]["escala_no_4k"],
         "projeto_aep": (base / "after_effects" / "O_Mundo_e_um_Servidor.aep").as_posix(),
-        "render_saida": (base / "render" / "O_Mundo_e_um_Servidor_master.mov").as_posix(),
+        "render_saida": (base / "render" / "O_Mundo_e_um_Servidor_master.mp4").as_posix(),
         "atos": atos, "shots": shots, "textos": textos, "cartoes": cartoes, "audio": audio,
         "chat": roteiro.CHAT, "reels": criar_reels(textos),
         "mc_texturas": (base / "mc_assets" / "textures" / "block").as_posix(),

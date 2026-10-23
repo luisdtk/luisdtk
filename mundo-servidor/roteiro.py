@@ -30,14 +30,14 @@ ATOS = [
     {
         "id": 2, "romano": "II", "nome": "Os primeiros griefers",
         "citacao": "Destruir o que o outro construiu, só pelo prazer de vê-lo perder.",
-        "alvo_s": 120, "musica": "respite", "grade": "ambar_frio",
+        "alvo_s": 120, "musica": "respite", "musica_alternativa": "warmth", "grade": "ambar_frio",
         "preenchimento": {"gameplay": ["casa_paredes", "paisagem_mesa", "arvore_sol_folhas"],
                           "img": ["muralha_medieval", "castelo_berry"]},
     },
     {
         "id": 3, "romano": "III", "nome": "O chat do servidor",
         "citacao": "Nada prende mais a nossa atenção do que o medo e a raiva.",
-        "alvo_s": 120, "musica": "respite", "grade": "vermelho",
+        "alvo_s": 120, "musica": "respite", "musica_alternativa": "drone", "grade": "vermelho",
         "preenchimento": {"gameplay": ["anoitecer_estrelas", "lava_caverna", "zumbis_noite"],
                           "img": ["kandinsky_composicao", "dore_inferno_1", "schiele_autorretrato", "gericault_medusa",
                                   "goya_desastres_1"]},
@@ -70,7 +70,7 @@ BLOCOS = [
     {"id": "1a", "ato": 1, "pausa_peso": 2,
      "visual": "Tela preta, chuva leve, 'Gerando mundo...'. Primeiro amanhecer: planície, rio, ovelhas. Sem HUD.",
      "fontes": [{"t": "ae", "gerador": "gerando_mundo", "s": 6},
-                {"t": "blender", "cena": "A1_amanhecer"},
+                {"t": "gameplay", "tag": "arvore_amanhecer", "s": 9},
                 {"t": "gameplay", "tag": "arvore_contemplacao", "s": 8}],
      "sfx": [{"som": "chuva", "em": "video_inicio", "dur": 16, "db": -14}],
      "narracao": "Toda vez que você cria um mundo novo no Minecraft, ele é perfeito. Ninguém derrubou uma árvore. "
@@ -82,7 +82,7 @@ BLOCOS = [
     {"id": "1b", "ato": 1,
      "visual": "O jogador soca uma árvore e constrói uma casinha de madeira simples, com uma janela e uma tocha.",
      "fontes": [{"t": "gameplay", "tag": "arvore_amanhecer", "s": 6},
-                {"t": "blender", "cena": "A1_casinha"},
+                {"t": "gameplay", "tag": "casa_paredes", "s": 9},
                 {"t": "gameplay", "tag": "penhasco_mar_casa", "s": 7}],
      "narracao": "A primeira coisa que quase todo mundo faz é a mesma: uma casa. Não uma fortaleza. Uma casa. "
                  "Quatro paredes pra sobreviver à primeira noite. Porque a primeira noite assusta. Os monstros aparecem "
@@ -92,7 +92,7 @@ BLOCOS = [
 
     {"id": "1c", "ato": 1,
      "visual": "Noite. Zumbis ao redor da casa. O jogador olha pela janela, seguro.",
-     "fontes": [{"t": "blender", "cena": "A1_noite_zumbis"},
+     "fontes": [{"t": "gameplay", "tag": "interior_tochas", "s": 7},
                 {"t": "gameplay", "tag": "zumbis_noite", "s": 6},
                 {"t": "img", "id": "bruegel_cacadores", "s": 6}],
      "narracao": "Durante muito tempo, essa foi a história da humanidade também. O perigo estava lá fora: a fome, o frio, "
@@ -104,7 +104,7 @@ BLOCOS = [
      "visual": "Imagens da história antiga: primeiras vilas, muralhas, cidades. Amanhecer: um segundo jogador aparece no horizonte. Um acena.",
      "fontes": [{"t": "img", "id": "cole_selvagem", "s": 5},
                 {"t": "img", "id": "cole_arcadia", "s": 5},
-                {"t": "blender", "cena": "A1_segundo_jogador"}],
+                {"t": "gameplay", "tag": "por_do_sol_planicie", "s": 8}],
      "narracao": "Mas esse é um vídeo sobre o que acontece quando o servidor enche. Sobre o dia em que a gente descobre "
                  "que o monstro mais perigoso do mundo não aparece no escuro. Ele aparece no chat.",
      "textos": [{"linhas": [{"texto": "O monstro mais perigoso não aparece no escuro.", "ancora": "não aparece no escuro"},
@@ -120,7 +120,7 @@ BLOCOS = [
     # ======================= ATO 2 =======================
     {"id": "2a", "ato": 2,
      "visual": "Timelapse do servidor crescendo: vilas, pontes, fazenda coletiva, placa 'bem-vindo', dezenas de jogadores.",
-     "fontes": [{"t": "blender", "cena": "A2_servidor_cresce"},
+     "fontes": [{"t": "img", "id": "cole_consumacao", "s": 9},
                 {"t": "gameplay", "tag": "casa_paredes", "s": 7},
                 {"t": "gameplay", "tag": "paisagem_mesa", "s": 6}],
      "narracao": "No começo, um servidor cheio é lindo. Um constrói a ponte, outro planta o trigo, outro ilumina a caverna "
@@ -129,8 +129,10 @@ BLOCOS = [
                 {"linhas": [{"texto": "As pessoas cooperam porque é melhor assim.", "ancora": "as pessoas cooperam"}]}]},
 
     {"id": "2b", "ato": 2, "pausa_peso": 3, "silencio": True,
+     "sfx": [{"som": "pavio", "em": "bloco_inicio", "offset": 0.3, "db": -16},
+             {"som": "explosao", "em": "bloco_inicio", "offset": 3.0, "db": -9}],
      "visual": "Um jogador coloca TNT embaixo de uma casa e explode. Silêncio. Os outros param e olham a cratera.",
-     "fontes": [{"t": "blender", "cena": "A2_tnt"}],
+     "fontes": [{"t": "img", "id": "turner_incendio", "s": 9}, {"t": "gameplay", "tag": "lava_caverna", "s": 6}],
      "narracao": "Até que um dia alguém explode uma casa. Sem motivo. Só pra ver o que acontece. No Minecraft tem nome "
                  "pra isso: griefing. Destruir o que o outro construiu não pra ganhar algo, mas pelo prazer de ver o outro perder.",
      "textos": [{"ref": "griefing  (s.)",
@@ -140,7 +142,7 @@ BLOCOS = [
 
     {"id": "2c", "ato": 2,
      "visual": "O dono volta e encontra o buraco. A câmera fica nele por alguns segundos.",
-     "fontes": [{"t": "blender", "cena": "A2_dono_volta"},
+     "fontes": [{"t": "img", "id": "friedrich_abadia", "s": 8},
                 {"t": "gameplay", "tag": "arvore_sol_folhas", "s": 6}],
      "narracao": "E aqui está a primeira coisa que ninguém te conta: o estrago de verdade não é a cratera. Cratera se tapa "
                  "em cinco minutos. O estrago de verdade é o que muda dentro de quem perdeu a casa.",
@@ -149,7 +151,7 @@ BLOCOS = [
 
     {"id": "2d", "ato": 2,
      "visual": "Ele reconstrói, agora com paredes de pedra, sem janela. Depois coloca lava na entrada.",
-     "fontes": [{"t": "blender", "cena": "A2_bunker"},
+     "fontes": [{"t": "gameplay", "tag": "casa_paredes", "s": 8},
                 {"t": "img", "id": "muralha_medieval", "s": 6}],
      "narracao": "Na reconstrução, ele não faz mais janela. Faz muro. E coloca lava na porta. Ele não virou uma pessoa má. "
                  "Ele virou uma pessoa com medo. E uma pessoa com medo começa a enxergar todo mundo que se aproxima como o próximo griefer.",
@@ -159,7 +161,7 @@ BLOCOS = [
 
     {"id": "2e", "ato": 2,
      "visual": "Um por um, os jogadores cercam suas casas. A vila aberta vira um conjunto de bunkers isolados. + muralhas medievais.",
-     "fontes": [{"t": "blender", "cena": "A2_vila_bunkers"},
+     "fontes": [{"t": "gameplay", "tag": "paisagem_mesa", "s": 7},
                 {"t": "img", "id": "castelo_berry", "s": 6},
                 {"t": "img", "id": "muralhas_constantinopla", "s": 6}],
      "narracao": "Multiplique isso por milhões de pessoas e você tem uma parte grande do mundo real hoje. Gente que já foi "
@@ -173,7 +175,7 @@ BLOCOS = [
     # ======================= ATO 3 =======================
     {"id": "3a", "ato": 3,
      "visual": "Close no chat do jogo, mensagens subindo rápido. Uma diz: 'foi o pessoal do norte que explodiu a casa'.",
-     "fontes": [{"t": "blender", "cena": "A3_chat3d"},
+     "fontes": [{"t": "img", "id": "dore_inferno_1", "s": 7},
                 {"t": "ae", "gerador": "chat_rolando", "s": 7},
                 {"t": "img", "id": "kandinsky_composicao", "s": 7}],
      "narracao": "Agora imagine que esse servidor tem um chat. E que esse chat tem uma regra escondida: as mensagens que geram "
@@ -205,7 +207,7 @@ BLOCOS = [
 
     {"id": "3d", "ato": 3,
      "visual": "Jogador sozinho no quarto da casa-bunker, à noite, chat aberto, tocha piscando. + Munch, Goya.",
-     "fontes": [{"t": "blender", "cena": "A3_quarto_bunker"},
+     "fontes": [{"t": "gameplay", "tag": "interior_tochas", "s": 8},
                 {"t": "img", "id": "munch_grito", "s": 7},
                 {"t": "img", "id": "schiele_autorretrato", "s": 6},
                 {"t": "img", "id": "goya_saturno", "s": 7},
@@ -225,7 +227,7 @@ BLOCOS = [
     # ======================= ATO 4 =======================
     {"id": "4a", "ato": 4,
      "visual": "Facção azul e facção vermelha (armaduras de couro tingidas). Bandeiras sobem dos dois lados do rio.",
-     "fontes": [{"t": "blender", "cena": "A4_faccoes"},
+     "fontes": [{"t": "img", "id": "uccello_batalha", "s": 9},
                 {"t": "img", "id": "goya_desastres_2", "s": 6}],
      "narracao": "Quando as pessoas estão com medo e com raiva, sempre aparece alguém oferecendo uma resposta simples. No "
                  "servidor, ele aparece com uma bandeira e uma frase: 'juntos, a gente se protege deles'. E de repente você não é "
@@ -235,7 +237,7 @@ BLOCOS = [
 
     {"id": "4b", "ato": 4,
      "visual": "Um jogador azul derruba uma árvore no meio do mapa. No chat: vermelhos dizem ataque, azuis dizem legítimo.",
-     "fontes": [{"t": "blender", "cena": "A4_arvore"},
+     "fontes": [{"t": "gameplay", "tag": "por_do_sol_planicie", "s": 8},
                 {"t": "ae", "gerador": "chat_faccoes", "s": 9}],
      "narracao": "Repare no que acontece com a verdade. Antes, a pergunta era 'o que aconteceu?'. Agora a pergunta é 'de que "
                  "lado é quem fez?'. Se foi o meu lado, foi defesa. Se foi o outro lado, foi crime. O mesmo bloco quebrado, "
@@ -248,7 +250,7 @@ BLOCOS = [
 
     {"id": "4c", "ato": 4, "pausa_peso": 3, "silencio_inicio_s": 6,
      "visual": "Silêncio. A ponte entre os dois lados do rio é destruída bloco por bloco, pelos dois lados. + Goya: Duelo a garrotazos. + história.",
-     "fontes": [{"t": "blender", "cena": "A4_ponte"},
+     "fontes": [{"t": "img", "id": "goya_desastres_3", "s": 7},
                 {"t": "img", "id": "goya_duelo", "s": 8},
                 {"t": "img", "id": "kirchner_soldado", "s": 6},
                 {"t": "img", "id": "saque_roma", "s": 6},
@@ -266,9 +268,13 @@ BLOCOS = [
                 {"linhas": [{"texto": "…e ainda dormir em paz.", "ancora": "e ainda dormir em paz"}]}]},
 
     {"id": "4d", "ato": 4, "silencio": True,
+     "sfx": [{"som": "arco", "em": "bloco_inicio", "offset": 1.0, "db": -16},
+             {"som": "flecha_acerta", "em": "bloco_inicio", "offset": 2.2, "db": -18},
+             {"som": "explosao", "em": "bloco_inicio", "offset": 7.0, "db": -10},
+             {"som": "fogo", "em": "bloco_inicio", "offset": 10.0, "dur": 9, "db": -16}],
      "visual": "Batalha no rio em câmera lenta (flechas, fogo, TNT), sem música, só sons do jogo. Corte para a casinha do Ato 1 em chamas.",
-     "fontes": [{"t": "blender", "cena": "A4_batalha"},
-                {"t": "blender", "cena": "A4_casinha_chamas"}],
+     "fontes": [{"t": "img", "id": "altdorfer_issus", "s": 10}, {"t": "img", "id": "marc_destino_animais", "s": 7},
+                {"t": "img", "id": "turner_incendio", "s": 7}, {"t": "gameplay", "tag": "lava_caverna", "s": 5}],
      "narracao": None},
 
     {"id": "4e", "ato": 4,
@@ -284,7 +290,7 @@ BLOCOS = [
     # ======================= ATO 5 =======================
     {"id": "5a", "ato": 5,
      "visual": "Dia seguinte. Drone lento: crateras, fumaça, lava, bandeiras rasgadas, nenhum jogador. + Cole — Desolação, Pompeia, Fórum.",
-     "fontes": [{"t": "blender", "cena": "A5_drone_ruinas"},
+     "fontes": [{"t": "img", "id": "hubert_robert_ruinas", "s": 8},
                 {"t": "img", "id": "cole_desolacao", "s": 8},
                 {"t": "img", "id": "klee_angelus", "s": 7},
                 {"t": "img", "id": "pompeia", "s": 6},
@@ -297,8 +303,8 @@ BLOCOS = [
 
     {"id": "5b", "ato": 5,
      "visual": "Um jogador sem armadura e sem cor de time tapa uma cratera, um bloco de terra de cada vez.",
-     "fontes": [{"t": "blender", "cena": "A5_tapando_cratera"},
-                {"t": "img", "id": "hubert_robert_ruinas", "s": 6}],
+     "fontes": [{"t": "gameplay", "tag": "casa_paredes", "s": 9},
+                {"t": "img", "id": "pompeia", "s": 6}],
      "narracao": "Então eu não vou terminar esse vídeo com uma solução. Não existe comando que conserte isso. Mas existem algumas "
                  "coisas pequenas que eu aprendi olhando esse servidor.",
      "textos": [{"linhas": [{"texto": "Não existe comando que conserte isso.", "ancora": "não existe comando"}]}]},
@@ -327,7 +333,7 @@ BLOCOS = [
 
     {"id": "5d", "ato": 5,
      "visual": "Um jogador vermelho se aproxima, tira a armadura e ajuda. Depois um azul. Os três trabalham em silêncio. + Bruegel — Os Ceifeiros.",
-     "fontes": [{"t": "blender", "cena": "A5_tres_trabalham"},
+     "fontes": [{"t": "gameplay", "tag": "casa_paredes", "s": 8},
                 {"t": "img", "id": "bruegel_ceifeiros", "s": 8}],
      "narracao": "O mundo não vai ser consertado por um herói. Vai ser consertado do mesmo jeito que foi construído no começo: "
                  "por gente comum, colocando um bloco de cada vez, sem que ninguém mande.",
@@ -336,7 +342,7 @@ BLOCOS = [
 
     {"id": "5e", "ato": 5,
      "visual": "Os três reconstroem a casinha do Ato 1, agora com janela grande. Anoitece. Uma tocha acende.",
-     "fontes": [{"t": "blender", "cena": "A5_casinha_janela_grande"},
+     "fontes": [{"t": "gameplay", "tag": "anoitecer_estrelas", "s": 8},
                 {"t": "gameplay", "tag": "interior_tochas", "s": 10},
                 {"t": "gameplay", "tag": "arvore_contemplacao", "s": 7}],
      "narracao": "A noite ainda vai chegar. Os monstros ainda vão aparecer. Mas talvez a gente consiga lembrar de novo que eles "
@@ -466,6 +472,14 @@ IMAGENS = {
                         "obra": "Irmãos Limbourg — Très Riches Heures du Duc de Berry (c. 1412)"},
     "friedrich_manha": {"arquivo": None, "busca": "Caspar David Friedrich Morning in the Riesengebirge",
                         "obra": "Caspar David Friedrich — Manhã nas Montanhas (1810)"},
+    "turner_incendio": {"arquivo": None, "busca": "Turner Burning of the Houses of Lords and Commons 1834",
+                        "obra": "J. M. W. Turner — O Incêndio das Casas do Parlamento (1834)"},
+    "friedrich_abadia": {"arquivo": None, "busca": "Caspar David Friedrich Abbey in the Oakwood",
+                         "obra": "Caspar David Friedrich — Abadia no Carvalhal (1810)"},
+    "uccello_batalha": {"arquivo": None, "busca": "Paolo Uccello Battle of San Romano National Gallery",
+                        "obra": "Paolo Uccello — A Batalha de San Romano (c. 1438)"},
+    "altdorfer_issus": {"arquivo": None, "busca": "Albrecht Altdorfer Battle of Alexander at Issus",
+                        "obra": "Albrecht Altdorfer — A Batalha de Alexandre em Isso (1529)"},
     "millet_angelus":  {"arquivo": None, "busca": "Jean-François Millet L'Angélus Orsay",
                         "obra": "Jean-François Millet — O Ângelus (1859)"},
     # --- arte moderna (séc. XX) já em domínio público: artistas falecidos há mais de 70 anos
