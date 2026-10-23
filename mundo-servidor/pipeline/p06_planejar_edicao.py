@@ -40,7 +40,12 @@ GRADES = {
 # ------------------------------------------------------------------ entradas
 def carregar_entradas(cfg):
     base = Path(cfg["pastas"]["trabalho"])
-    sync = ler_json(base / "narracao_tratada" / "narracao_sync.json")
+    organizada = base / "narracao_organizada" / "narracao_sync.json"
+    if organizada.exists():
+        print("usando a narração organizada por capítulo (passo 3b)")
+        sync = ler_json(organizada)
+    else:
+        sync = ler_json(base / "narracao_tratada" / "narracao_sync.json")
     gp_path = base / "analise" / "gameplay_bons.json"
     if gp_path.exists():
         gameplay = ler_json(gp_path)["tags"]
@@ -477,9 +482,8 @@ def criar_audio(itens, sync, blocos, shots, cfg, musicas, base, fim_video):
         primeiro_do_ato.setdefault(r["bloco"]["ato"], r)
     for ato, r in primeiro_do_ato.items():
         t_card = 6.5 if ato == 1 else r["V0"]
-        sfx.append({"som": "boom", "arquivo": sfx_arquivo("boom"), "ini": round(t_card, 3), "db": -8})
-        if ato > 1:
-            sfx.append({"som": "whoosh", "arquivo": sfx_arquivo("whoosh"), "ini": round(r["V0"] - 1.1, 3), "db": -10})
+        # efeitos simples: só um impacto grave e discreto em cada cartão de capítulo
+        sfx.append({"som": "boom", "arquivo": sfx_arquivo("boom"), "ini": round(t_card, 3), "db": -13})
     for sh in shots:
         if sh["tipo"] == "blender":
             for off, sid, db in roteiro.BLENDER_CENAS[sh["cena"]]["sons"]:
@@ -509,7 +513,7 @@ def criar_reels(textos, alvo=75):
     escolhidos = [e for e in textos if e["destaque"]]
     total, reels = 0.0, []
     for e in escolhidos:
-        a, b = e["ini"] - 1.2, e["fim"] + 0.6
+        a, b = e["ini"] - 2.0, e["fim"] + 1.0
         if total + (b - a) > alvo + 10:
             break
         reels.append({"ini": round(a, 3), "fim": round(b, 3), "texto": " / ".join(l["texto"] for l in e["linhas"])})
@@ -602,6 +606,7 @@ def main():
         "render_saida": (base / "render" / "O_Mundo_e_um_Servidor_master.mov").as_posix(),
         "atos": atos, "shots": shots, "textos": textos, "cartoes": cartoes, "audio": audio,
         "chat": roteiro.CHAT, "reels": criar_reels(textos),
+        "mc_texturas": (base / "mc_assets" / "textures" / "block").as_posix(),
         "titulo": {"linha": "SUPERNOVA STUDIO", "titulo": "O MUNDO É UM SERVIDOR"},
         "final": {"linhas": ["O mundo é um servidor.", "Cuide dele."], "assinatura": "SUPERNOVA STUDIO",
                   "arroba": "@ssupernova.studio"},

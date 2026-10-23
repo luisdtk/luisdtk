@@ -63,25 +63,70 @@ def palavras_do_roteiro():
 
 
 def alinhar(transcricao):
+    """Localiza cada arquivo no roteiro de forma independente (a ordem dos arquivos não importa).
+    Se a mesma frase foi gravada mais de uma vez, fica a take com o trecho contínuo mais longo
+    (empate: a gravação mais recente)."""
     script = palavras_do_roteiro()
+    sw = [s[0] for s in script]
     falado = []  # (palavra_normalizada, idx_arquivo, ini, fim)
+    inicio_arq = []
     for fi, arq in enumerate(transcricao):
+        inicio_arq.append(len(falado))
         for p in arq["palavras"]:
             for w in normalizar(p["w"]):
                 falado.append((w, fi, p["ini"], p["fim"]))
+    inicio_arq.append(len(falado))
 
-    sm = SequenceMatcher(None, [s[0] for s in script], [f[0] for f in falado], autojunk=False)
-    mapa = {}
-    for bl in sm.get_matching_blocks():
-        for k in range(bl.size):
-            mapa[bl.a + k] = bl.b + k
+    melhor = {}  # idx_script -> (pontuação, idx_falado)
+    for fi in range(len(transcricao)):
+        a0, a1 = inicio_arq[fi], inicio_arq[fi + 1]
+        fw = [f[0] for f in falado[a0:a1]]
+        if not fw:
+            continue
+        # 1ª passada: onde este arquivo cai no roteiro (maior trecho em comum)
+        blocos = [bl for bl in SequenceMatcher(None, sw, fw, autojunk=False).get_matching_blocks() if bl.size]
+        if not blocos:
+            continue
+        maior = max(blocos, key=lambda bl: bl.size)
+        # 2ª passada: alinhamento só na região do roteiro em volta desse trecho
+        lo = max(0, maior.a - maior.b - 25)
+        hi = min(len(sw), maior.a + (len(fw) - maior.b) + 25)
+        for bl in SequenceMatcher(None, sw[lo:hi], fw, autojunk=False).get_matching_blocks():
+            for k in range(bl.size):
+                pont = (bl.size, fi)   # trecho contínuo maior vence; empate -> gravação mais recente
+                i = lo + bl.a + k
+                if i not in melhor or pont > melhor[i][0]:
+                    melhor[i] = (pont, a0 + bl.b + k)
+    mapa = {i: j for i, (_, j) in melhor.items()}
+
+    # buracos no roteiro que um arquivo inteiro ainda não usado cobre (ex.: arquivo de 1 palavra)
+    usados = {falado[j][1] for j in mapa.values()}
+    i = 0
+    while i < len(sw):
+        if i in mapa:
+            i += 1
+            continue
+        g1 = i
+        while g1 < len(sw) and g1 not in mapa:
+            g1 += 1
+        for fi in range(len(transcricao)):
+            a0, a1 = inicio_arq[fi], inicio_arq[fi + 1]
+            if fi in usados or a1 == a0:
+                continue
+            fw = [f[0] for f in falado[a0:a1]]
+            if SequenceMatcher(None, sw[i:g1], fw, autojunk=False).ratio() >= 0.75:
+                for bl in SequenceMatcher(None, sw[i:g1], fw, autojunk=False).get_matching_blocks():
+                    for k in range(bl.size):
+                        mapa[i + bl.a + k] = a0 + bl.b + k
+                usados.add(fi)
+                break
+        i = g1
 
     # posição (arquivo, tempo) de cada palavra do roteiro; não casadas -> vizinho mais próximo
     pos = [None] * len(script)
-    for i in range(len(script)):
-        if i in mapa:
-            f = falado[mapa[i]]
-            pos[i] = (f[1], f[2], f[3])
+    for i, j in mapa.items():
+        f = falado[j]
+        pos[i] = (f[1], f[2], f[3])
     for i in range(len(pos)):
         if pos[i] is None:
             ant = next((pos[j] for j in range(i - 1, -1, -1) if pos[j]), None)
