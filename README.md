@@ -1,7 +1,7 @@
 # luis fellipe
 
 
-i'm Luis, i’m 18 years old, currently living in New York. Majoring Computer Science at NYIT. i’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others.
+i'm Luis, i’m 19 years old, currently living in New York. Majoring Computer Science at NYIT. i’m passionate about technology and the complexity of this world, always seeking to acquire knowledge and share it with others.
 
 ---
 
