@@ -77,11 +77,7 @@ i'm luis, i’m 19 years old and currently living in new york. Majoring CS at @N
     src="https://github-readme-stats.vercel.app/api?username=luisdtk&show_icons=true&theme=tokyonight&include_all_commits=true" 
 />
 
-<img 
-      align="left" 
-      alt="GitHub Stats" 
-      src="https://github-readme-stats.vercel.app/api/top-langs/?username=luisdtk&theme=tokyonight&layout=compact&custom_title=Tech&langs_count=9" 
-/> 
+
 
 
 
