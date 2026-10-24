@@ -67,7 +67,7 @@ i'm luis, i’m 19 years old and currently living in new york. majoring CS at @ 
 <br/>
 <br/>
 
-###  statistics
+### 
 
 <img
     alt="stats"
