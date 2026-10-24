@@ -5,7 +5,7 @@ i'm luis, i’m 19 years old and currently living in New York. Majoring CS at @N
 
 ---
 
-###  Languages & Tech
+###  languages & tech
 
 <img 
     align="left" 
@@ -67,7 +67,7 @@ i'm luis, i’m 19 years old and currently living in New York. Majoring CS at @N
 <br/>
 <br/>
 
-###  Statistics  
+###  stats  
 
 <img 
     align="left" 
