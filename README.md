@@ -1,7 +1,7 @@
 # luissd 
 
 
-i'm luis, i’m 19 years old and currently living in New York. Majoring CS at @NYIT. i’m passionate about solving problems ;) 
+i'm luis, i’m 19 years old and currently living in new york. Majoring CS at @NYIT. i’m passionate about solving problems ;) 
 
 ---
 
@@ -67,7 +67,7 @@ i'm luis, i’m 19 years old and currently living in New York. Majoring CS at @N
 <br/>
 <br/>
 
-###  stats  
+###  statitcs
 
 <img 
     align="left" 
