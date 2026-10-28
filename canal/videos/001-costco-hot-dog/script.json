@@ -1,0 +1,20 @@
+{
+  "title": "Why Costco's Hot Dog Is Still $1.50",
+  "segments": [
+    {"say": "This company refuses to make money on its hot dog.", "hl": ["refuses", "money"], "words": 3},
+    {"say": "Costco's hot dog and soda: one dollar fifty.", "show": "Costco's hot dog and soda", "big": "$1.50", "hl": ["Costco's"]},
+    {"say": "The same price since 1985.", "big": "1985", "hl": ["same", "price"]},
+    {"say": "When an executive wanted to raise it, the co-founder said:", "hl": ["raise"]},
+    {"say": "If you raise the price of the hot dog, I will kill you.", "hl": ["kill"], "pause": 0.25},
+    {"say": "Because the hot dog isn't there to make money.", "hl": ["money"]},
+    {"say": "It's there to make you come back.", "hl": ["come", "back"]},
+    {"say": "The real money is the membership.", "hl": ["membership"]},
+    {"say": "About ninety percent of members renew every year.", "show": "of members renew every year", "big": "90%", "hl": ["renew"]},
+    {"say": "That's over four billion dollars a year, before you buy a single thing.", "show": "a year, before you buy a single thing", "big": "$4B+", "hl": ["before"]},
+    {"say": "More than half of Costco's profit.", "big": "50%+", "hl": ["profit"]},
+    {"say": "You're not the hot dog customer. You're the membership customer.", "hl": ["membership"]},
+    {"say": "And that's exactly why", "hl": ["why"], "pause": 0.0}
+  ],
+  "description": "Costco's $1.50 hot dog hasn't changed price since 1985, and that's the whole strategy. #business #money #costco",
+  "pinned_comment": "Would you pay for a Costco membership just for the hot dog?"
+}
