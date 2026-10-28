@@ -9,7 +9,7 @@ Usage: python3 pixel_short.py <video_dir>   (reads script.json, writes video.mp4
 import asyncio, json, math, os, random, subprocess, sys, tempfile
 from PIL import Image, ImageDraw
 import edge_tts
-import scenes
+import music, scenes
 from pixelfont import draw_text_centered, text_width
 
 LW, LH, SCALE, FPS = 270, 480, 4, 30
@@ -65,16 +65,21 @@ def build_audio(segs, tmp):
 
 
 def mix_audio(voice, sfx_times, total, tmp):
-    """Voice + a low ambient room tone + a soft pixel 'blip' on every scene cut."""
+    """Voice + the channel's 8-bit loop (ducked under the voice) + room tone + a 'blip' on every scene cut."""
     out = os.path.join(tmp, "mix.wav")
+    track = os.path.join(tmp, "music.wav")
+    music.write(track, total)
     blips = "".join(f"[b{i}]" for i in range(len(sfx_times)))
-    filters = [f"anoisesrc=color=brown:amplitude=0.5:duration={total:.2f},lowpass=f=180,volume=0.10[amb]"]
+    filters = ["[0:a]asplit=2[v][key]",
+               "[1:a]aformat=channel_layouts=stereo,volume=0.22[m]",
+               "[m][key]sidechaincompress=threshold=0.03:ratio=5:attack=15:release=350[duck]",
+               f"anoisesrc=color=brown:amplitude=0.5:duration={total:.2f},lowpass=f=180,volume=0.06[amb]"]
     for i, ts in enumerate(sfx_times):
         filters.append(f"sine=frequency=880:duration=0.06,volume=0.12,adelay={int(ts * 1000)}|{int(ts * 1000)},"
                        f"aformat=channel_layouts=stereo[b{i}]")
-    filters.append(f"[0:a][amb]{blips}amix=inputs={2 + len(sfx_times)}:normalize=0:duration=first,"
+    filters.append(f"[v][duck][amb]{blips}amix=inputs={3 + len(sfx_times)}:normalize=0:duration=first,"
                    "loudnorm=I=-14:TP=-1.5:LRA=11[out]")
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", voice, "-filter_complex", ";".join(filters),
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", voice, "-i", track, "-filter_complex", ";".join(filters),
                     "-map", "[out]", "-ar", "44100", out], check=True)
     return out
 
